@@ -1,0 +1,3 @@
+user psswrd = Qwerty@12
+admin psswrd = qwerty
+<a> tag = get

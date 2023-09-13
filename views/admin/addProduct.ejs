@@ -1,0 +1,72 @@
+<%- include('./adminLogHeader.ejs') %>
+
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-lg-12 col-xl-7">
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4 text-primary">Add Product</h6>
+                    <form action="/admin/adminProduct/addProduct" method="post" enctype="multipart/form-data">
+
+                        <div>
+                            <label for="formFileLg" class="form-label text-danger">Select 4 images</label>
+                            <input class="form-control form-control-md" id="formFileLg" name="image" type="file"
+                                accept="image/*" multiple required>
+                        </div>
+
+
+                        <div class="mt-3 mb-3">
+                            <label for="addprod">Name</label>
+                            <input class="form-control mb-3" type="text" id="addprod" name="name"
+                                placeholder="Default input" aria-label="default input example" required>
+                        </div>
+
+
+
+                        <div>
+                            <label for="">Category</label>
+                            <select class="form-select" aria-label="Default select example" id="category"
+                                name="category">
+
+                                <option selected>Select category from below</option>
+
+                                <% if(category.length>0){%>
+                                    <% for(let i=0;i<category.length;i++){ %>
+
+                                        <option id="<%=category[i]._id  %>" name="<%=category[i]._id  %>">
+                                            <%= category[i].name %>
+                                        </option>
+
+                                        <% } %>
+                                            <% } else{ %>
+                                                <option value="">No categories</option>
+                                                <% } %>
+                            </select>
+                        </div>
+
+                        <div class="mt-3 mb-3">
+                            <label for="addProdCat">Brand</label>
+                            <input class="form-control mb-3" type="text" id="addProdCat" name="brand"
+                                placeholder="Default input" aria-label="default input example" required>
+                        </div>
+
+                        <div class="mt-3 mb-3">
+                            <label for="addPrice">Price</label>
+                            <input class="form-control mb-3" type="number" id="addPrice" name="price"
+                                placeholder="Default input" aria-label="default input example" required>
+                        </div>
+
+                        <div class="mt-3 mb-3">
+                            <label for="product_description">Product Description:</label>
+                            <textarea class="form-control form-control-lg" id="product_description" name="description"
+                                required></textarea>
+                        </div>
+
+                        <button onclick="" type="submit" class="btn btn-primary">Add Product</button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <%- include('./adminLogFooter.ejs') %>

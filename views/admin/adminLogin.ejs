@@ -1,0 +1,60 @@
+
+
+ 
+    <%- include('../admin/adminHeader.ejs') %>
+
+    <section class="vh-100" style="background-color: #c9d2ef;">
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+              <div class="card shadow-2-strong" style="border-radius: 1rem;">
+
+              <form action="/admin/adminDash" method="post">
+                  
+                <div class="card-body p-5 text-center">
+      
+                  <h3 class="mb-5">Admin Sign in</h3>
+
+                              <% if (locals.error) { %>
+                                <div class="alert text-center" style="color: red; height: 10px;">
+                                  <%= error %>
+                                </div>
+                             <% } %>
+
+                      <small style="color: red;" class="mt-3">
+                        <%=locals.passwordError?passwordError:'' %>
+                    </small>
+                  
+                  <div class="form-outline mb-4">
+                    <input type="email" id="typeEmailX-2" class="form-control form-control-lg" name="email" />
+                    <label class="form-label" for="typeEmailX-2">Email</label>
+                  </div>
+      
+                  <div class="form-outline mb-4">
+                    <input type="password" id="typePasswordX-2" class="form-control form-control-lg" name="password"/>
+                    <label class="form-label" for="typePasswordX-2">Password</label>
+                  </div>
+      
+      
+                  <button class="btn btn-primary btn-block "   type="submit">Login</button>
+
+
+      
+                  <hr class="my-4">
+      
+                  
+
+            
+      
+                </div>
+              </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    
+      <%- include('../admin/adminFooter.ejs') %>
+
+   

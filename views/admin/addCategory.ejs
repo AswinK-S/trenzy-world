@@ -1,0 +1,35 @@
+<%- include('./adminLogHeader.ejs') %>
+
+
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-6">    
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Add Category</h6>
+                    <form action="/admin/adminCategory/addCat" method="post" enctype="multipart/form-data">
+
+                        <div>
+                            <label for="formFileLg" class="form-label">Large file input example</label>
+                            <input class="form-control form-control-md" id="formFileLg" name="image" type="file"
+                                accept="image/*" single required>
+                        </div>
+
+                        <small style="color: red;" class="mt-3">
+                            <%=nameExist %>
+                        </small>
+
+                        <div class="mt-3 mb-3">
+                            <label for="addCat">Category name</label>
+                            <input class="form-control mb-3" type="text" id="addCat" name="name"
+                                placeholder="Default input" aria-label="default input example">
+                        </div>
+
+                        <button onclick="" type="submit" class="btn btn-primary">Add Category</button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <%- include('./adminLogFooter.ejs') %>

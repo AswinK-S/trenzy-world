@@ -1,0 +1,50 @@
+ <!-- Back to Top -->
+ <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+</div>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/libCopy/chart/chart.min.js"></script>
+<script src="/libCopy/easing/easing.min.js"></script>
+<script src="/libCopy/waypoints/waypoints.min.js"></script>
+<script src="/libCopy/owlcarousel/owl.carousel.min.js"></script>
+<script src="/libCopy/tempusdominus/js/moment.min.js"></script>
+<script src="/libCopy/tempusdominus/js/moment-timezone.min.js"></script>
+<script src="/libCopy/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+
+
+</body>
+
+<!-- Template Javascript -->
+<script src="/js/main.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+  <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+
+  <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+
+  <script>
+    $('#sortTable').DataTable();
+  </script>
+  <script>
+    $('.modalBTN').click(function () {
+      //user modal
+      var userId = $(this).data('id');
+      var routeURL = '/admin/userStatus/' + userId
+      $(".modal-footer #confirmBTN").attr('href', routeURL);
+
+      //category  modal
+      var categoryId = $(this).data('id');
+      var catrouteURL ='/admin/categoryStatus/' + categoryId
+      $(".modal-footer #catconfirmBTN").attr('href', catrouteURL);
+
+      //product modal
+      var productId = $(this).data('id');
+      var prodrouteURL ='/admin/productStatus/' + productId
+      $(".modal-footer #prodConfirmBTN").attr('href', prodrouteURL);
+    });
+  </script>
+</html>

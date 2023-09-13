@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Trenzy world</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet"> 
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/css/style.css" rel="stylesheet"> 
+
+</head> 
+<style>small{color: red; }</style>
+<body>
+
+
+<div class="container-fluid">
+    
+  
+
+    <div class="row align-items-center py-3 px-xl-5">
+        <div class="col-lg-3 d-none d-lg-block">
+            <a href="" class="text-decoration-none">
+                <h2 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1" >Trenzy</span>world</h2>
+            </a>
+        </div>
+        <div class="col-lg-6 col-6 text-left">
+          
+        </div>
+        <!-- <div class="col-lg-3 col-6 text-right">
+            <a href="" class="btn border">
+                <i class="fas fa-heart text-primary"></i>
+                <span class="badge">0</span>
+            </a>
+            <a href="" class="btn border">
+                <i class="fas fa-shopping-cart text-primary"></i>
+                <span class="badge">0</span>
+            </a>
+        </div> -->
+    </div>
+</div>
+<!-- Topbar End -->
+
+<div class="container py-5">
+    <h2 class="text-center mb-4">Register Form</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form  action="/signUp" method="post">
+                <div class="mb-3">
+                    <label for="name"  class="form-label">First Name:</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Enter name" required>
+                    <small id="fnameError"></small>
+                </div>
+                <div class="mb-3">
+                    <label for="lastName"  class="form-label">last Name:</label>
+                    <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Enter name" required>
+                    <small id="lnameError"></small>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter email" required>
+                    <small id="emailError"></small>
+                    <small id="clear" style="color: red;">
+                        <%=locals.emailExistMessage?emailExistMessage:'' %>
+                    </small>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone:</label>
+                    <input type="number" id="phone" name="phone" class="form-control" placeholder="Enter phone number" required>
+                    <small id="phoneError"></small>
+
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password:</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+                    <span style="font-size: 12px;">*Must contain an uppercase letter,
+                        lowercase letter, special character and a number. Password should
+                        contain minimum 8 characters</span>
+                    <small id="passwordError"></small>
+
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Confirm Password:</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Enter password" required>
+                    <small id="cPasswordError"></small>
+                </div>
+                <button onclick="return validateForm()" type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+
+<script src="/js/validation/signUpValidation.js"></script>
+</body>
+</html>
