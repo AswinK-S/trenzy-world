@@ -15,42 +15,50 @@ exports.adminProduct =async (req,res)=>{
 
 
 //get add product
-exports.addProduct= async (req ,res)=>{
+exports.addProduct = async (req, res) => {
     console.log("in add Product")
     try {
-        const category = await Category.find({status:true})
-        console.log(category);
-        res.render('admin/addProduct',{category})
+        // Get the error message from res.locals
+       
+        const category = await Category.find({ status: true });
+        console.log("caaat",category);
+        res.render('admin/addProduct', { category });
     } catch (error) {
-        console.log(error.message)
-    }
-}    
-
-//post add product
-exports.postAddProduct=async (req,res)=>{
-    try {
-        console.log('post addprdct')
-        const {name,category,brand,price, description} = req.body
-        // console.log('hello',req.body)
-        // console.log('files',req.files)
-        let images =[]
-        for (let file of req.files) {
-            images.push(file.filename)
-        }
-        // console.log('file',images);
-        const categoryId = await Category.findOne({name:category})
-        console.log('categor',categoryId,category)
-        await new Products({name:name,category:categoryId._id,brand,price,image:images, description}).save()
-
-        // const productDet = new Products({name:name,category:categoryId._id,brand,price,image:images})
-        // console.log('productDet',productDet)
-        // const productData = await productDet.save()
-
-        res.redirect('/admin/adminProduct')
-    } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
     }
 }
+   
+
+//post add product
+exports.postAddProduct = async (req, res) => {
+    try {
+        console.log('post add product');
+        const { name, category, brand, price, quantity, description } = req.body;
+        let images = [];
+
+        for (let file of req.files) {
+            images.push(file.filename);
+        }
+
+        const categoryId = await Category.findOne({ name: category });
+        console.log('category', categoryId, category);
+
+        await new Products({
+            name: name,
+            category: categoryId._id,
+            brand,
+            price,
+            image: images,
+            quantity,
+            description,
+        }).save();
+
+        res.redirect('/admin/adminProduct');
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
 
 //product list or unlist
 exports.productStatus = async (req,res)=>{

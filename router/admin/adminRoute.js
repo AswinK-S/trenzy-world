@@ -7,6 +7,7 @@ const uploadProd =require('../../config/multerProd')//multer product
 
 //middlewear
 const isAdmin = require('../../middleware/adminAuth')
+const checkImage =require('../../middleware/imageCheck')
 
 const  adminController = require('../../controller/admin/adminController')
 const categoryController = require('../../controller/admin/categoryController')
@@ -38,7 +39,7 @@ admin.get('/userStatus/:id',adminController.userStatus)            // block/unbl
 admin.get('/adminProduct',isAdmin.isLoggedIn,productController.adminProduct)
 
 admin.get('/adminProduct/addProduct',isAdmin.isLoggedIn,productController.addProduct)        // get addProduct
-admin.post('/adminProduct/addProduct',uploadProd.array('image',4),productController.postAddProduct)//post product
+admin.post('/adminProduct/addProduct',uploadProd.array('image',10),checkImage.checkImageCount,productController.postAddProduct)//post product
 
 admin.get('/productStatus/:id',productController.productStatus)  //product status
 admin.get('/adminProduct/editProduct/:id',productController.editProduct) //product edit

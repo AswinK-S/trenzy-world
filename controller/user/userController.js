@@ -155,7 +155,7 @@ exports.insertUser = async (req, res) => {
                 service: 'gmail',
                 auth: {
                     user: 'trenzyworld4@gmail.com',
-                    pass: 'xcaasrvymxptpkuc',
+                    pass:  process.env.GMAIL_PASS,
                 },
                 secure: true, // Use TLS
                 port: 465, // Gmail SMTP port with TLS

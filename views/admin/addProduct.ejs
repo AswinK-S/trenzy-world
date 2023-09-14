@@ -11,6 +11,9 @@
                             <label for="formFileLg" class="form-label text-danger">Select 4 images</label>
                             <input class="form-control form-control-md" id="formFileLg" name="image" type="file"
                                 accept="image/*" multiple required>
+                                <% if (typeof imageCountMessage !== 'undefined') { %>
+                                    <div class="alert alert-danger mt-2"><%= imageCountMessage %></div>
+                                <% } %>
                         </div>
 
 
@@ -54,7 +57,11 @@
                             <input class="form-control mb-3" type="number" id="addPrice" name="price"
                                 placeholder="Default input" aria-label="default input example" required>
                         </div>
-
+                        <div class="mt-3 mb-3">
+                            <label for="addQuantity">Quantity</label>
+                            <input class="form-control mb-3" type="number" id="addQuantity" name="quantity"
+                                placeholder="Default input" aria-label="default input example" required>
+                        </div>
                         <div class="mt-3 mb-3">
                             <label for="product_description">Product Description:</label>
                             <textarea class="form-control form-control-lg" id="product_description" name="description"

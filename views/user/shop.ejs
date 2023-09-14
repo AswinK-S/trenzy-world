@@ -211,21 +211,23 @@
                                 </a>
                             </li>
                             <% } %>
-                                <li class="page-item <%= page === 1 ? 'active' : '' %>"><a class="page-link" href="/shop?page=1">1</a></li>
-                                <li class="page-item <%= page === 2 ? 'active' : '' %>"><a class="page-link" href="/shop?page=2">2</a></li>
-                            <!-- Add more page links as needed -->
-                            <% if (page * 6 < product.length && page < totalPages) { %>
-                                <li class="page-item">
-                                    <a class="page-link" href="/shop?page=<%= page + 1 %>" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                        <span class="sr-only">Next</span>
-                                    </a>
+                            <% for (let currentPage = 1; currentPage <= totalPages; currentPage++) { %>
+                                <li class="page-item <%= page == currentPage ? 'active' : '' %>">
+                                    <a class="page-link" href="/shop?page=<%= currentPage %>"><%= currentPage %></a>
                                 </li>
-                                <% } %>
-                                
+                            <% } %>
+                            <% if (page < totalPages) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="/shop?page=<%= page + 1 %>" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                            <% } %>
                         </ul>
                     </nav>
                 </div>
+                
             </div>
             
             <!-- Shop Product End -->
