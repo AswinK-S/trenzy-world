@@ -1,4 +1,4 @@
-<%- include('./partials/header.ejs') %>
+<%- include('../partials/header.ejs') %>
 
 
 
@@ -34,13 +34,13 @@
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="index.html" class="nav-item nav-link active">Home</a>
+                            <a href="home" class="nav-item nav-link active">Home</a>
                             <a href="/shop" class="nav-item nav-link">Shop</a>
-                            <a href="detail.html" class="nav-item nav-link">Shop Detail</a>
+                            <a href="#" class="nav-item nav-link">Shop Detail</a>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
                                 <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="cart.html" class="dropdown-item">Shopping Cart</a>
+                                    <a href="/cart" class="dropdown-item">Shopping Cart</a>
                                     <a href="checkout.html" class="dropdown-item">Checkout</a>
                                 </div>
                             </div>
@@ -93,7 +93,7 @@
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Shop Detail</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="">Home</a></p>
+                <p class="m-0"><a href="/">Home</a></p>
                 <p class="m-0 px-2">-</p>
                 <p class="m-0">Shop Detail</p>
             </div>
@@ -108,14 +108,16 @@
     
             <!-- Left Column (Image) -->
             <div class="col-lg-6 pb-5 col-12 text-center">
-                <div class="col-md-6 ">
+                <div class="row">
+                    <div class="col-md-2"></div>
+                <div class="col-md-8 pb-5 ps-5 pe-5">
                     <!-- card left -->
                     <div class="product-imgs">
                         <div class="img-display">
-                            <div class="img-showcase" style="border: 1px solid rgb(233, 232, 232);">
-                                <div class="main-image">
-                                    <img class="imgg" src="/productImages/<%=product.image[0] %>"
-                                        id="main-img" alt="Responsive image" style="cursor: zoom-in;">
+                            <div class="img-showcase bg-danger" style="border: 1px solid rgb(233, 232, 232);" >
+                                <div class="main-image bg-danger" style="height: 80%;">
+                                    <img class="w-100" src="/productImages/<%=product.image[0] %>"
+                                        id="main-img" alt="Responsive image" style="cursor: zoom-in;" height="80%">
                                 </div>
                             </div>
                         </div>
@@ -147,12 +149,15 @@
                         </div>
                     </div>
                 </div>
+                </div>
+                
             </div>
     
             <!-- Right Column (Product Details) -->
+
             <div class="col-lg-6 pb-5">
-                <h3 class="font-weight-semi-bold">Colorful Stylish Shirt</h3>
-                <div class="d-flex mb-3">
+                <h3 class="font-weight-semi-bold mb-3" style="margin-top: 100px;">Colorful Stylish Shirt</h3>
+                <div class="d-flex mb-3 mt-4 mb-3">
                     <div class="text-primary mr-2">
                         <small class="fas fa-star"></small>
                         <small class="fas fa-star"></small>
@@ -162,8 +167,8 @@
                     </div>
                     <small class="pt-1">(50 Reviews)</small>
                 </div>
-                <h3 class="font-weight-semi-bold mb-4">$150.00</h3>
-                <p class="mb-4">Volup erat ipsum diam elitr rebum et dolor. Est nonumy elitr erat diam stet sit clita
+                <h3 class="font-weight-semi-bold mb-4 mt-5">$150.00</h3>
+                <p class="mb-4 mt-4">Volup erat ipsum diam elitr rebum et dolor. Est nonumy elitr erat diam stet sit clita
                     ea. Sanc invidunt ipsum et, labore clita lorem magna lorem ut. Erat lorem duo dolor no sea nonumy.
                     Accus labore stet, est lorem sit diam sea et justo, amet at lorem et eirmod ipsum diam et rebum kasd
                     rebum.</p>
@@ -307,4 +312,4 @@
 
 
 
-    <%- include('./partials/footer.ejs') %>
+    <%- include('../partials/footer.ejs') %>

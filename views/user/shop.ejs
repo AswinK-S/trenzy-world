@@ -1,9 +1,9 @@
-<%- include('./partials/header.ejs') %>
+<%- include('../partials/header.ejs') %>
 
     
 
 
-<!-Navbar Start -->
+<!--Navbar Start -->
 <div class="container-fluid mb-5">
     <div class="row border-top px-xl-5">
         <div class="col-md-3 d-none d-md-block">
@@ -31,13 +31,13 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
-                        <a href="index.html" class="nav-item nav-link active">Home</a>
+                        <a href="/shop" class="nav-item nav-link active">Home</a>
                         <a href="/shop" class="nav-item nav-link">Shop</a>
                         <a href="detail.html" class="nav-item nav-link">Shop Detail</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="cart.html" class="dropdown-item">Shopping Cart</a>
+                                <a href="/cart" class="dropdown-item">Shopping Cart</a>
                                 <a href="checkout.html" class="dropdown-item">Checkout</a>
                             </div>
                         </div>
@@ -85,7 +85,7 @@
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
             <h1 class="font-weight-semi-bold text-uppercase mb-3">Our Shop</h1>
             <div class="d-inline-flex">
-                <p class="m-0"><a href="">Home</a></p>
+                <p class="m-0"><a href="/">Home</a></p>
                 <p class="m-0 px-2">-</p>
                 <p class="m-0">Shop</p>
             </div>
@@ -124,7 +124,7 @@
                             <span class="badge border font-weight-normal">#</span>
                         </div>
 
-                        <input type="text" name="search" value="<%= search %> " hidden>
+                        <input type="text" name="search" value="<%=queryString%> " hidden>
                         <!-- Add unique id and name attributes for the remaining checkboxes -->
                         
                         <button type="submit">Filter</button>
@@ -233,4 +233,4 @@
     </div>
     <!-- Shop End -->
 
-<%- include('./partials/footer.ejs') %>
+<%- include('../partials/footer.ejs') %>

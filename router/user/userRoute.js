@@ -36,4 +36,7 @@ user.post('/verifyOTP', userController.verifyOTPPost);
 user.post('/logout',userController.logout)
 user.get('/logout',userController.logout)
 
+//user get cart
+user.get('/cart',userController.getCart)
+
 module.exports = user;

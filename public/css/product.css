@@ -3,9 +3,9 @@
     box-sizing: border-box;
     padding: 0;
     margin: 0;
-}
+} */
 
-body {
+ body {
     line-height: 1.5;
 }
 
@@ -61,9 +61,9 @@ body {
 
 .product-content {
     padding: 2rem 1rem;
-}
+} 
 
-
+/* 
 @media screen and (min-width: 992px) {
     .card {
         display: grid;
@@ -87,4 +87,4 @@ body {
     .product-content {
         padding-top: 0;
     }
-}
+} */

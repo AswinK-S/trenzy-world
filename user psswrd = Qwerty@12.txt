@@ -1,3 +1,8 @@
 user psswrd = Qwerty@12
 admin psswrd = qwerty
 <a> tag = get
+
+
+git add .
+git commit -m "name"
+git push

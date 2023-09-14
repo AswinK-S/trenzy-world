@@ -126,7 +126,14 @@ exports.signUp = async (req, res) => {
 exports.insertUser = async (req, res) => {
     try {
         console.log('body email', req.body);
+
+        const existEmail = await User.findOne({ email: req.body.email })
+        if(existEmail){
+            req.app.locals.specialContext ="already registered email"
+            return  res.redirect("/signup")
+        }
         // Generate a random OTP (e.g., a 6-digit number)
+
         const user = {
             name: req.body.name,
             lastName: req.body.lastName,
@@ -238,123 +245,71 @@ exports.verifyOTPPost = async (req, res) => {
 // shop page
 exports.shopPage = async (req, res) => {
     try {
-        const search = req.query.search ||''
-        console.log("search typeof",typeof search )
-        const price = req.query.price
-        console.log("price : ",req.query.price)
-        let query = { status: true}
+        const search = req.query.search || '';
+        const queryString = search.replace(/\+$/,'').trim();
+        console.log("queryString", queryString);
+        
+        const price = req.query.price;
+        console.log("price : ", req.query.price);
+        let query = { status: true }
 
-
-        if (search.trim().length>0 ) {
-            console.log('category 1', search);
-            console.log("jean.lenth : ",search.length)
-
-            // Step 1: Query the "category" collection
-            let matchingCategories1 = await Category.find({
-                name: { $regex: new RegExp(search, 'i') }
-            });
-            
-            console.log('Matching Categories 1', matchingCategories1);
-
-
-            if (matchingCategories1.length > 0) {
-                console.log('Matching Categories 1', matchingCategories1);
-                catName = matchingCategories1[0]._id
-                console.log('name', catName)
-                query.category = {
-                    _id: catName
-                };
-            } 
+        // Function to search and set category in the query
+        const setSearchCategory = async (queryString) => {
+            if (queryString.length > 0) {
+                const matchingCategories = await Category.find({
+                    name: { $regex: new RegExp(queryString, 'i') }
+                });
+                
+                if (matchingCategories.length > 0) {
+                    console.log('Matching Categories', matchingCategories);
+                    catName = matchingCategories[0]._id;
+                    console.log('name', catName);
+                    query.category = catName;
+                }
+            }
         }
-        console.log("   query  :  ",query)
+
+        // Call the function to set the category based on the search query
+        await setSearchCategory(queryString);
 
         if (typeof price === 'string') {
-
-            if ( search.trim().length>0) {
-                console.log('category2', search);
-    
-                // Step 1: Query the "category" collection
-                let matchingCategories2 = await Category.find({
-                    name: { $regex: new RegExp(search, 'i') }
-                });
-                console.log('Matching Categories2', matchingCategories2);
-
-    
-                if (matchingCategories2.length > 0) {
-                    console.log('Matching Categories2', matchingCategories2);
-                    catName = matchingCategories2[0]._id
-                    console.log('name', catName)
-                    query.category = catName
-                }
-            }
-        
-
-            console.log('price',price,search)
-            const price1 = parseInt(price)
-            const minPrice = price1 - 999
-            const maxPrice = price1
-            console.log('string', minPrice, maxPrice)
-
+            console.log('price', price, queryString);
+            const price1 = parseInt(price);
+            const minPrice = price1 - 999;
+            const maxPrice = price1;
+            console.log('string', minPrice, maxPrice);
 
             query.price = {
                 $gte: minPrice,
                 $lte: maxPrice
-            }
-            console.log('price single',query)
-        }else if (Array.isArray(price)) {
-
-            if ( search.trim().length>0) {
-                console.log('category3', search);
-    
-                // Step 1: Query the "category" collection
-                let matchingCategories3 = await Category.find({
-                    name: { $regex: new RegExp(search, 'i') }
-                });
-    
-                if (matchingCategories.length > 0) {
-                    console.log('Matching Categories3', matchingCategories3);
-                    catName = matchingCategories[0]._id
-                    console.log('name', catName)
-                    query.category = catName
-                }
-            }
-
-            console.log('price2',price,search)
-            minPrice = Math.min(...price.map(Number)) - 999
-            maxPrice = Math.max(...price.map(Number))
-            console.log('ara', minPrice, maxPrice)
+            };
+            console.log('price single', query);
+        } else if (Array.isArray(price)) {
+            console.log('price2', price, queryString);
+            minPrice = Math.min(...price.map(Number)) - 999;
+            maxPrice = Math.max(...price.map(Number));
+            console.log('ara', minPrice, maxPrice);
             query.price = {
                 $gte: minPrice,
                 $lte: maxPrice
-            }
+            };
         }
 
-
-        // const page = parseInt(req.query.page) || 1; // Default to page 1 if 'page' is not provided
-        // console.log('current page', page);
-        // // Define the number of products to display per page
-        // const productsPerPage = 6;
-
-        // // Calculate the index from which to start displaying products
-        // const startIndex = (page - 1) * productsPerPage;
-
-        // Query the database to retrieve products for the current page
-        let page = 1
+        let page = 1;
         if (req.query.page) {
-            page = req.query.page
+            page = req.query.page;
         }
-        let limit = 6
+        let limit = 6;
 
-        console.log('quwe', query)
-        const product = await Product.find(query).limit(limit * 1).skip((page - 1) * limit)
-        console.log('product',product)
+        console.log('query', query);
+        const product = await Product.find(query).limit(limit * 1).skip((page - 1) * limit);
+        console.log('product', product);
 
         const totalProducts = await Product.countDocuments();
-        // console.log('tot prdts',totalProducts);
         const totalPages = Math.ceil(totalProducts / limit);
-        // console.log(' tot pag',totalPages);
+        
         // Render the shop page template with products and pagination data
-        res.render('shop', { product, totalPages, currentPage: page, page, search });
+        res.render('user/shop', { product, totalPages, currentPage: page, page, queryString });
     } catch (error) {
         console.log(error.message);
     }
@@ -362,6 +317,7 @@ exports.shopPage = async (req, res) => {
 
 
 
+// product detail page
 exports.singleProduct = async (req,res)=>{
     try {
         console.log('product page');
@@ -369,8 +325,18 @@ exports.singleProduct = async (req,res)=>{
         console.log('id',id)
         const product =await Product.findById({_id : id})
         console.log('product',product)
-        res.render('product',{product})
+        res.render('user/product',{product})
     } catch (error) {
         console.log(error.message);
+    }
+}
+
+//get cart page
+exports.getCart = async (req,res)=>{
+    try{
+        console.log('cart page');
+        res.render('user/cart')
+    }catch(error){
+        console.log(error.message)
     }
 }
