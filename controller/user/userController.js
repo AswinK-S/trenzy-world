@@ -242,13 +242,46 @@ exports.verifyOTPPost = async (req, res) => {
 }
 
 
+// user account
+exports.userAccount= async(req,res)=>{
+    try{
+        console.log('user account')
+        const userId = req.session.name
+        const userData = await User.findOne({_id:userId})
+        // console.log('user data',userData)
+        res.render("user/userProfile",{userData})
+    }catch(error){
+        console.log(error.message)
+    }
+}
+
+// update user
+exports.updateUser =async (req,res)=>{
+    try {
+        console.log('update user')
+        const userId = req.params.id
+        console.log(userId,'userid')
+        const data=await User.updateOne({_id:userId},{$set:{
+            name:req.body.name,
+            lastName:req.body.lastName,
+            email:req.body.email,
+            phone:req.body.phone
+        }})
+        console.log('object',data);
+        res.redirect("/userProfile")
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
 // shop page
 exports.shopPage = async (req, res) => {
     try {
         const search = req.query.search || '';
         const queryString = search.replace(/\+$/,'').trim();
         console.log("queryString", queryString);
-        
+        const user= req.session.name
         const price = req.query.price;
         console.log("price : ", req.query.price);
         let query = { status: true }
@@ -309,7 +342,7 @@ exports.shopPage = async (req, res) => {
         const totalPages = Math.ceil(totalProducts / limit);
         
         // Render the shop page template with products and pagination data
-        res.render('user/shop', { product, totalPages, currentPage: page, page, queryString });
+        res.render('user/shop', { user,product, totalPages, currentPage: page, page, queryString });
     } catch (error) {
         console.log(error.message);
     }
@@ -321,11 +354,12 @@ exports.shopPage = async (req, res) => {
 exports.singleProduct = async (req,res)=>{
     try {
         console.log('product page');
+        const user= req.session.name
         const id= req.params.id
         console.log('id',id)
         const product =await Product.findById({_id : id})
         console.log('product',product)
-        res.render('user/product',{product})
+        res.render('user/product',{user,product})
     } catch (error) {
         console.log(error.message);
     }
@@ -335,7 +369,8 @@ exports.singleProduct = async (req,res)=>{
 exports.getCart = async (req,res)=>{
     try{
         console.log('cart page');
-        res.render('user/cart')
+        const user = req.session.name
+        res.render('user/cart',{user})
     }catch(error){
         console.log(error.message)
     }

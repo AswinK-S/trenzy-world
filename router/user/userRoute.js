@@ -14,7 +14,7 @@ user.get('/',isUser.blockStatus,userController.getHome)
 user.get('/shop',isUser.blockStatus,userController.shopPage)
 
 //single product
-user.get('/product/:id',userController.singleProduct)
+user.get('/product/:id',isUser.blockStatus,userController.singleProduct)
 
 //login
 user.get('/login',isUser.loggedOut,userController.login)
@@ -35,6 +35,10 @@ user.post('/verifyOTP', userController.verifyOTPPost);
 // user.get('/login')
 user.post('/logout',userController.logout)
 user.get('/logout',userController.logout)
+
+//user profile
+user.get('/userProfile',isUser.blockStatus,userController.userAccount)
+user.post('/userProfile/edit/:id',userController.updateUser)
 
 //user get cart
 user.get('/cart',userController.getCart)
