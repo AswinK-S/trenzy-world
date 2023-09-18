@@ -49,7 +49,7 @@
             <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                 <div class="cat-item d-flex flex-column border mb-3" style="padding: 20px;">
                     <p class="text-right">15 Products</p>
-                    <a href="" class="cat-img position-relative overflow-hidden mb-2">
+                    <a href="/shop?search=shirt" class="cat-img position-relative overflow-hidden mb-2">
                         <img class="img-fluid" src="/categoryImages/<%=shirt.image %>" alt="">
                     </a>
                     <h5 class="font-weight-semi-bold m-0">Shirts</h5>
@@ -58,7 +58,7 @@
             <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                 <div class="cat-item d-flex flex-column border mb-3" style="padding: 20px;">
                     <p class="text-right">15 Products</p>
-                    <a href="" class="cat-img position-relative overflow-hidden mb-2">
+                    <a href="/shop?search=t-shirt" class="cat-img position-relative overflow-hidden mb-2">
                         <img class="img-fluid" src="/categoryImages/<%=t_shirt.image %>" alt="">
                     </a>
                     <h5 class="font-weight-semi-bold m-0">T-shirts</h5>
@@ -67,7 +67,7 @@
             <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                 <div class="cat-item d-flex flex-column border mb-3" style="padding: 20px;">
                     <p class="text-right">15 Products</p>
-                    <a href="" class="cat-img position-relative overflow-hidden mb-2">
+                    <a href="/shop?search=jeans" class="cat-img position-relative overflow-hidden mb-2">
                         <img class="img-fluid" src="/categoryImages/<%=jeans.image %>" alt="">
                     </a>
                     <h5 class="font-weight-semi-bold m-0">Jeans</h5>
@@ -76,7 +76,7 @@
             <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                 <div class="cat-item d-flex flex-column border mb-3" style="padding: 20px;">
                     <p class="text-right">15 Products</p>
-                    <a href="" class="cat-img position-relative overflow-hidden mb-2">
+                    <a href="/shop?search=pant" class="cat-img position-relative overflow-hidden mb-2">
                         <img class="img-fluid" src="/categoryImages/<%=pant.image %>" alt="">
                     </a>
                     <h5 class="font-weight-semi-bold m-0">Casual Pants</h5>
@@ -147,10 +147,10 @@
                             </div>
                         </div>
                         <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View
-                                Detail</a>
-                            <a href="" class="btn btn-sm text-dark p-0"><i
-                                    class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
+                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+                            <form action="/cart/<%=product[i]._id  %>" method="post">
+                                <button type="submit" class="btn btn-sm text-primary p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</button>
+                            </form>
                         </div>
                     </div>
                 </div>

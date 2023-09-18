@@ -13,6 +13,7 @@ user.get('/',isUser.blockStatus,userController.getHome)
 //shop page
 user.get('/shop',isUser.blockStatus,userController.shopPage)
 
+
 //single product
 user.get('/product/:id',isUser.blockStatus,userController.singleProduct)
 
@@ -42,5 +43,7 @@ user.post('/userProfile/edit/:id',userController.updateUser)
 
 //user get cart
 user.get('/cart',userController.getCart)
+//user post cart
+user.post('/cart/:id',userController.postCart)
 
 module.exports = user;

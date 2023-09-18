@@ -33,7 +33,7 @@ exports.addProduct = async (req, res) => {
 exports.postAddProduct = async (req, res) => {
     try {
         console.log('post add product');
-        const { name, category, brand, price, quantity, description } = req.body;
+        const { name, category, brand, price, quantity, description,size } = req.body;
         let images = [];
 
         for (let file of req.files) {
@@ -50,6 +50,7 @@ exports.postAddProduct = async (req, res) => {
             price,
             image: images,
             quantity,
+            size,
             description,
         }).save();
 

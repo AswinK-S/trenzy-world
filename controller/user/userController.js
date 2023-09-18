@@ -6,7 +6,7 @@ const nodemailer = require('nodemailer')
 const Product = require('../../model/product.js')
 const Category = require('../../model/category.js');
 const smtpTransport = require('nodemailer-smtp-transport');
-const category = require('../../model/category.js');
+const Cart = require('../../model/cart.js')
 
 // login page
 exports.login = async (req, res) => {
@@ -350,6 +350,8 @@ exports.shopPage = async (req, res) => {
 
 
 
+
+
 // product detail page
 exports.singleProduct = async (req,res)=>{
     try {
@@ -365,13 +367,109 @@ exports.singleProduct = async (req,res)=>{
     }
 }
 
-//get cart page
-exports.getCart = async (req,res)=>{
-    try{
-        console.log('cart page');
-        const user = req.session.name
-        res.render('user/cart',{user})
-    }catch(error){
-        console.log(error.message)
+// get cart page
+exports.getCart = async (req, res) => {
+    try {
+        console.log('get cart page');
+        const userId = req.session.name;
+        if (!userId) {
+            return res.redirect('/login');
+        }
+
+        // Find the user's cart based on userId
+        const cart = await Cart.findOne({ user: userId }).populate('products.products');
+        
+        if (!cart || cart.products.length === 0) {
+            // If no cart or no products in the cart, display an empty cart
+            return res.render('user/cart', { cart: null });
+        }
+
+        // If the user has a cart with products, display the cart
+        res.render('user/cart', { cart });
+    } catch (error) {
+        console.log(error.message);
     }
 }
+
+
+
+// post cart page for adding products and updating quantities
+exports.postCart = async (req, res) => {
+    try {
+        const userId = req.session.name;
+        if (!userId) {
+            return res.redirect('/login');
+        }
+
+        const productId = req.params.id;
+        const product = await Product.findOne({ _id: productId });
+
+        if (!product) {
+            // Handle the case where the product doesn't exist
+            console.log('Product not found');
+            return res.redirect('/'); // Redirect to a home page or handle the error
+        }
+
+        // Find the user's cart based on userId
+        let cart = await Cart.findOne({ user: userId });
+
+        if (!cart) {
+            // If the user doesn't have a cart, create a new cart
+            cart = new Cart({
+                user: userId,
+                products: [
+                    {
+                        products: products[0]._id,
+                        price: products[0].price,
+                        quantity: 1,
+                        size: 'M',
+                    },
+                ],
+                total: products[0].price, // Initial total based on the product's price
+            });
+        } else {
+            // If the user already has a cart, add the product to the existing cart
+
+            // Check if the product is already in the cart
+            const existingProduct = cart.products.find((item) =>
+                item.products.equals(product._id)
+            );
+
+            if (existingProduct) {
+                // If the product is already in the cart, update its quantity based on the action
+                if (req.body.action === 'plus') {
+                    existingProduct.quantity += 1;
+                } else if (req.body.action === 'minus') {
+                    if (existingProduct.quantity > 1) {
+                        existingProduct.quantity -= 1;
+                    }
+                }
+            } else {
+                // If it's a new product, add it to the cart
+                cart.products.push({
+                    products: product._id,
+                    price: product.price,
+                    quantity: 1,
+                    size: 'M',
+                });
+            }
+
+            // Recalculate the cart's total based on the updated quantities
+            cart.total = cart.products.reduce(
+                (total, item) => total + item.price * item.quantity,
+                0
+            );
+        }
+
+        // Save the updated cart
+        await cart.save();
+
+        // Send a response to the client indicating success or updated cart data
+        res.json({ success: true, cart });
+    } catch (error) {
+        console.log(error.message);
+        // Handle errors and send an error response to the client if needed
+        res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+};
+
