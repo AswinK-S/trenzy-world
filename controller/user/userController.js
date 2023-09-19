@@ -128,9 +128,9 @@ exports.insertUser = async (req, res) => {
         console.log('body email', req.body);
 
         const existEmail = await User.findOne({ email: req.body.email })
-        if(existEmail){
-            req.app.locals.specialContext ="already registered email"
-            return  res.redirect("/signup")
+        if (existEmail) {
+            req.app.locals.specialContext = "already registered email"
+            return res.redirect("/signup")
         }
         // Generate a random OTP (e.g., a 6-digit number)
 
@@ -155,7 +155,7 @@ exports.insertUser = async (req, res) => {
                 service: 'gmail',
                 auth: {
                     user: 'trenzyworld4@gmail.com',
-                    pass:  process.env.GMAIL_PASS,
+                    pass: process.env.GMAIL_PASS,
                 },
                 secure: true, // Use TLS
                 port: 465, // Gmail SMTP port with TLS
@@ -243,31 +243,33 @@ exports.verifyOTPPost = async (req, res) => {
 
 
 // user account
-exports.userAccount= async(req,res)=>{
-    try{
+exports.userAccount = async (req, res) => {
+    try {
         console.log('user account')
         const userId = req.session.name
-        const userData = await User.findOne({_id:userId})
+        const userData = await User.findOne({ _id: userId })
         // console.log('user data',userData)
-        res.render("user/userProfile",{userData})
-    }catch(error){
+        res.render("user/userProfile", { userData })
+    } catch (error) {
         console.log(error.message)
     }
 }
 
 // update user
-exports.updateUser =async (req,res)=>{
+exports.updateUser = async (req, res) => {
     try {
         console.log('update user')
         const userId = req.params.id
-        console.log(userId,'userid')
-        const data=await User.updateOne({_id:userId},{$set:{
-            name:req.body.name,
-            lastName:req.body.lastName,
-            email:req.body.email,
-            phone:req.body.phone
-        }})
-        console.log('object',data);
+        console.log(userId, 'userid')
+        const data = await User.updateOne({ _id: userId }, {
+            $set: {
+                name: req.body.name,
+                lastName: req.body.lastName,
+                email: req.body.email,
+                phone: req.body.phone
+            }
+        })
+        console.log('object', data);
         res.redirect("/userProfile")
     } catch (error) {
         console.log(error.message);
@@ -279,9 +281,9 @@ exports.updateUser =async (req,res)=>{
 exports.shopPage = async (req, res) => {
     try {
         const search = req.query.search || '';
-        const queryString = search.replace(/\+$/,'').trim();
+        const queryString = search.replace(/\+$/, '').trim();
         console.log("queryString", queryString);
-        const user= req.session.name
+        const user = req.session.name
         const price = req.query.price;
         console.log("price : ", req.query.price);
         let query = { status: true }
@@ -292,7 +294,7 @@ exports.shopPage = async (req, res) => {
                 const matchingCategories = await Category.find({
                     name: { $regex: new RegExp(queryString, 'i') }
                 });
-                
+
                 if (matchingCategories.length > 0) {
                     console.log('Matching Categories', matchingCategories);
                     catName = matchingCategories[0]._id;
@@ -340,9 +342,9 @@ exports.shopPage = async (req, res) => {
 
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
-        
+
         // Render the shop page template with products and pagination data
-        res.render('user/shop', { user,product, totalPages, currentPage: page, page, queryString });
+        res.render('user/shop', { user, product, totalPages, currentPage: page, page, queryString });
     } catch (error) {
         console.log(error.message);
     }
@@ -353,15 +355,15 @@ exports.shopPage = async (req, res) => {
 
 
 // product detail page
-exports.singleProduct = async (req,res)=>{
+exports.singleProduct = async (req, res) => {
     try {
         console.log('product page');
-        const user= req.session.name
-        const id= req.params.id
-        console.log('id',id)
-        const product =await Product.findById({_id : id})
-        console.log('product',product)
-        res.render('user/product',{user,product})
+        const user = req.session.name
+        const id = req.params.id
+        console.log('id', id)
+        const product = await Product.findById({ _id: id })
+        console.log('product', product)
+        res.render('user/product', { user, product })
     } catch (error) {
         console.log(error.message);
     }
@@ -378,7 +380,7 @@ exports.getCart = async (req, res) => {
 
         // Find the user's cart based on userId
         const cart = await Cart.findOne({ user: userId }).populate('products.products');
-        
+
         if (!cart || cart.products.length === 0) {
             // If no cart or no products in the cart, display an empty cart
             return res.render('user/cart', { cart: null });
@@ -397,11 +399,14 @@ exports.getCart = async (req, res) => {
 exports.postCart = async (req, res) => {
     try {
         const userId = req.session.name;
+        const productId = req.params.id;
+        console.log("proid", productId)
+        let quantity = 0, price = 0
+
         if (!userId) {
             return res.redirect('/login');
         }
 
-        const productId = req.params.id;
         const product = await Product.findOne({ _id: productId });
 
         if (!product) {
@@ -419,13 +424,13 @@ exports.postCart = async (req, res) => {
                 user: userId,
                 products: [
                     {
-                        products: products[0]._id,
-                        price: products[0].price,
-                        quantity: 1,
+                        products: product[0]._id,
+                        price: product[0].price,
+                        quantity: 0,
                         size: 'M',
                     },
                 ],
-                total: products[0].price, // Initial total based on the product's price
+                total: product[0].price, // Initial total based on the product's price
             });
         } else {
             // If the user already has a cart, add the product to the existing cart
@@ -439,9 +444,13 @@ exports.postCart = async (req, res) => {
                 // If the product is already in the cart, update its quantity based on the action
                 if (req.body.action === 'plus') {
                     existingProduct.quantity += 1;
+                    quantity = existingProduct.quantity
+                    price = existingProduct.price * existingProduct.quantity
                 } else if (req.body.action === 'minus') {
                     if (existingProduct.quantity > 1) {
                         existingProduct.quantity -= 1;
+                        quantity = existingProduct.quantity
+                        price = existingProduct.price * existingProduct.quantity
                     }
                 }
             } else {
@@ -463,9 +472,13 @@ exports.postCart = async (req, res) => {
 
         // Save the updated cart
         await cart.save();
+        console.log(cart)
 
         // Send a response to the client indicating success or updated cart data
-        res.json({ success: true, cart });
+        // res.json({ success: true, data:cart});
+        res.status(200).json({ success: true, quantity, total: cart.total, price });
+        // res.redirect('/cart')
+
     } catch (error) {
         console.log(error.message);
         // Handle errors and send an error response to the client if needed
@@ -473,3 +486,96 @@ exports.postCart = async (req, res) => {
     }
 };
 
+
+//users add to cart page
+exports.addToCart = async (req, res) => {
+    try {
+        const userId = req.session.name
+        const productId = req.params.id
+        if (!userId) {
+            res.redirect('/login')
+        }
+        console.log('add to cart page')
+        let cart = await Cart.findOne({ user: userId })
+        console.log('cart', cart)
+        const product = await Product.findOne({ _id: productId })
+
+        // Check if the product is already in the cart
+        const existingProduct = cart.products.find((item) =>
+            item.products.equals(product._id)
+        );
+
+        if (existingProduct) {
+
+            console.log('exx', existingProduct)
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+                quantity = existingProduct.quantity
+                price = existingProduct.price * existingProduct.quantity
+            }
+
+
+        } else if(!cart){
+            //if the user doesn't have a cart
+            console.log('emoty cart');
+            cart = new Cart({
+                user: userId,
+                products: [{
+                    products: productId,
+                    price: product.price,
+                    quantity: 1,
+                    size: "M"
+                }],
+                total: product.price
+            }).save()
+        }else{
+            await Cart.updateOne(
+                { user: userId },
+                {
+                  $push: {
+                    products: {
+                      products: productId,
+                      price: product.price,
+                      quantity: 1,
+                      size: "M"
+                    }
+                  },
+                  $inc: { total: product.price } // Increment total by product price
+                }
+              );
+              
+        }
+        console.log('caaart',cart);
+        res.redirect('/cart')
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+// remove the product from the cart
+exports.removeFromCart = async (req, res) => {
+    try {
+        const userId = req.session.name;
+        const productId = req.params.id
+        console.log('remove');
+        const removeProduct = await Cart.updateOne({ user: userId }, { $pull: { products: { products: productId } } })
+        console.log('pull', removeProduct)
+        let cart = await Cart.findOne({ user: userId })
+        console.log('cart', cart)
+        let total = 0
+        if (cart) {
+            total = cart.products.reduce((acc, curr) => acc + curr.price, 0)
+            cart.total=total
+            await cart.save()
+        }
+        console.log('after deleting the ', cart)
+        console.log('total', total);
+
+        res.redirect('/cart');
+
+    } catch (error) {
+        console.log(error.message)
+    }
+}

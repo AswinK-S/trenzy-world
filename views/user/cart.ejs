@@ -122,22 +122,30 @@
                                     <td class="align-middle">
                                         <div class="input-group quantity mx-auto" style="width: 100px;">
                                             <div class="input-group-btn">
-                                                <button class="btn btn-sm btn-primary btn-minus">-</button>
+                                                <button class="btn btn-sm btn-primary btn-plus" id="minus-<%= cart.products[i].products._id %>" data-id="<%= cart.products[i].products._id %>" data-action="minus" >
+                                                   -
+                                                </button>
                                             </div>
-                                            <input type="text"
-                                                class="form-control form-control-sm bg-secondary text-center quantity-input"
-                                                value="<%= cart.products[i].quantity %>">
+                                            <p  type="text" class="form-control form-control-sm bg-secondary text-center quantity-input" id="<%= cart.products[i].products._id %>"><%= cart.products[i].quantity %></p>                                                                                                                                                       
                                             <div class="input-group-btn">
-                                                <button class="btn btn-sm btn-primary btn-plus">+</button>
+                                                <button class="btn btn-sm btn-primary btn-plus"  data-id="<%= cart.products[i].products._id %>" data-action="plus">
+                                                    +
+                                                </button>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="align-middle" id="total-price-<%= i %>">
+                                    
+                                    <td class="align-middle" id="total-price-<%= cart.products[i].products._id %>">
                                         &#8377 <%= cart.products[i].price * cart.products[i].quantity %>
                                     </td>
                                     <td class="align-middle">
-                                        <button class="btn btn-sm btn-primary btn-remove"><i
-                                                class="fa fa-times"></i></button>
+                                        <form action="/removeProduct/<%= cart.products[i].products._id %>" method="post"> 
+                                            <button class="btn btn-sm btn-primary btn-remove">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </form>
+                                       
+                                                
                                     </td>
                                 </tr>
                                 <% } %>
@@ -180,7 +188,7 @@
                         <div class="card-footer border-secondary bg-transparent">
                             <div class="d-flex justify-content-between mt-2">
                                 <h5 class="font-weight-bold">Total</h5>
-                                <h5 class="font-weight-bold">&#8377 <%= cart.total %>
+                                <h5 class="font-weight-bold" id="cart-total">&#8377 <%= cart.total %>
                                 </h5> <!-- Display cart total -->
                             </div>
                             <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>
@@ -191,6 +199,11 @@
         </div>
     </div>
 
-
-
     <%- include('../partials/footer.ejs') %>
+
+    <script>
+        $(document).on("click",".btn-plus",function(){
+            var plus=$(this).data('id')
+            $('.btn-plus #pid').val(plus)
+        })
+    </script>

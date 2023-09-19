@@ -46,4 +46,11 @@ user.get('/cart',userController.getCart)
 //user post cart
 user.post('/cart/:id',userController.postCart)
 
+//user add to cart
+user.post('/addToCart/:id',userController.addToCart)
+
+//user delete product from the cart
+user.post('/removeProduct/:id',userController.removeFromCart)
+
+
 module.exports = user;
