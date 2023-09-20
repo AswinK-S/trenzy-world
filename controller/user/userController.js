@@ -490,68 +490,143 @@ exports.postCart = async (req, res) => {
 //users add to cart page
 exports.addToCart = async (req, res) => {
     try {
-        const userId = req.session.name
-        const productId = req.params.id
+        const userId = req.session.name;
+        const productId = req.params.id;
+        
         if (!userId) {
-            res.redirect('/login')
+            return res.redirect('/login');
         }
-        console.log('add to cart page')
-        let cart = await Cart.findOne({ user: userId })
-        console.log('cart', cart)
-        const product = await Product.findOne({ _id: productId })
 
-        // Check if the product is already in the cart
-        const existingProduct = cart.products.find((item) =>
-            item.products.equals(product._id)
-        );
+        const product = await Product.findOne({ _id: productId });
 
-        if (existingProduct) {
+        if (!product) {
+            // Handle the case where the product doesn't exist
+            console.log('Product not found');
+            return res.redirect('/'); // Redirect to a home page or handle the error
+        }
 
-            console.log('exx', existingProduct)
-            if (existingProduct) {
-                existingProduct.quantity += 1;
-                quantity = existingProduct.quantity
-                price = existingProduct.price * existingProduct.quantity
-            }
+        let cart = await Cart.findOne({ user: userId });
 
-
-        } else if(!cart){
-            //if the user doesn't have a cart
-            console.log('emoty cart');
+        if (!cart) {
+            // If the user doesn't have a cart, create a new cart
             cart = new Cart({
                 user: userId,
-                products: [{
+                products: [
+                    {
+                        products: productId,
+                        price: product.price,
+                        quantity: 1,
+                        size: 'M',
+                    },
+                ],
+                total: product.price, // Initial total based on the product's price
+            });
+        } else {
+            // If the user already has a cart, add the product to the existing cart
+            const existingProduct = cart.products.find((item) =>
+                item.products.equals(product._id)
+            );
+
+            if (existingProduct) {
+                // If the product is already in the cart, update its quantity
+                existingProduct.quantity += 1;
+                cart.total += product.price; // Increment total by product price
+            } else {
+                // If it's a new product, add it to the cart
+                cart.products.push({
                     products: productId,
                     price: product.price,
                     quantity: 1,
-                    size: "M"
-                }],
-                total: product.price
-            }).save()
-        }else{
-            await Cart.updateOne(
-                { user: userId },
-                {
-                  $push: {
-                    products: {
-                      products: productId,
-                      price: product.price,
-                      quantity: 1,
-                      size: "M"
-                    }
-                  },
-                  $inc: { total: product.price } // Increment total by product price
-                }
-              );
-              
-        }
-        console.log('caaart',cart);
-        res.redirect('/cart')
+                    size: 'M',
+                });
 
+                cart.total += product.price; // Increment total by product price
+            }
+        }
+
+        // Save the updated cart
+        await cart.save();
+
+        res.redirect('/cart');
     } catch (error) {
         console.log(error.message);
+        // Handle errors and send an error response to the client if needed
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
-}
+};
+
+
+
+
+
+
+// exports.addToCart = async (req, res) => {
+//     try {
+//         const userId = req.session.name
+//         const productId = req.params.id
+//         console.log('product id :',productId)
+//         console.log('user id :',userId)
+
+//         if (!userId) {
+//             res.redirect('/login')
+//         }
+//         console.log('add to cart page')
+//         let cart = await Cart.findOne({ user: userId })
+//         console.log('cart', cart)
+//         const product = await Product.findOne({ _id: productId })
+
+//         // Check if the product is already in the cart
+//         const existingProduct = cart.products.find((item) =>
+//             item.products.equals(product._id)
+//         );
+
+//         if (existingProduct) {
+
+//             console.log('exx', existingProduct)
+//             if (existingProduct) {
+//                 existingProduct.quantity += 1;
+//                 quantity = existingProduct.quantity
+//                 price = existingProduct.price * existingProduct.quantity
+//             }
+
+
+//         } else if(!cart){
+//             //if the user doesn't have a cart
+//             console.log('emoty cart');
+//             cart = new Cart({
+//                 user: userId,
+//                 products: [{
+//                     products: productId,
+//                     price: product.price,
+//                     quantity: 1,
+//                     size: "M"
+//                 }],
+//                 total: product.price
+//             }).save()
+//         }else{
+//             await Cart.updateOne(
+//                 { user: userId },
+//                 {
+//                   $push: {
+//                     products: {
+//                       products: productId,
+//                       price: product.price,
+//                       quantity: 1,
+//                       size: "M"
+//                     }
+//                   },
+//                   $inc: { total: product.price } // Increment total by product price
+//                 }
+//               );
+              
+//         }
+//         console.log('caaart',cart);
+//         res.redirect('/cart')
+
+//     } catch (error) {
+//         console.log(error.message);
+//     }
+// }
 
 
 // remove the product from the cart
