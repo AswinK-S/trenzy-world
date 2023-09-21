@@ -22,8 +22,21 @@ user.get('/login',isUser.loggedOut,userController.login)
 user.post('/login',userController.userLogin)
 
 
-// forgot password
+// forgot password page to enter email
 user.get('/forgotPassword',userController.forgotPassword)
+
+//forgot password otp page
+user.get('/forgotPasswordOtpPage',userController.getPasswordOtpPage)
+// otp generation for forgot password
+user.post('/forgotPasswordEmail',userController.ForgotPasswordEmail)
+
+//otp verification for forgot password
+user.post('/verifyForgotPasswordOtp',userController.verifyForgotPassOtp)
+// get new password page
+user.get('/newPassword',userController.newPasswordPage)
+
+//post set new password
+user.post('/createNewPass',userController.changePassword)
 
 //signup
 user.get('/signUp',isUser.loggedOut,userController.signUp)
@@ -37,9 +50,19 @@ user.post('/verifyOTP', userController.verifyOTPPost);
 user.post('/logout',userController.logout)
 user.get('/logout',userController.logout)
 
-//user profile
+//---------------------------------------------------------------------user profile---------------------------------------------\\
 user.get('/userProfile',isUser.blockStatus,userController.userAccount)
+
+//user get edit profile page
+user.get('/editUserProfile',userController.getUserEdit)
+//user post edit profile page
 user.post('/userProfile/edit/:id',userController.updateUser)
+
+//user get address page
+user.get('/addAddress',userController.getAddAddress)
+//user post add adress
+user.post('/addAddress',userController.postAddAddress)
+
 
 //user get cart
 user.get('/cart',userController.getCart)
@@ -52,5 +75,13 @@ user.post('/addToCart/:id',userController.addToCart)
 //user delete product from the cart
 user.post('/removeProduct/:id',userController.removeFromCart)
 
+
+// get checkout page
+user.get('/checkout',userController.getCheckOut)
+// post checkout page
+user.post('/postCheckOut',userController.postCheckOut)
+
+//user confirmation page
+user.get('/confirmation',userController.getConfirmation)
 
 module.exports = user;

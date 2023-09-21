@@ -191,7 +191,9 @@
                                 <h5 class="font-weight-bold" id="cart-total">&#8377 <%= cart.total %>
                                 </h5> <!-- Display cart total -->
                             </div>
+                         <form action="/postCheckOut" method="post">
                             <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>
+                         </form>
                         </div>
                     </div>
                     <% } %>

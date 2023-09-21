@@ -28,46 +28,55 @@
 
     <script src="/js/cart.js"></script>
 
+    <script>
+        document.getElementById('search').addEventListener('submit', function (event) {
+          event.preventDefault(); // Prevent the default form submission
+          const searchTerm = document.querySelector('#search input').value.trim();
+          if (searchTerm !== '') {
+            const newUrl = `/shop?search=${encodeURIComponent(searchTerm)}`;
+            console.log('ssss')
+            window.location.href = newUrl;
+          } else {
+            // Handle the case when the search term is empty (e.g., show an alert)
+            // For example:
+            // alert('Please enter a search term.');
+          }
+        });
+      </script>
+
 </head>
 
 <body>
 
 
-<div class="container-fluid">
-    
-    <div class="row align-items-center py-3 px-xl-5">
-        <div class="col-lg-3 d-none d-lg-block">
-            <a href="/" class="text-decoration-none">
-                <h2 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">Trenzy</span>world</h2>
-            </a>
-        </div>
-        <div class="col-lg-6 col-6 text-left">
-            <form >
-                <div class="input-group">
-                    <input type="text" class="form-control" name="search" placeholder="Search for products">
-                    <div class="input-group-append">
-                        <span class="input-group-text bg-transparent text-primary">
-                           <button><i class="fa fa-search"></i></button> 
-                        </span>
+    <div class="container-fluid">
+        <div class="row align-items-center py-3 px-xl-5">
+            <div class="col-lg-3 d-none d-lg-block">
+                <a href="/" class="text-decoration-none">
+                    <h2 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">Trenzy</span>world</h2>
+                </a>
+            </div>
+            <div class="col-lg-6 col-6 text-left">
+                <form>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="search" name="search" placeholder="Search for products">
+                        <div class="input-group-btn"> <!---->
+                            <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="col-lg-3 col-6 text-right">
+                <a href="" class="btn border">
+                    <i class="fas fa-heart text-primary"></i>
+                    <span class="badge"></span>
+                </a>
+                <a href="/cart" class="btn border">
+                    <i class="fas fa-shopping-cart text-primary"></i>
+                    <span class="badge"></span>
+                </a>
+            </div>
         </div>
-        <div class="col-lg-3 col-6 text-right">
-            <a href="" class="btn border">
-                <i class="fas fa-heart text-primary"></i>
-                <span class="badge"></span>
-            </a>
-            <a href="/cart" class="btn border">
-                <i class="fas fa-shopping-cart text-primary"></i>
-                <span class="badge"></span>
-            </a>
-
-
-        </div>
-
-        
-
     </div>
-</div>
+    
 <!-- Topbar End -->

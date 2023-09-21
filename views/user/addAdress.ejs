@@ -1,0 +1,97 @@
+<%- include('../partials/header.ejs') %>
+    <!-- navbar -->
+    <div class="container-fluid mb-5">
+        <div class="row border-top px-xl-5">
+            <div class="col-lg-12">
+                <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
+                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarCollapse">
+                        <div class="navbar-nav mr-auto py-0">
+                            <a href="#" class="nav-item nav-link active">Dashboard</a>
+                            <a href="#" class="nav-item nav-link">Edit Profile</a>
+                            <a href="#" class="nav-item nav-link">Address</a>
+                            <a href="#" class="nav-item nav-link">Change Password</a>
+                            <a href="#" class="nav-item nav-link">Order</a>
+                            <a href="#" class="nav-item nav-link">WishList</a>
+                            <a href="#" class="nav-item nav-link"></a>
+                        </div>
+                        <div class="navbar-nav ml-auto py-0">
+                            <% if(userData) { %>
+                                <form action="/logout" method="POST" class="mr-auto">
+                                    <button class="btn border" type="submit"
+                                        style="background: none; font-size: 22px; padding: 2px;">Logout</button>
+                                </form>
+                                <a href="#" class="btn border ml-2" style="text-decoration: none; color: #D19C97;">
+                                    <i class="fas fa-user"></i>
+                                </a>
+                                <% } else { %>
+                                    <form action="/login" method="">
+                                        <button type="submit"
+                                            style="background: none; border: none; padding: 0;">Login</button>
+                                    </form>
+                                    <% } %>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- navbar end -->
+
+
+    <div class="container-fluid pt-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-8">
+                <div class="mb-4">
+                    <h4 class="font-weight-semi-bold mb-4">Add Address</h4>
+                    <form action="/addAddress" method="post">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Name</label>
+                                <input class="form-control" type="text" name="name" placeholder="Enter Name">
+                            </div>
+
+                            <div class="col-md-6 form-group">
+                                <label>Mobile</label>   
+                                <input class="form-control" type="Number" name="phone" placeholder="Enter Mobile">
+                            </div>
+
+                            <div class="col-md-6 form-group">
+                                <label>State</label>
+                                <input class="form-control" type="text" name="state" placeholder="Enter State">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>District</label>
+                                <input class="form-control" type="text" name="district" placeholder="Enter District">
+                            </div>
+
+                            <div class="col-md-6 form-group">
+                                <label>Town</label>
+                                <input class="form-control" type="text" name="town" placeholder="Enter Town">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Pin Code</label>
+                                <input class="form-control" type="text" name="pincode" placeholder="Enter pincode">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Address</label>
+                                <textarea class="form-control" type="text" name="address" placeholder="Enter Address"></textarea>
+                            </div>
+
+                        </div>
+                        <div class="mt-5">
+                            <button class="btn btn-primary profile-button" type="submit">Add Adress</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <%- include('../partials/footer.ejs') %>

@@ -1,0 +1,82 @@
+<%- include('../partials/header.ejs') %>
+
+<section class="order_details section_gap">
+    <div class="container">
+        <h4 class="title_confirmation text-center text-success mt-5">Thank you. Your order has been received.</h4>
+
+        <!-- Border for the content inside the row -->
+        <div class="container border border-secondary py-4 mt-5 mb-5 bg-secondary ">
+            <div class="row order_d_inner ">
+                <div class="col-lg-4">
+                    <div class="details_item ">
+                        <h5>Order Info</h5>
+                        <!-- Use list-unstyled to remove list style -->
+                        <ul class="list-unstyled">
+                            <li><a href="#"><span>Order number</span> : 60235</a></li>
+                            <li><a href="#"><span>Date</span> : Los Angeles</a></li>
+                            <li><a href="#"><span>Total</span> : USD 2210</a></li>
+                            <li><a href="#"><span>Payment method</span> : Check payments</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="details_item">
+                        <h5>Billing Address</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#"><span>Street</span> : 56/8</a></li>
+                            <li><a href="#"><span>City</span> : Los Angeles</a></li>
+                            <li><a href="#"><span>Country</span> : United States</a></li>
+                            <li><a href="#"><span>Postcode </span> : 36952</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="details_item">
+                        <h5>Shipping Address</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#"><span>Street</span> : 56/8</a></li>
+                            <li><a href="#"><span>City</span> : Los Angeles</a></li>
+                            <li><a href="#"><span>Country</span> : United States</a></li>
+                            <li><a href="#"><span>Postcode </span> : 36952</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4>Order Details</h4>
+
+        
+        <!-- Border for the "Order Details Table" -->
+        <div class="order_details_table mt-4 border ">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p>Pixelstore fresh Blackberry</p>
+                            </td>
+                            <td>
+                                <h5>x 02</h5>
+                            </td>
+                            <td>
+                                <p>$720.00</p>
+                            </td>
+                        </tr>
+                        <!-- Add more rows as needed -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+<%- include('../partials/footer.ejs') %>
