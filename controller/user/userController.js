@@ -10,6 +10,8 @@ const Product = require('../../model/product.js')
 const Category = require('../../model/category.js');
 const Cart = require('../../model/cart.js')
 const Address = require('../../model/adress.js')
+const Order = require('../../model/order.js'); 
+
 
 // login page
 exports.login = async (req, res) => {
@@ -761,17 +763,6 @@ exports.addToCart = async (req, res) => {
 };
 
 
-//get confirmation page 
-exports.getConfirmation = async (req,res)=>{
-    console.log('confirmation page')
-    res.render('user/confirmation')
-}
-
-
-
-
-
-
 
 // remove the product from the cart
 exports.removeFromCart = async (req, res) => {
@@ -801,22 +792,133 @@ exports.removeFromCart = async (req, res) => {
 
 
 // get check out page
-exports.getCheckOut = async(req,res)=>{
+exports.getCheckOut = async (req, res) => {
     try {
         console.log('check out');
-        res.render('user/checkOut')
+        const userId = req.session.name;
+        const cart = await Cart.find({ user: userId }).populate('products.products');
+        console.log("cart", cart);
+        console.log('products',)
+        const userAddresses = await Address.find({ user: userId }, 'addressField');
+        const allAddresses = [];
+
+        for (const userAddress of userAddresses) {
+            if (userAddress.addressField && userAddress.addressField.length > 0) {
+                allAddresses.push(...userAddress.addressField);
+            }
+        }
+
+        const addressError = req.app.locals.addressError;
+        req.app.locals.addressError = null;
+
+        const paymentError = req.app.locals.paymentError;
+        req.app.locals.paymentError = null;
+
+        console.log('user addresses', allAddresses);
+        res.render('user/checkOut', { allAddresses, cart, paymentError, addressError });
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
     }
-}
+};
+
+
+
+
+
 
 //post check out
+exports.postCheckOut = async (req, res) => {
+    try {
+        console.log('placing order')
+        const userId = req.session.name; 
+        const selectedAddressId = req.body.selectedAddressId; 
+        const paymentMethod = req.body.payment; 
+        console.log('seleted addrs :',selectedAddressId,'payment :',paymentMethod)
 
-exports.postCheckOut = async(req,res)=>{
-    try{
-        console.log('check out')
-        res.redirect('/checkout')
-    }catch(error){
-        console.log(error.message)
+       
+        if(!paymentMethod){
+            req.app.locals.paymentError ="please select payment method"
+            return res.redirect('/checkout')
+        }
+
+        //extracting the addressid
+        let addressId=null
+        for(let i=0;i<selectedAddressId.length;i++){
+            if(selectedAddressId[i]!==null){
+                addressId=selectedAddressId[i]
+                break
+            }
+        }
+        console.log('addrsId',addressId)
+
+        if(!addressId){
+            req.app.locals.addressError ="please select any address"
+            return  res.redirect('/checkout')
+        }
+
+        // Fetch the user's cart contents
+        const cart = await Cart.findOne({ user: userId }).populate('products.products');
+        console.log('cart',cart)
+        if (!cart) {
+         console.log('cart is not there');
+        }
+
+        // Calculate the total order amount based on cart contents
+        const totalAmount = calculateTotalAmount(cart.products);
+        console.log('total amt', totalAmount)
+        // Create a new order document
+        const newOrder = new Order({
+            user: userId,
+            products: cart.products.map(item => ({
+                products: item.products._id,
+                name: item.products.name,
+                price: item.products.price,
+                quantity: item.quantity,
+                size: item.size
+            })),
+            orderStatus: 'Pending', // You can set the initial order status here
+            paymentMode: paymentMethod,
+            total: totalAmount,
+            date: new Date(),
+            address: {
+               
+                addressId: addressId,
+            }
+        });
+
+        // Save the new order to the database
+        await newOrder.save();
+        console.log("neworder",newOrder )
+        const orderId=newOrder._id
+        // Clear the user's cart
+        await cart.deleteOne({user:userId});
+
+        // Redirect to the confirmation page with order details
+        res.redirect(`confirmation/${orderId}`);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
+};
+
+// Helper function to calculate the total order amount
+function calculateTotalAmount(products) {
+    console.log('calculating price')
+    console.log('products',products)
+    let total = 0;
+    for (const item of products) {
+        total += item.products.price * item.quantity;
+    }
+    return total;
+}
+
+
+//get confirmation page 
+exports.getConfirmation = async (req,res)=>{
+    console.log('confirmation page')
+    const orderId = req.params.id
+    console.log('order id',orderId)
+    const order = await Order.findById(orderId).populate('products.products').exec();
+    console.log("order",order)
+    res.render('user/confirmation',{order})
 }

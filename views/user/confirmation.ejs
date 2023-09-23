@@ -12,14 +12,14 @@
                         <h5>Order Info</h5>
                         <!-- Use list-unstyled to remove list style -->
                         <ul class="list-unstyled">
-                            <li><a href="#"><span>Order number</span> : 60235</a></li>
-                            <li><a href="#"><span>Date</span> : Los Angeles</a></li>
-                            <li><a href="#"><span>Total</span> : USD 2210</a></li>
-                            <li><a href="#"><span>Payment method</span> : Check payments</a></li>
+                            <li><a href="#"><span class="text-dark">Order Id : </span>  <%=  order._id %></a></li>
+                            <li><a href="#"><span class="text-dark">Date  : </span>  <%=  order.date%></a></li>
+                            <li><a href="#"><span class="text-dark">Total : </span> &#8377 <%=  order.total %></a></li>
+                            <li><a href="#"><span class="text-dark">Payment method : </span> </a></li>
                         </ul>
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <!-- <div class="col-lg-4">
                     <div class="details_item">
                         <h5>Billing Address</h5>
                         <ul class="list-unstyled">
@@ -29,15 +29,13 @@
                             <li><a href="#"><span>Postcode </span> : 36952</a></li>
                         </ul>
                     </div>
-                </div>
+                </div> -->
                 <div class="col-lg-4">
                     <div class="details_item">
                         <h5>Shipping Address</h5>
                         <ul class="list-unstyled">
-                            <li><a href="#"><span>Street</span> : 56/8</a></li>
-                            <li><a href="#"><span>City</span> : Los Angeles</a></li>
-                            <li><a href="#"><span>Country</span> : United States</a></li>
-                            <li><a href="#"><span>Postcode </span> : 36952</a></li>
+                            <li><a href="#"><span><%= order.address %></span></a></li>
+                            
                         </ul>
                     </div>
                 </div>

@@ -64,6 +64,8 @@ user.get('/addAddress',userController.getAddAddress)
 user.post('/addAddress',userController.postAddAddress)
 
 
+//==============================================================cart section=======================================\\
+
 //user get cart
 user.get('/cart',userController.getCart)
 //user post cart
@@ -82,6 +84,6 @@ user.get('/checkout',userController.getCheckOut)
 user.post('/postCheckOut',userController.postCheckOut)
 
 //user confirmation page
-user.get('/confirmation',userController.getConfirmation)
+user.get('/confirmation/:id',userController.getConfirmation)
 
 module.exports = user;
