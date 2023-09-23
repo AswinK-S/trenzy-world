@@ -34,7 +34,7 @@
                                             <h5>Select Address</h5>
                                             <small style="color: red;" class="mt-3">
                                                 <%=locals.addressError?addressError:'' %>
-                                              </small>
+                                            </small>
 
                                         </div>
                                         <div class="card-body">
@@ -72,10 +72,11 @@
                     </div>
 
                     <div class=" border-secondary bg-transparent">
-                        <a href="">
-                            <button class="btn btn-sm  btn-primary font-weight-normal my-3 py-3" type="submit">Add
-                                Address</button>
-                        </a>
+                        <button class="btn btn-sm btn-primary font-weight-normal my-3 py-3" type="button"
+                            data-toggle="modal" data-target="#addAddressModal">
+                            Add Address
+                        </button>
+
 
                     </div>
 
@@ -149,8 +150,8 @@
                                         </div>
                                         <input type="hidden" name="selectPayment" id="selectPayment">
                                         <small style="color: red;" class="mt-3">
-                                            <%=locals.paymentError?paymentError:'' %>   
-                                          </small>
+                                            <%=locals.paymentError?paymentError:'' %>
+                                        </small>
                                     </div>
                                 </div>
                                 <div class="card-footer border-secondary bg-transparent">
@@ -168,17 +169,103 @@
         </form>
     </div>
 
+    <!-- Modal for Adding Address -->
+    <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog" aria-labelledby="addAddressModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addAddressModalLabel">Add Address</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="addressForm" action="/checkoutNewAdd" method="post">
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Name</label>
+                                <input class="form-control" type="text" name="name" placeholder="Enter Name" required>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Mobile</label>
+                                <input class="form-control" type="Number" name="phone" placeholder="Enter Mobile"
+                                    required>
+                            </div>
+
+                            <div class="col-md-6 form-group">
+                                <label>State</label>
+                                <input class="form-control" type="text" name="state" placeholder="Enter State" required>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>District</label>
+                                <input class="form-control" type="text" name="district" placeholder="Enter District"
+                                    required>
+                            </div>
+
+                            <div class="col-md-6 form-group">
+                                <label>Town</label>
+                                <input class="form-control" type="text" name="town" placeholder="Enter Town" required>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Pin Code</label>
+                                <input class="form-control" type="text" name="pincode" placeholder="Enter pincode"
+                                    required>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Address</label>
+                                <textarea class="form-control" type="text" name="address" placeholder="Enter Address"
+                                    required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" onclick="addAddress()">Save Address</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
     <script>
+        //address selection 
         function updateSelectedAddress(radio) {
             const selectedAddressId = radio.getAttribute('data-address-id');
             console.log('Selected Address ID:', selectedAddressId);
             document.querySelector('input[name="selectedAddressId"]').value = selectedAddressId;
         }
-
+        //payment selection
         function updateSelectedPayment(radio) {
             const selectedPayment = radio.value;
             document.querySelector('#selectPayment').value = selectedPayment;
         }
+
+        //modal for add addresss
+        function addAddress() {
+            const addressForm = document.getElementById('addressForm');
+            const formData = new FormData(addressForm);
+
+            fetch('/addNewAddress', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => {
+                    if (response.ok) {
+                        $('#addAddressModal').modal('hide'); // Close the modal
+                        // Handle success, e.g., update the list of addresses
+                    } else {
+                        // Handle errors if needed
+                    }
+                })
+                .catch(error => {
+                    // Handle network errors or other issues
+                });
+        }
+
     </script>
 
 

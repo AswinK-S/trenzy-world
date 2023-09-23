@@ -82,6 +82,8 @@ user.post('/removeProduct/:id',userController.removeFromCart)
 user.get('/checkout',userController.getCheckOut)
 // post checkout page
 user.post('/postCheckOut',userController.postCheckOut)
+//new address
+user.post('/checkoutNewAdd',userController.checkoutNewAdd)
 
 //user confirmation page
 user.get('/confirmation/:id',userController.getConfirmation)

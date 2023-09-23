@@ -913,6 +913,37 @@ function calculateTotalAmount(products) {
 }
 
 
+//add address in the check out page
+exports.checkoutNewAdd = async(req,res)=>{
+    try {
+        console.log('adding NEW ADDRESS address ')
+        const userId = req.session.name;
+        console.log('user Id ',userId)
+        console.log('req body',req.body)
+        const newAddress = new Address ({
+            user:userId,
+            addressField:[
+                {
+                    name:req.body.name,
+                    phone:req.body.phone,
+                    state:req.body.state,
+                    district:req.body.district,
+                    town:req.body.town,
+                    pincode:req.body.pincode,
+                    address:req.body.address
+                }
+            ]
+        })
+        await newAddress.save()
+        console.log('newaddress',newAddress)
+        res.redirect('/checkout')
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+
+
 //get confirmation page 
 exports.getConfirmation = async (req,res)=>{
     console.log('confirmation page')
