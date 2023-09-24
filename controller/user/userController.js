@@ -454,28 +454,59 @@ exports.getAddAddress = async(req,res)=>{
 }
 
 //user post add address
-exports.postAddAddress = async(req,res)=>{
+exports.postAddAddress = async (req, res) => {
     try {
-        console.log('adding address')
+        console.log('Adding address');
         const userId = req.session.name;
-        console.log('user Id ',userId)
-        console.log('req body',req.body)
-        const newAddress = new Address ({
-            user:userId,
-            addressField:[
-                {
-                    name:req.body.name,
-                    phone:req.body.phone,
-                    state:req.body.state,
-                    district:req.body.district,
-                    town:req.body.town,
-                    pincode:req.body.pincode,
-                    address:req.body.address
-                }
-            ]
-        })
-        await newAddress.save()
-        console.log('newaddress',newAddress)
+        console.log('User ID:', userId);
+        console.log('Request body:', req.body);
+
+        const newAddress = {
+            name: req.body.name,
+            phone: req.body.phone,
+            state: req.body.state,
+            district: req.body.district,
+            town: req.body.town,
+            pincode: req.body.pincode,
+            address: req.body.address
+        };
+
+        // Find the user's address document
+        let userAddress = await Address.findOne({ user: userId });
+
+        // If the user has no address document, create a new one
+        if (!userAddress) {
+            userAddress = new Address({ user: userId, addressField: [] });
+        }
+
+        // Push the new address into the addressField array
+        userAddress.addressField.push(newAddress);
+
+        // Save the user's address document
+        await userAddress.save();
+
+        console.log('New address added:', newAddress);
+        res.redirect('/userProfile');
+    } catch (error) {
+        console.error(error.message);
+        // Handle the error and provide an appropriate response to the user
+        res.status(500).send('Error adding address');
+    }
+};
+
+
+
+//user delete address
+exports.deleteAdd=async(req,res)=>{
+    try {
+        console.log('delete address')
+        const userId=req.session.name
+        const addressId=req.params.id
+        console.log("address id ",addressId);
+        await Address.updateOne(
+            { user: userId },
+            { $pull: { addressField: { _id: addressId } } }
+        );
         res.redirect('/userProfile')
     } catch (error) {
         console.log(error.message)
@@ -483,17 +514,23 @@ exports.postAddAddress = async(req,res)=>{
 }
 
 
-
 // shop page
 exports.shopPage = async (req, res) => {
     try {
-        const search = req.query.search || '';
+        let search = req.query.search || '';
+        search = search.replace(/\+$/, '').trim();
         const queryString = search.replace(/\+$/, '').trim();
         console.log("queryString", queryString);
         const user = req.session.name
         const price = req.query.price;
+        let sort = req.query.sort || {name:1}
         console.log("price : ", req.query.price);
-        let query = { status: true }
+        let query = { status: true,
+            $or: [
+                { name: { $regex: search, $options: 'i' } },
+                { brand: { $regex: search, $options: 'i' } }
+            ]
+        }
 
         // Function to search and set category in the query
         const setSearchCategory = async (queryString) => {
@@ -537,14 +574,22 @@ exports.shopPage = async (req, res) => {
             };
         }
 
+
+        if(sort==1){
+            sort={price:1}
+        }else{
+            sort={price:-1}
+        }
+
+
         let page = 1;
         if (req.query.page) {
             page = req.query.page;
         }
-        let limit = 6;
+        let limit = 3;
 
         console.log('query', query);
-        const product = await Product.find(query).limit(limit * 1).skip((page - 1) * limit);
+        const product = await Product.find(query).limit(limit * 1).skip((page - 1) * limit).sort(sort);
         console.log('product', product);
 
         const totalProducts = await Product.countDocuments();
@@ -914,33 +959,47 @@ function calculateTotalAmount(products) {
 
 
 //add address in the check out page
-exports.checkoutNewAdd = async(req,res)=>{
+exports.checkoutNewAdd = async (req, res) => {
     try {
-        console.log('adding NEW ADDRESS address ')
+        console.log('Adding address');
         const userId = req.session.name;
-        console.log('user Id ',userId)
-        console.log('req body',req.body)
-        const newAddress = new Address ({
-            user:userId,
-            addressField:[
-                {
-                    name:req.body.name,
-                    phone:req.body.phone,
-                    state:req.body.state,
-                    district:req.body.district,
-                    town:req.body.town,
-                    pincode:req.body.pincode,
-                    address:req.body.address
-                }
-            ]
-        })
-        await newAddress.save()
-        console.log('newaddress',newAddress)
-        res.redirect('/checkout')
+        console.log('User ID:', userId);
+        console.log('Request body:', req.body);
+
+        // Create a new address object from the request data
+        const newAddress = {
+            name: req.body.name,
+            phone: req.body.phone,
+            state: req.body.state,
+            district: req.body.district,
+            town: req.body.town,
+            pincode: req.body.pincode,
+            address: req.body.address
+        };
+
+        // Find the user's address document
+        let userAddress = await Address.findOne({ user: userId });
+
+        // If the user has no address document, create a new one
+        if (!userAddress) {
+            userAddress = new Address({ user: userId, addressField: [] });
+        }
+
+        // Push the new address into the addressField array
+        userAddress.addressField.push(newAddress);
+
+        // Save the user's address document
+        await userAddress.save();
+
+        console.log('New address added:', newAddress);
+        res.redirect('/checkout');
     } catch (error) {
-        console.log(error.message)
+        console.error(error.message);
+        // Handle the error and provide an appropriate response to the user
+        res.status(500).send('Error adding address');
     }
-}
+};
+
 
 
 

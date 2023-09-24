@@ -63,6 +63,7 @@ user.get('/addAddress',userController.getAddAddress)
 //user post add adress
 user.post('/addAddress',userController.postAddAddress)
 
+user.post('/deleteAdd/:id',userController.deleteAdd)
 
 //==============================================================cart section=======================================\\
 
@@ -82,7 +83,7 @@ user.post('/removeProduct/:id',userController.removeFromCart)
 user.get('/checkout',userController.getCheckOut)
 // post checkout page
 user.post('/postCheckOut',userController.postCheckOut)
-//new address
+//new address in checkOut page
 user.post('/checkoutNewAdd',userController.checkoutNewAdd)
 
 //user confirmation page
