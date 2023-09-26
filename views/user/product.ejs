@@ -176,29 +176,39 @@
                     <div class="d-flex mb-3">
                         <p class="text-dark font-weight-medium mb-0 mr-3">Sizes:</p>
                             <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="size-2" name="size" required>
+                                <input type="radio" class="custom-control-input" id="size-2" name="size">
                                 <label class="custom-control-label" for="size-2">S</label>
                             </div>
                             <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="size-3" name="size" required>
+                                <input type="radio" class="custom-control-input" id="size-3" name="size">
                                 <label class="custom-control-label" for="size-3">M</label>
                             </div>
                             <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="size-4" name="size" required>
+                                <input type="radio" class="custom-control-input" id="size-4" name="size">
                                 <label class="custom-control-label" for="size-4">L</label>
                             </div>
                             <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="size-5" name="size" required>
+                                <input type="radio" class="custom-control-input" id="size-5" name="size">
                                 <label class="custom-control-label" for="size-5">XL</label>
                             </div>
                     </div>
-                    <div class="d-flex align-items-center mb-4 pt-2">
-                       
-                        <button onclick="return validateForm1()" class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To
-                            Cart</button>
-                    </div>
-                    <span id="sizeError" class="text-danger" ></span>
+                    <div class="d-flex flex-column align-items-center mb-4 pt-2">
+                        <% if (product.quantity == 0) { %>
+                            <button onclick="" class="btn btn-primary px-3" disabled>
+                                <i class="fa fa-shopping-cart mr-1"></i> Add To Cart
+                            </button>
+                            <p style="color: red;" class="pt-3">Out of Stock!</p>
+                        <% } else { %>
+                            <button onclick="return validateForm1()" class="btn btn-primary px-3">
+                                <i class="fa fa-shopping-cart mr-1"></i> Add To Cart
+                            </button>
+                        <% } %>
 
+                        <span id="sizeError" class="text-danger pt-3" ></span>
+
+                    </div>
+                    
+                    
                 </form>
 
             </div>

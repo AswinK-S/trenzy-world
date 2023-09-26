@@ -1,7 +1,7 @@
 const sizeRadios = document.getElementsByName('size')
 
 function validateSize(){
-    console.log('sice')
+    console.log('size')
     let sizeSelected =false
     for(const radio of sizeRadios){
         if(radio.checked){

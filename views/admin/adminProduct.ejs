@@ -18,6 +18,7 @@
                                <th scope="col">#</th>
                                <th scope="col">Image</th>
                                <th scope="col">Name</th>
+                               <th scope="col">Stock</th>
                                <th scope="col">Brand</th>
                                <th scope="col">Category</th>
                                <th scope="col">price</th>
@@ -40,6 +41,9 @@
                                </td>
                                <td>
                                 <%= productData[i].name %>
+                                </td>
+                                <td>
+                                <%=productData[i].quantity%>  
                                 </td>
                                <td>
                                 <%= productData[i].brand %>

@@ -42,6 +42,11 @@ connectDB();
 app.use('/',home)
 app.use('/admin',admin)
 
+//error
+app.use((req,res)=>{
+  res.status(404).render('user/404')
+})
+
 app.listen(3000,()=>{
     console.log('server running on port http://localhost:3000')
 })

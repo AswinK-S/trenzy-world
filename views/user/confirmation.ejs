@@ -4,19 +4,33 @@
     <div class="container">
         <h4 class="title_confirmation text-center text-success mt-5">Thank you. Your order has been received.</h4>
 
-        <!-- Border for the content inside the row -->
+        <div class="text-center">
+            <form action="/" >
+                <button class="btn btn-sm btn-primary font-weight-medium my-2 py-2" type="submit">Go to home</button>
+            </form>
+            
+        </div>   
+
+          <!-- Border for the content inside the row -->
         <div class="container border border-secondary py-4 mt-5 mb-5 bg-secondary ">
             <div class="row order_d_inner ">
                 <div class="col-lg-4">
                     <div class="details_item ">
                         <h5>Order Info</h5>
                         <!-- Use list-unstyled to remove list style -->
+
                         <ul class="list-unstyled">
-                            <li><a href="#"><span class="text-dark">Order Id : </span>  <%=  order._id %></a></li>
-                            <li><a href="#"><span class="text-dark">Date  : </span>  <%=  order.date%></a></li>
-                            <li><a href="#"><span class="text-dark">Total : </span> &#8377 <%=  order.total %></a></li>
-                            <li><a href="#"><span class="text-dark">Payment method : </span><%= order.paymentMode %> </a></li>
+                            <% for (let i = 0; i < order.products.length; i++) { %>
+
+                            <li><a href="#" style="text-decoration: none;"><span class="text-dark">Item Name  <%= i+1 %> : </span>  <%=  order.products[i].name %></a></li>
+                            <li><a href="#" style="text-decoration: none;"><span class="text-dark">quantity : </span>  <%=  order.products[i].quantity%></a></li>
+                            <li><a href="#" style="text-decoration: none;"><span class="text-dark">price </span> &#8377 <%=  order.products[i].price %></a></li><br>
+                            <% } %>
+
                         </ul>
+
+                        <a href="" style="text-decoration: none;"><span class="text-dark font-weight-semi-bold">Total :</span> <span> &#8377 <%= order.total %></span></a>
+                        
                     </div>
                 </div>
                 <!-- <div class="col-lg-4">
@@ -34,45 +48,25 @@
                     <div class="details_item">
                         <h5>Shipping Address</h5>
                         <ul class="list-unstyled">
-                            <li><a href="#"><span><%= order.address %></span></a></li>
-                            
+                            <li><a href="#"><span><%= selectedAddrss.name %></span></a></li>
+                            <li><a href="#"><span><%= selectedAddrss.phone %></span></a></li>
+                            <li><a href="#"><span><%= selectedAddrss.state %></span></a></li>
+                            <li><a href="#"><span><%= selectedAddrss.district %></span></a></li>
+                            <li><a href="#"><span><%= selectedAddrss.town %></span></a></li>
+                            <li><a href="#"><span><%= selectedAddrss.pincode %></span></a></li>
+                            <li><a href="#"><span><%= selectedAddrss.address %></span></a></li>
+
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
 
-        <h4>Order Details</h4>
+        <!-- <h4>Order Details</h4> -->
 
         
         <!-- Border for the "Order Details Table" -->
-        <div class="order_details_table mt-4 border ">
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">Product</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <p>Pixelstore fresh Blackberry</p>
-                            </td>
-                            <td>
-                                <h5>x 02</h5>
-                            </td>
-                            <td>
-                                <p>$720.00</p>
-                            </td>
-                        </tr>
-                        <!-- Add more rows as needed -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        
         
     </div>
 </section>

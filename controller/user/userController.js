@@ -192,7 +192,7 @@ exports.getHome = async (req, res) => {
     try {
 
         const user = req.session.name
-        const product = await Product.find({})
+        const product = await Product.find({status:true}).limit(8)
         // console.log('products', product)
         const shirt = await Category.findOne({ $and: [{ "name": "Shirt" }, { "status": "true" }] })
         const t_shirt = await Category.findOne({ $and: [{ "name": "T-Shirt" }, { "status": "true" }] })
@@ -586,11 +586,12 @@ exports.shopPage = async (req, res) => {
         if (req.query.page) {
             page = req.query.page;
         }
-        let limit = 3;
+        let limit = 6;
 
         console.log('query', query);
         const product = await Product.find(query).limit(limit * 1).skip((page - 1) * limit).sort(sort);
-        console.log('product', product);
+        const products =await Product.find({})
+        console.log('product QUANTITY', products.quantity);
 
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
@@ -615,7 +616,7 @@ exports.singleProduct = async (req, res) => {
         console.log('id', id)
         const product = await Product.findById({ _id: id })
         console.log('product', product)
-        res.render('user/product', { user, product })
+        res.render('user/product', { user, product})
     } catch (error) {
         console.log(error.message);
     }
@@ -626,6 +627,7 @@ exports.getCart = async (req, res) => {
     try {
         console.log('get cart page');
         const userId = req.session.name;
+        
         if (!userId) {
             return res.redirect('/login');
         }
@@ -653,13 +655,15 @@ exports.postCart = async (req, res) => {
         const userId = req.session.name;
         const productId = req.params.id;
         console.log("proid", productId)
-        let quantity = 0, price = 0
-
+        let quantity = 1, price = 0
+        let message=''
         if (!userId) {
             return res.redirect('/login');
         }
 
         const product = await Product.findOne({ _id: productId });
+        let productQuantity =product.quantity
+        console.log("prodqnty111", productQuantity )
 
         if (!product) {
             // Handle the case where the product doesn't exist
@@ -695,14 +699,25 @@ exports.postCart = async (req, res) => {
             if (existingProduct) {
                 // If the product is already in the cart, update its quantity based on the action
                 if (req.body.action === 'plus') {
+                    if(productQuantity>1){
+                    productQuantity=productQuantity-1
                     existingProduct.quantity += 1;
                     quantity = existingProduct.quantity
                     price = existingProduct.price * existingProduct.quantity
+                    await Product.findOneAndUpdate({_id:productId},{$set:{quantity:productQuantity}})
+                    console.log('prdct qty ',productQuantity)
+                    }else{
+                    quantity = existingProduct.quantity
+                    price = existingProduct.price * existingProduct.quantity
+                    message='Stock limit exeeds !'
+                    }
                 } else if (req.body.action === 'minus') {
                     if (existingProduct.quantity > 1) {
                         existingProduct.quantity -= 1;
+                        productQuantity=productQuantity+1
                         quantity = existingProduct.quantity
                         price = existingProduct.price * existingProduct.quantity
+                        await Product.findOneAndUpdate({_id:productId},{$set:{quantity:productQuantity}})
                     }
                 }
             } else {
@@ -727,9 +742,7 @@ exports.postCart = async (req, res) => {
         console.log(cart)
 
         // Send a response to the client indicating success or updated cart data
-        // res.json({ success: true, data:cart});
-        res.status(200).json({ success: true, quantity, total: cart.total, price });
-        // res.redirect('/cart')
+        res.status(200).json({ success: true, quantity, total: cart.total, price,message });
 
     } catch (error) {
         console.log(error.message);
@@ -739,17 +752,20 @@ exports.postCart = async (req, res) => {
 };
 
 
+
 //users add to cart page
 exports.addToCart = async (req, res) => {
     try {
         const userId = req.session.name;
         const productId = req.params.id;
-        
+        req.session.productId=productId
         if (!userId) {
             return res.redirect('/login');
         }
 
         const product = await Product.findOne({ _id: productId });
+
+        
 
         if (!product) {
             // Handle the case where the product doesn't exist
@@ -780,6 +796,9 @@ exports.addToCart = async (req, res) => {
             );
 
             if (existingProduct) {
+                if (product.quantity === 1) {
+                    return res.redirect('/cart');   
+                } 
                 // If the product is already in the cart, update its quantity
                 existingProduct.quantity += 1;
                 cart.total += product.price; // Increment total by product price
@@ -921,7 +940,7 @@ exports.postCheckOut = async (req, res) => {
                 quantity: item.quantity,
                 size: item.size
             })),
-            orderStatus: 'Pending', // You can set the initial order status here
+            orderStatus: 'Pending', 
             paymentMode: paymentMethod,
             total: totalAmount,
             date: new Date(),
@@ -931,10 +950,15 @@ exports.postCheckOut = async (req, res) => {
             }
         });
 
+
+
         // Save the new order to the database
         await newOrder.save();
         console.log("neworder",newOrder )
         const orderId=newOrder._id
+
+        await updateProductQuantities(cart.products);
+
         // Clear the user's cart
         await cart.deleteOne({user:userId});
 
@@ -955,6 +979,28 @@ function calculateTotalAmount(products) {
         total += item.products.price * item.quantity;
     }
     return total;
+}
+
+// Helper function to update product quantities in the Product collection
+async function updateProductQuantities(cartProducts) {
+    try {
+        console.log('updateproductquantites',cartProducts);
+        for (const item of cartProducts) {
+            const productId = item.products._id;
+            const purchasedQuantity = item.quantity;
+
+            const product = await Product.findById(productId);
+
+            if (product && product.quantity >= purchasedQuantity) {
+                product.quantity -= purchasedQuantity;
+                await product.save();
+            } else {
+                console.error(`Product ${productId} not found or insufficient quantity.`);
+            }
+        }
+    } catch (error) {
+        console.error('Error updating product quantities:', error);
+    }
 }
 
 
@@ -1010,5 +1056,16 @@ exports.getConfirmation = async (req,res)=>{
     console.log('order id',orderId)
     const order = await Order.findById(orderId).populate('products.products').exec();
     console.log("order",order)
-    res.render('user/confirmation',{order})
+    const userId=order.user
+    console.log("userId",userId)
+    const addId= order.address.addressId
+    console.log('addid',addId)
+    const addres =await Address.findOne({user:userId})
+    const addrs = addres.addressField
+    const selectedAddrss = addrs.find((item)=>{
+        return item._id==addId;
+    })
+
+    console.log('slctd addrs',selectedAddrss)
+    res.render('user/confirmation',{order,selectedAddrss})
 }

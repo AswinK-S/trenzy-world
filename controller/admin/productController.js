@@ -117,7 +117,7 @@ exports.postEditProd = async (req,res)=>{
         const prodId = req.params.id
         // console.log("prod _ID",prodId );
         console.log('req.body',req.body );
-        const {product_name,product_brand,category,product_price,product_description}=req.body
+        const {product_name,product_brand,category,product_price,product_description,product_quantity}=req.body
         
             const price = Number(product_price)
         
@@ -132,6 +132,7 @@ exports.postEditProd = async (req,res)=>{
             brand : product_brand,
             category:categoryId._id,
             price : price,
+            quantity:product_quantity,
             description : product_description
         }})
         // console.log('edt',editPrdData)

@@ -126,14 +126,21 @@
                                                    -
                                                 </button>
                                             </div>
-                                            <p  type="text" class="form-control form-control-sm bg-secondary text-center quantity-input" id="<%= cart.products[i].products._id %>"><%= cart.products[i].quantity %></p>                                                                                                                                                       
+                                            <p  type="text" class="form-control form-control-sm bg-secondary text-center quantity-input" id="<%= cart.products[i].products._id %>"><%= cart.products[i].quantity %></p>  
+                                                                                                                                                     
                                             <div class="input-group-btn">
+
                                                 <button class="btn btn-sm btn-primary btn-plus"  data-id="<%= cart.products[i].products._id %>" data-action="plus">
                                                     +
-                                                </button>
+                                                </button>       
+ 
                                             </div>
+                                            <span id="stock-<%= cart.products[i].products._id %>" class=" text-danger pt-3 "></span>
+
                                         </div>
                                     </td>
+
+
                                     
                                     <td class="align-middle" id="total-price-<%= cart.products[i].products._id %>">
                                         &#8377 <%= cart.products[i].price * cart.products[i].quantity %>
@@ -192,7 +199,7 @@
                                 </h5> <!-- Display cart total -->
                             </div>
                          <a href="/checkOut" style="text-decoration: none;" >
-                            <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>
+                            <button class="btn btn-block btn-primary my-3 py-3" id="checkout-button">Proceed To Checkout</button>
                          <a>
                         </div>
                     </div>
