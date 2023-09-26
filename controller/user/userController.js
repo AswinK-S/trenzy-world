@@ -532,7 +532,7 @@ exports.shopPage = async (req, res) => {
             ]
         }
 
-        // Function to search and set category in the query
+        // Function to search and set category in the queryy
         const setSearchCategory = async (queryString) => {
             if (queryString.length > 0) {
                 const matchingCategories = await Category.find({
