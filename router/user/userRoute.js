@@ -1,22 +1,30 @@
 const express =require('express')
 const user=express()
-const router= express.Router()
-const nocache= require('nocache')
-const nodemailer = require('nodemailer')
+// const router= express.Router()
+// const nocache= require('nocache')
+// const nodemailer = require('nodemailer')
 
 const isUser = require('../../middleware/userAuth')
 const userController = require('../../controller/user/userController')
+const addressController = require('../../controller/user/addressController')
+const cartController = require('../../controller/user/cartController')
+const productController = require('../../controller/user/productController')
+
+
 
 //home
 user.get('/',isUser.blockStatus,userController.getHome)
 
+//-------------------------------------------------product and shop page-------------------------------------------------------\\
 //shop page
-user.get('/shop',isUser.blockStatus,userController.shopPage)
-
+user.get('/shop',isUser.blockStatus,productController.shopPage)
 
 //single product
-user.get('/product/:id',isUser.blockStatus,userController.singleProduct)
+user.get('/product/:id',isUser.blockStatus,productController.singleProduct)
 
+
+
+//------------------------------------------------------------------user login section---------------------------------\\
 //login
 user.get('/login',isUser.loggedOut,userController.login)
 user.post('/login',userController.userLogin)
@@ -50,43 +58,46 @@ user.post('/verifyOTP', userController.verifyOTPPost);
 user.post('/logout',userController.logout)
 user.get('/logout',userController.logout)
 
+
 //---------------------------------------------------------------------user profile---------------------------------------------\\
-user.get('/userProfile',isUser.blockStatus,userController.userAccount)
+user.get('/userProfile',isUser.blockStatus,addressController.userAccount)
 
 //user get edit profile page
-user.get('/editUserProfile',userController.getUserEdit)
+user.get('/editUserProfile',addressController.getUserEdit)
 //user post edit profile page
-user.post('/userProfile/edit/:id',userController.updateUser)
+user.post('/userProfile/edit/:id',addressController.updateUser)
 
 //user get address page
-user.get('/addAddress',userController.getAddAddress)
+user.get('/addAddress',addressController.getAddAddress)
 //user post add adress
-user.post('/addAddress',userController.postAddAddress)
+user.post('/addAddress',addressController.postAddAddress)
 
-user.post('/deleteAdd/:id',userController.deleteAdd)
+user.post('/deleteAdd/:id',addressController.deleteAdd)
+
+
 
 //==============================================================cart section=======================================\\
 
 //user get cart
-user.get('/cart',userController.getCart)
+user.get('/cart',cartController.getCart)
 //user post cart
-user.post('/cart/:id',userController.postCart)
+user.post('/cart/:id',cartController.postCart)
 
 //user add to cart
-user.post('/addToCart/:id',userController.addToCart)
+user.post('/addToCart/:id',cartController.addToCart)
 
 //user delete product from the cart
-user.post('/removeProduct/:id',userController.removeFromCart)
+user.post('/removeProduct/:id',cartController.removeFromCart)
 
 
 // get checkout page
-user.get('/checkout',userController.getCheckOut)
+user.get('/checkout',cartController.getCheckOut)
 // post checkout page
-user.post('/postCheckOut',userController.postCheckOut)
+user.post('/postCheckOut',cartController.postCheckOut)
 //new address in checkOut page
-user.post('/checkoutNewAdd',userController.checkoutNewAdd)
+user.post('/checkoutNewAdd',cartController.checkoutNewAdd)
 
 //user confirmation page
-user.get('/confirmation/:id',userController.getConfirmation)
+user.get('/confirmation/:id',cartController.getConfirmation)
 
 module.exports = user;
