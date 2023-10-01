@@ -1,5 +1,6 @@
 const Product = require('../../model/product.js')
 const Category = require('../../model/category.js');
+const dotenv = require('dotenv').config()
 
 
 

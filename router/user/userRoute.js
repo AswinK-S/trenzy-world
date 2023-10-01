@@ -89,13 +89,16 @@ user.post('/addToCart/:id',cartController.addToCart)
 //user delete product from the cart
 user.post('/removeProduct/:id',cartController.removeFromCart)
 
-
+//----------------------------------------------------check out page----------------------------------------\\
 // get checkout page
 user.get('/checkout',cartController.getCheckOut)
-// post checkout page
+
+//------------------------- post checkout page - payment
 user.post('/postCheckOut',cartController.postCheckOut)
 //new address in checkOut page
 user.post('/checkoutNewAdd',cartController.checkoutNewAdd)
+
+user.post('/verifyPayment',cartController.verifyPayment)
 
 //user confirmation page
 user.get('/confirmation/:id',cartController.getConfirmation)

@@ -31,7 +31,7 @@ const orders = mongoose.Schema({
     }],
     orderStatus: {
         type:String
-    },
+    },  
     paymentMode: {
         type: String,
         required:true
