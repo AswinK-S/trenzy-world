@@ -1,0 +1,140 @@
+<%- include('../partials/header.ejs') %>
+    <!-- navbar -->
+    <div class="container-fluid mb-5">
+        <!-- Your navigation bar here -->
+        <div class="row border-top px-xl-5">
+            <div class="col-lg-12">
+                <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
+                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarCollapse">
+                        <div class="navbar-nav mr-auto py-0">
+                            <a href="#" class="nav-item nav-link active">Dashboard</a>
+                            <a href="/editUserProfile" class="nav-item nav-link">Edit Profile</a>
+                            <a href="/addAddress" class="nav-item nav-link">Add Address</a>
+                            <a href="#" class="nav-item nav-link">Change Password</a>
+                            <a href="#" class="nav-item nav-link">Orders</a>
+                            <a href="#" class="nav-item nav-link">WishList</a>
+                            <a href="#" class="nav-item nav-link"></a>
+                        </div>
+                        <div class="navbar-nav ml-auto py-0">
+                            <% if(userData) { %>
+                                <form action="/logout" method="POST" class="mr-auto">
+                                    <button class="btn border" type="submit"
+                                        style="background: none; font-size: 22px; padding: 2px;">Logout</button>
+                                </form>
+                                <a href="#" class="btn border ml-2" style="text-decoration: none; color: #D19C97;">
+                                    <i class="fas fa-user"></i>
+                                </a>
+                                <% } else { %>
+                                    <form action="/login" method="">
+                                        <button type="submit"
+                                            style="background: none; border: none; padding: 0;">Login</button>
+                                    </form>
+                                    <% } %>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <section>
+        <div class="container">
+            <div class="mt-5">
+                <h1>MY ORDERS</h1>
+            </div>
+            <div class="mt-5">
+                <% if(orders.length> 0) { %>
+                    <% orders.forEach((order)=> { %>
+                        <div class="card mb-5 p-2">
+                            <div class="card-body">
+                                <div class="row">
+                                    <% order.products.forEach((product)=> { %>
+                                        <div class="col-md-3">
+                                            <div class="d-flex my-1 pl-3">
+                                                <div class="me-5io">
+                                                    <img src="/productImages/<%= product.products.image[0] %>"
+                                                        class="img-fluid" style="width: 3rem;">
+                                                </div>
+                                                <div>
+                                                    <h6 class="card-title pl-2">
+                                                        <%= product.products.name %>
+                                                    </h6>
+                                                    <span class="pl-2" style="color: rgb(99, 99, 99);">Price: <%=
+                                                            product.products.price %></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% }); %>
+                                            <div
+                                                class="col-md-2 text-center mt-3 justify-content-center d-flex align-items-center">
+                                                <p class="card-text text-dark">Order Status: <span class="">
+                                                        <%= order.orderStatus %>
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="col-md-2 text-center mt-3 justify-content-center d-flex align-items-center">
+                                                <p class="card-text text-dark">Date: <span class=""
+                                                        style="color: rgb(99, 99, 99);">
+                                                        <%= order.date.toDateString() %>
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="col-md-2 text-center mt-3 justify-content-center d-flex align-items-center">
+                                                <a href="#" class="btn btn-primary">View Details</a>
+                                            </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                        <nav aria-label="...">
+                            <nav aria-label="...">
+                                <ul class="pagination justify-content-center pagination-md">
+                                    <% if (pageCount > 1) { %>
+                                        <% if (currentPage > 1) { %>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                        <% } %>
+                                        <% for (let i = Math.max(1, currentPage - 1); i <= Math.min(currentPage + 1, pageCount); i++) { %>
+                                            <li class="page-item <%= (currentPage === i) ? 'active' : '' %>">
+                                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                            </li>
+                                        <% } %>
+                                        <% if (currentPage < pageCount) { %>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        <% } %>
+                                    <% } %>
+                                </ul>
+                            </nav>
+                            
+                        </nav>
+                        
+                        
+                        
+
+
+                            <% } else { %>
+                                <div class="mt-5">
+                                    <h1>No orders</h1>
+                                </div>
+                                <% } %>
+            </div>
+        </div>
+    </section>
+
+
+    <%- include('../partials/footer.ejs') %>

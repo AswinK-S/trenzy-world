@@ -9,7 +9,7 @@ const userController = require('../../controller/user/userController')
 const addressController = require('../../controller/user/addressController')
 const cartController = require('../../controller/user/cartController')
 const productController = require('../../controller/user/productController')
-
+const orderController = require('../../controller/user/orderController')
 
 
 //home
@@ -74,6 +74,8 @@ user.post('/addAddress',addressController.postAddAddress)
 
 user.post('/deleteAdd/:id',addressController.deleteAdd)
 
+//user order page
+user.get('/orders',orderController.getOrderPage)
 
 
 //==============================================================cart section=======================================\\

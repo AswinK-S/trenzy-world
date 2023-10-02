@@ -342,7 +342,7 @@ exports.postCheckOut = async (req, res) => {
                     quantity: item.quantity,
                     size: item.size
                 })),
-                orderStatus: 'pending', 
+                orderStatus: 'Sucess', 
                 paymentMode: paymentMethod,
                 total: totalAmount,
                 date: new Date(),
