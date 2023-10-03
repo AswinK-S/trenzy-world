@@ -63,7 +63,8 @@ admin.get('/adminCoupon',isAdmin.isLoggedIn,couponController.adminCoupon)
 
 // admin order
 admin.get('/adminOrder',isAdmin.isLoggedIn,orderController.adminOrder)
-
+admin.get('/adminOrder/editOrder/:id',orderController.getAdminEditStatus)
+admin.post('/adminOrder/orderEdit/:id',isAdmin.isLoggedIn,orderController.orderStatus)
 // adnim banner
 admin.get('/adminBanner',isAdmin.isLoggedIn,bannerController.adminBanner)
 

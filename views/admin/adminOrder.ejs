@@ -1,49 +1,63 @@
 <%- include('./adminLogHeader.ejs') %>
 
-<div class="container-fluid pt-4 px-4">
-  <div class="row g-4">
-    <div class="col-12">
-      <div class="bg-light rounded h-100 p-4">
-        <h6 class="mb-4">Responsive Table</h6>
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col"></th>
-                <th scope="col">Order Id</th>
-                <th scope="col">Product</th>
-                <th scope="col">Price</th>
-                <th scope="col">Payment</th>
-                <th scope="col">Order Status</th>
-                <th scope="col">Ordered date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% orders.forEach((order, index) => { %>
-                <% order.products.forEach((product) => { %>
-                  <tr>
-                    <th scope="row"><%= index + 1 %></th>
-                    <td><%= order._id %></td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <img src="/productImages/<%= product.products.image[0] %>" alt="<%= product.products.name %>"
-                          class="img-fluid me-2" style="max-width: 50px;">
-                        <%= product.products.name %>
-                      </div>
-                    </td>
-                    <td><%= product.products.price %></td>
-                    <td><%= order.paymentMode %></td>
-                    <td><%= order.orderStatus %></td>
-                    <td><%= order.date.toDateString() %></td>
-                  </tr>
-                <% }); %>
-              <% }); %>
-            </tbody>
-          </table>
+  <div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+      <div class="col-12">
+        <div class="bg-light rounded h-100 p-4">
+          <h6 class="mb-4">Responsive Table</h6>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Order Id</th>
+                  <th scope="col">Product</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Payment</th>
+                  <th scope="col">Order Status</th>
+                  <th scope="col">Ordered date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% orders.forEach((order, index)=> { %>
+                  <% order.products.forEach((product)=> { %>
+                    <tr>
+                      <th scope="row">
+                        <%= index + 1 %>
+                      </th>
+                      <td>
+                        <%= order._id %>
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="/productImages/<%= product.products.image[0] %>" alt="<%= product.products.name %>"
+                            class="img-fluid me-2" style="max-width: 50px;">
+                          <%= product.products.name %>
+                        </div>
+                      </td>
+                      <td>
+                        <%= product.products.price %>
+                      </td>
+                      <td>
+                        <%= order.paymentMode %>
+                      </td>
+                      <td>
+                        <span><%= order.orderStatus %></span> <a  href="adminOrder/editOrder/<%=order._id%>">
+                            <button type="button" class="btn  btn-outline-primary btn-sm"><i class="fa fa-edit"></i></button>
+                          </a>
+                      </td>
+                      <td>
+                        <%= order.date.toDateString() %>
+                      </td>
+                    </tr>
+                    <% }); %>
+                      <% }); %>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<%- include('./adminLogFooter.ejs') %>
+  <%- include('./adminLogFooter.ejs') %>

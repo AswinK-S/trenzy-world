@@ -1,0 +1,147 @@
+<%- include('./adminLogHeader.ejs') %>
+
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-6">
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Change Order Status</h6>
+                    <form action="/admin/adminOrder/orderEdit/<%=orders._id%>" method="post">
+
+                        <div class="mt-3 mb-3">
+                            <div class="form-group">
+                                <label class="pb-2" for="category">Order Status:</label>
+                                <select class="form-select form-select-sm " name="orderStatus" id="orderStatus">
+                                    <option value="pending" <%=orders.orderStatus==='pending' ? 'selected' : '' %>
+                                        >Pending</option>
+                                    <option value="success" <%=orders.orderStatus==='success' ? 'selected' : '' %>
+                                        >Success</option>
+                                    <option value="shipped" <%=orders.orderStatus==='shipped' ? 'selected' : '' %>
+                                        >Shipped</option>
+                                    <option value="out_for_delivery" <%=orders.orderStatus==='out_for_delivery'
+                                        ? 'selected' : '' %>>Out for Delivery</option>
+                                    <option value="delivered" <%=orders.orderStatus==='delivered' ? 'selected' : '' %>
+                                        >Delivered</option>
+                                    <option value="canceled" <%=orders.orderStatus==='canceled' ? 'selected' : '' %>
+                                        >Canceled</option>
+                                    <option value="canceled_by_admin" <%=orders.orderStatus==='canceled_by_admin'
+                                        ? 'selected' : '' %>>Canceled by Admin</option>
+                                    <option value="pending_return_approval"
+                                        <%=orders.orderStatus==='pending_return_approval' ? 'selected' : '' %>>Pending
+                                        Return Approval</option>
+                                    <option value="returned" <%=orders.orderStatus==='returned' ? 'selected' : '' %>
+                                        >Returned</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group pb-2">
+                            <label for="paymentMode">Payment Mode:</label>
+                            <input type="text" class="form-control form-control-sm" id="paymentMode" name="paymentMode"
+                                value="<%= orders.paymentMode %>">
+                        </div>
+                        <div class="form-group pb-2">
+                            <label for="total">Total:</label>
+                            <input type="text" class="form-control form-control-sm" id="total" name="total"
+                                value="<%= orders.total %>">
+                        </div>
+                        <div class="form-group pb-2">
+                            <label for="orderDate">Order Date:</label>
+                            <input type="text" class="form-control form-control-sm" id="orderDate" name="orderDate"
+                                value="<%= orders.date.toDateString() %>">
+                        </div>
+
+                        <div class="pt-2">
+                            <button onclick="" type="submit" class="btn btn-primary ">Update</button>
+                        </div>
+
+                    </form>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="col-sm-12 col-xl-6">
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Product details</h6>
+
+                    <div class="form-group pb-2">
+                        <label for="orderId">Order Id:</label>
+                        <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
+                            value="<%=orders._id %>">
+                    </div>
+
+
+                    <% orders.products.forEach((product, index)=> { %>
+                        <div class="form-group pb-2">
+                            <div class="pb-2">
+                                <label for="orderId">Product name:</label>
+                                <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
+                                    value="<%= product.name %>">
+                            </div>
+
+                            <div class="pb-2">
+                                <label for="orderId">Product price:</label>
+                                <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
+                                    value="<%= product.price %>">
+                            </div>
+
+                        </div>
+                        <% }) %>
+
+
+
+
+                </div>
+
+            </div>
+
+            <!-- address -->
+
+            <div class="col-sm-12 col-xl-6">
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Address details</h6>
+                    <div class="form-group pb-2">
+                        <div class="pb-2">
+                            <label for="orderId">Name:</label>
+                            <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
+                                value="<%= address.addressField[0].name %>">
+                        </div>
+
+                        <div class="pb-2">
+                            <label for="orderId">State:</label>
+                            <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
+                                value="<%= address.addressField[0].state %>">
+                        </div>
+
+                        <div class="pb-2">
+                            <label for="orderId">District:</label>
+                            <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
+                                value="<%= address.addressField[0].district %>">
+                        </div>
+
+                        <div class="pb-2">
+                            <label for="orderId">Town:</label>
+                            <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
+                                value="<%= address.addressField[0].town %>">
+                        </div>
+
+                        <div class="pb-2">
+                            <label for="orderId">Pincode:</label>
+                            <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
+                                value="<%= address.addressField[0].pincode %>">
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+    <%- include('./adminFooter.ejs') %>
