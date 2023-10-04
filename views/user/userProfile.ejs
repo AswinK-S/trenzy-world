@@ -40,26 +40,14 @@
         </div>
 
     </div>
+    <!-- navbar end -->
 
-    <div class="container rounded bg-white mt-5 mb-5">
+    <div class="container rounded bg-white mt-5 mb-5" style="border: 1px solid rgb(155, 154, 154);">
+
         <div class="row">
-            <!-- User Profile Icon Column -->
-            <div class="col-md-2 border-right " style="padding-right:12em ;">
-                <div class="d-flex flex-column align-items-center text-center p-3 py-5">
-                    <img class="rounded-circle mt-5" width="150px"
-                        src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
-                    <span class="font-weight-bold">
-                        <%= userData.name %>
-                    </span>
-                    <span class="text-black-50">
-                        <%= userData.email %>
-                    </span>
-                </div>
-            </div>
-
-            <!-- Profile Card Column -->
-            <div class="col-md-4 border-right pl-5">
-                <div class="card border-info mb-3" style="max-width: 18rem;">
+            <!-- User Profile Column -->
+            <div class="col-md-4 mt-4">
+                <div class="card border" style="max-width: 18rem;">
                     <div class="card-header">Profile</div>
                     <div class="card-body">
                         <h5 class="card-title">
@@ -75,53 +63,71 @@
                         <!-- Add more profile card details as needed -->
                     </div>
                 </div>
+
+                <!-- Wallet Column -->
+                <div class=" mt-4">
+                    <div class="card border mb-3" style="max-width: 18rem;">
+                        <div class="card-header">Wallet</div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                Amount: &#8377 <%= userData.wallet %>
+                            </h5>
+                            <!-- Add more wallet details as needed -->
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Addresses Column -->
-            <div class="col-md-6 pl-5">
-                <!-- If there are addresses -->
-                <% if (allAddresses && allAddresses.length> 0) { %>
+          <!-- vertical border -->
+            <div class=" border-right " style="border: 1px solid rgb(155, 154, 154);"></div>
+
+
+
+            <!-- Address Column -->
+            <div class="col-md-7 mt-4 d-flex flex-wrap justify-content-around">
+                <!-- Loop through and display addresses -->
+                <% if (allAddresses && allAddresses.length > 0) { %>
                     <% for (const address of allAddresses) { %>
-                        <div class=" p-1 py-1">
-                            <div class="card border-info mb-3" style="max-width: 18rem;">
-                                <div class="card-header">Address</div>
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        <%= address.name %>
-                                    </h5>
-                                    <p class="card-text">
-                                        <%= address.phone %>
-                                    </p>
-                                    <p class="card-text">
-                                        <%= address.state %>
-                                    </p>
-                                    <p class="card-text">
-                                        <%= address.district %>
-                                    </p>
-                                    <p class="card-text">
-                                        <%= address.town %>
-                                    </p>
-                                    <p class="card-text">
-                                        <%= address.pincode %>
-                                    </p>
-                                    <p class="card-text">
-                                        <%= address.address %>
-                                    </p>
-                                    <!-- Add more address details as needed -->
-                                </div>
-                                <form action="/deleteAdd/<%= address._id %>" method="post">
-                                    <button class=" btn-sm btn-primary font-weight-normal" type="submit">
-                                        delete
-                                    </button>
-                                </form>
+                        <div class="card border mb-3 " style="width: 16rem;">
+                            <div class="card-header">Address</div>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <%= address.name %>
+                                </h5>
+                                <p class="card-text">
+                                    <%= address.phone %>
+                                </p>
+                                <p class="card-text">
+                                    <%= address.state %>
+                                </p>
+                                <p class="card-text">
+                                    <%= address.district %>
+                                </p>
+                                <p class="card-text">
+                                    <%= address.town %>
+                                </p>
+                                <p class="card-text">
+                                    <%= address.pincode %>
+                                </p>
+                                <p class="card-text">
+                                    <%= address.address %>
+                                </p>
+                                <!-- Add more address details as needed -->
                             </div>
+                            <form action="/deleteAdd/<%= address._id %>" method="post">
+                                <button class="btn btn-sm btn-primary font-weight-normal" type="submit">
+                                    delete
+                                </button>
+                            </form>
                         </div>
-                        <% } %>
-                            <% } else { %>
-                                <p>No addresses found.</p>
-                                <% } %>
+                    <% } %>
+                <% } else { %>
+                    <p>No addresses found.</p>
+                <% } %>
             </div>
         </div>
     </div>
+
 
     <%- include('../partials/footer.ejs') %>

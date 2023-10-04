@@ -27,6 +27,10 @@ const customer = mongoose.Schema({
     },
     isVerified:{
         type:Boolean
+    },
+    wallet:{
+        type:Number,
+        default: 0
     }
 
 

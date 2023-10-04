@@ -38,17 +38,17 @@
                         <div class="form-group pb-2">
                             <label for="paymentMode">Payment Mode:</label>
                             <input type="text" class="form-control form-control-sm" id="paymentMode" name="paymentMode"
-                                value="<%= orders.paymentMode %>">
+                                value="<%= orders.paymentMode %>" disabled>
                         </div>
                         <div class="form-group pb-2">
                             <label for="total">Total:</label>
                             <input type="text" class="form-control form-control-sm" id="total" name="total"
-                                value="<%= orders.total %>">
+                                value="<%= orders.total %>" disabled>
                         </div>
                         <div class="form-group pb-2">
                             <label for="orderDate">Order Date:</label>
                             <input type="text" class="form-control form-control-sm" id="orderDate" name="orderDate"
-                                value="<%= orders.date.toDateString() %>">
+                                value="<%= orders.date.toDateString() %>" disabled>
                         </div>
 
                         <div class="pt-2">
@@ -70,7 +70,7 @@
                     <div class="form-group pb-2">
                         <label for="orderId">Order Id:</label>
                         <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
-                            value="<%=orders._id %>">
+                            value="<%=orders._id %>"disabled>
                     </div>
 
 
@@ -79,13 +79,13 @@
                             <div class="pb-2">
                                 <label for="orderId">Product name:</label>
                                 <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
-                                    value="<%= product.name %>">
+                                    value="<%= product.name %>" disabled>
                             </div>
 
                             <div class="pb-2">
                                 <label for="orderId">Product price:</label>
                                 <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
-                                    value="<%= product.price %>">
+                                    value="<%= product.price %>" disabled>
                             </div>
 
                         </div>
@@ -99,7 +99,7 @@
             </div>
 
             <!-- address -->
-
+            <% if(address.addressField){ %>
             <div class="col-sm-12 col-xl-6">
                 <div class="bg-light rounded h-100 p-4">
                     <h6 class="mb-4">Address details</h6>
@@ -107,31 +107,31 @@
                         <div class="pb-2">
                             <label for="orderId">Name:</label>
                             <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
-                                value="<%= address.addressField[0].name %>">
+                                value="<%= address.addressField[0].name %>" disabled>
                         </div>
 
                         <div class="pb-2">
                             <label for="orderId">State:</label>
                             <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
-                                value="<%= address.addressField[0].state %>">
+                                value="<%= address.addressField[0].state %>" disabled>
                         </div>
 
                         <div class="pb-2">
                             <label for="orderId">District:</label>
                             <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
-                                value="<%= address.addressField[0].district %>">
+                                value="<%= address.addressField[0].district %>" disabled>
                         </div>
 
                         <div class="pb-2">
                             <label for="orderId">Town:</label>
                             <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
-                                value="<%= address.addressField[0].town %>">
+                                value="<%= address.addressField[0].town %>" disabled>
                         </div>
 
                         <div class="pb-2">
                             <label for="orderId">Pincode:</label>
                             <input type="text" class="form-control form-control-sm" id="orderId" name="orderId"
-                                value="<%= address.addressField[0].pincode %>">
+                                value="<%= address.addressField[0].pincode %>" disabled>
                         </div>
                     </div>
 
@@ -139,6 +139,7 @@
                 </div>
 
             </div>
+            <% }%>
 
 
         </div>

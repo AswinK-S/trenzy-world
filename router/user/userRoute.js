@@ -73,10 +73,12 @@ user.get('/addAddress',addressController.getAddAddress)
 user.post('/addAddress',addressController.postAddAddress)
 
 user.post('/deleteAdd/:id',addressController.deleteAdd)
-
+ 
+     //---------------------------------user order----------------------------\\
 //user order page
 user.get('/orders',orderController.getOrderPage)
-
+//user single order detail
+user.get('/orders/orderDetail/:id',orderController.singleOrderDetails)
 
 //==============================================================cart section=======================================\\
 

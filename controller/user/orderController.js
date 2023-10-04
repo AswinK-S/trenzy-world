@@ -2,7 +2,6 @@ const Order = require('../../model/order')
 const User = require('../../model/customer')
 const Products = require('../../model/product')
 
-//get the orders page
 // get the orders page
 exports.getOrderPage = async (req, res) => {
     try {
@@ -22,7 +21,7 @@ exports.getOrderPage = async (req, res) => {
             .sort({ date: -1 })
             .skip(skip)
             .limit(limit);
-
+            console.log('orders',orders)
         let totalOrdersCount = await Order.find({ user: userId }).count();
         let pageCount = Math.ceil(totalOrdersCount / limit);
 
@@ -31,3 +30,51 @@ exports.getOrderPage = async (req, res) => {
         console.log(error.message);
     }
 };
+
+//user get single order details page
+exports.singleOrderDetails = async(req,res)=>{
+    try {
+        console.log("Single order details");
+        const orderId= req.params.id
+        const userId = req.session.name
+        console.log('order id :',orderId,'user id :',userId)
+        
+        
+        const order = await Order.findOne({ _id: orderId })
+            .populate({
+                path: 'products.products',
+                select: 'image name price', // Select the fields you need
+            })
+            
+            console.log('orders :',order)
+            const progress = calculateProgressBarWidth(order.orderStatus)
+
+            console.log('progress :',progress, 'orderstatus :',order.orderStatus)
+
+            function calculateProgressBarWidth(orderStatus) {
+                switch (orderStatus) {
+                    case 'success':
+                        return '25%';
+                    case 'shipped':
+                        return '50%';
+                    case 'out_for_delivery':
+                        return '75%';
+                    case 'delivered':
+                        return '100%';
+                    case 'canceled':
+                    case 'canceled_by_admin':
+                    case 'returned':
+                    case 'pending_return_approval':
+                        return '0%'; // You can set a common value for these statuses
+                    default:
+                        return '0%'; // Default width
+                }
+            }
+            
+
+        res.render('user/singleOrderDetail',{order,progress})
+
+    } catch (error) {
+        console.log(error.message)
+    }
+}
