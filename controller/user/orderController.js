@@ -36,7 +36,8 @@ exports.singleOrderDetails = async(req,res)=>{
     try {
         console.log("Single order details");
         const orderId= req.params.id
-        const userId = req.session.name
+        const userId = req.session.name;
+        const userData = await User.findOne({ _id: userId });
         console.log('order id :',orderId,'user id :',userId)
         
         
@@ -64,15 +65,65 @@ exports.singleOrderDetails = async(req,res)=>{
                     case 'canceled':
                     case 'canceled_by_admin':
                     case 'returned':
+                    case 'requested_for_return':    
                     case 'pending_return_approval':
-                        return '0%'; // You can set a common value for these statuses
+                        return '0%'; 
                     default:
-                        return '0%'; // Default width
+                        return '0%'; 
                 }
             }
             
 
-        res.render('user/singleOrderDetail',{order,progress})
+        res.render('user/singleOrderDetail',{order,userData,progress})
+
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+//cancel order
+exports.cancelOrder = async (req,res)=>{
+    try {
+        console.log('cancelling order')
+        const orderId = req.params.id
+        const userId = req.session.name
+        console.log('order Id',orderId,'user Id :',userId)
+        const order = await Order.findOne({ _id: orderId })
+            .populate({
+                path: 'products.products',
+                select: 'image name price', // Select the fields you need
+            })
+        console.log('order :',order)
+            if(order.paymentMode=='onlinePayment'){
+                await User.updateOne({ _id: userId }, { $inc: { wallet: order.total } });
+            }
+            await Order.updateOne({_id:orderId},{$set:{orderStatus:'canceled'}})
+            res.redirect('/orders')
+
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+//order return
+exports.returnOrder = async (req,res)=>{
+    try {
+        console.log('return order')
+        const userId=req.session.name
+        const orderId = req.params.id
+
+        const order = await Order.findOne({ _id: orderId })
+            .populate({
+                path: 'products.products',
+                select: 'image name price', // Select the fields you need
+            })
+        console.log('order :',order)
+            if(order.paymentMode=='onlinePayment' || order.orderStatus=='delivered'){
+                await User.updateOne({ _id: userId }, { $inc: { wallet: order.total } });
+            }
+            await Order.updateOne({_id:orderId},{$set:{orderStatus:'requested_for_return'}})
+            res.redirect('/orders')
+
 
     } catch (error) {
         console.log(error.message)

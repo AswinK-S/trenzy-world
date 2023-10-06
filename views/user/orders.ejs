@@ -10,11 +10,11 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="#" class="nav-item nav-link active">Dashboard</a>
+                            <a href="/userProfile" class="nav-item nav-link active">Dashboard</a>
                             <a href="/editUserProfile" class="nav-item nav-link">Edit Profile</a>
                             <a href="/addAddress" class="nav-item nav-link">Add Address</a>
                             <a href="#" class="nav-item nav-link">Change Password</a>
-                            <a href="#" class="nav-item nav-link">Orders</a>
+                            <a href="/orders" class="nav-item nav-link">Orders</a>
                             <a href="#" class="nav-item nav-link">WishList</a>
                             <a href="#" class="nav-item nav-link"></a>
                         </div>
@@ -24,7 +24,7 @@
                                     <button class="btn border" type="submit"
                                         style="background: none; font-size: 22px; padding: 2px;">Logout</button>
                                 </form>
-                                <a href="#" class="btn border ml-2" style="text-decoration: none; color: #D19C97;">
+                                <a href="/userProfile" class="btn border ml-2" style="text-decoration: none; color: #D19C97;">
                                     <i class="fas fa-user"></i>
                                 </a>
                                 <% } else { %>
@@ -91,6 +91,21 @@
                                                 <a href="/orders/orderDetail/<%=order._id  %>" class="btn btn-primary">View Details</a>
                                             </div>
                                 </div>
+
+                                <% if(order.orderStatus === 'canceled') {%>
+                                <div class="row justify-content-center d-flex align-items-center ">
+                                    
+                                    <span class="border p-2" style="color: red; border-color: red;">Cancelled</span>
+                                </div>
+                                <% } %>
+
+                                <% if(order.orderStatus === 'requested_for_return') {%>
+                                    <div class="row justify-content-center d-flex align-items-center ">
+                                        
+                                        <span class="border p-2" style="color:orange; border-color: orange;">Return pending..</span>
+                                    </div>
+                                    <% } %>
+
                             </div>
                         </div>
                         <% }); %>

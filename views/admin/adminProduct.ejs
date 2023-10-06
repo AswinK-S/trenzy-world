@@ -1,123 +1,126 @@
 <%- include('./adminLogHeader.ejs') %>
 
 
-<div class="container-fluid pt-4 px-4">
-   <div class="mb-2">
-     <a href="adminProduct/addProduct">    
-           <button type="button" class="btn btn-primary">Add Product</button>
-     </a>
-   </div>
-     <div class="row g-4">
+  <div class="container-fluid pt-4 px-4">
+    <div class="mb-2">
+      <a href="adminProduct/addProduct">
+        <button type="button" class="btn btn-primary">Add Product</button>
+      </a>
+    </div>
+    <div class="row g-4">
 
-          <div class="col-12">
-               <div class="bg-light rounded h-100 p-4">
-                   <h6 class="mb-4">Category</h6>
-                   <table class="table table-striped">
-                       <thead>
-                           <tr>
-                               <th scope="col">#</th>
-                               <th scope="col">Image</th>
-                               <th scope="col">Name</th>
-                               <th scope="col">Stock</th>
-                               <th scope="col">Brand</th>
-                               <th scope="col">Category</th>
-                               <th scope="col">price</th>
-                               <th scope="col">Edit </th>
-                               <th scope="col">Status</th>
-                           </tr>
-                       </thead>
-                       <tbody>
-                        <% if(productData.length>0){
-                         for(i=0;i<productData.length;i++) {%>
-                           <tr>
-                            <td><%=i+1%></td>
-                               <td>
-                                 <% if(productData[i].image){%>
-                                    <div>
-                                        <img class="img-fluid" width="40rem"
-                                            src="/productImages/<%= productData[i].image[0] %>" alt="">
-                                    </div>
-                                    <%}else{%>No image<%}%>
-                               </td>
-                               <td>
-                                <%= productData[i].name %>
-                                </td>
-                                <td>
-                                <%=productData[i].quantity%>  
-                                </td>
-                               <td>
-                                <%= productData[i].brand %>
-                                </td>
-                               <td>
-                                <%= productData[i].category.name %>
-                                </td>
-                               <td>
-                                <%= productData[i].price %>
-                                </td>
+      <div class="col-12">
+        <div class="bg-light rounded h-100 p-4">
+          <h6 class="mb-4">Category</h6>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Image</th>
+                <th scope="col">Name</th>
+                <th scope="col">Stock</th>
+                <th scope="col">Brand</th>
+                <th scope="col">Category</th>
+                <th scope="col">price</th>
+                <th scope="col">Edit </th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if(productData.length>0){
+                for(i=0;i<productData.length;i++) {%>
+                  <tr>
+                    <td>
+                      <%=i+1%>
+                    </td>
+                    <td>
+                      <% if(productData[i].image){%>
+                        <div>
+                          <img class="img-fluid" width="40rem" src="/productImages/<%= productData[i].image[0] %>"
+                            alt="">
+                        </div>
+                        <%}else{%>No image<%}%>
+                    </td>
+                    <td>
+                      <%= productData[i].name %>
+                    </td>
+                    <td>
+                      <%=productData[i].quantity%>
+                    </td>
+                    <td>
+                      <%= productData[i].brand %>
+                    </td>
+                    <td>
+                      <%= productData[i].category.name %>
+                    </td>
+                    <td>
+                      <%= productData[i].price %>
+                    </td>
 
-                               <td> 
-                                   <a href="adminProduct/editProduct/<%=productData[i]._id%>">
-                                        <button type="button" class="btn btn-outline-primary"><i class="fa fa-edit"></i></button>
-                                   </a>
-                                    
-                              </td>
-                              <% if(productData[i].status === true){%>
+                    <td>
+                      <a href="adminProduct/editProduct/<%=productData[i]._id%>">
+                        <button type="button" class="btn btn-outline-primary"><i class="fa fa-edit"></i></button>
+                      </a>
 
-                                <td>
-                                     <a href="#confirmationPopUp" class="btn rounded-0 block-btn modalBTN" data-bs-toggle="modal"
-                                     data-id="<%= productData[i]._id  %>" style="color: green; border: 1px solid green;">Listed</a>
+                    </td>
+                    <% if(productData[i].status===true){%>
 
-                                </td>
-                                <%}else{%>
-                                  <td>
-                                    <a href="#confirmationPopUp" data-id="<%= productData[i]._id %>" data-bs-toggle="modal"
-                                    class="btn rounded-0 unBlock-btn modalBTN" style="color:red; border: 1px solid red;">Unlisted</a>
-                                  </td>
-                                  <% }%>
+                      <td>
+                        <a href="#confirmationPopUp" class="btn rounded-0 block-btn modalBTN" data-bs-toggle="modal"
+                          data-id="<%= productData[i]._id  %>" style="color: green; border: 1px solid green;">Listed</a>
 
-                                  <div class="modal fade" id="confirmationPopUp" tabindex="-1"
-                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                 <div class="modal-dialog">
-                                                 <div class="modal-content">
-                                                 <div class="modal-header">
-                                                   <h1 class="modal-title fs-5" id="exampleModalLabel">Are You Sure?</h1>
-                                                  <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                  aria-label="Close"></button>
-                                                </div>
-                                              <div class="modal-body">
+                      </td>
+                      <%}else{%>
+                        <td>
+                          <a href="#confirmationPopUp" data-id="<%= productData[i]._id %>" data-bs-toggle="modal"
+                            class="btn rounded-0 unBlock-btn modalBTN"
+                            style="color:red; border: 1px solid red;">Unlisted</a>
+                        </td>
+                        <% }%>
 
-                                                <%if(productData[i].status===true){%>
-                                                <strong> Do you want to unlist the Product ?</strong>
-                                                  <%}else{%>
-                                                    <strong> Do you want to list the Product ?</strong>
-                                                    <%}%>
-                                              <div class="modal-footer mt-2">
-                                                <button type="button" class="btn btn-secondary"
-                                                 data-bs-dismiss="modal">Close</button>
-                                                <a id="prodConfirmBTN" class="btn btn-primary">Confirm</a>
-                                              </div>
-                                              </div>
-                                              </div>
-                                              </div>
-                                            </div>
-                            </tr>
-                           <%}%>
-                           <%}else{%>
-                           <tr>
-                            <td>Product not found</td>
-                             </tr>
-                            <%}%> 
-                       </tbody>
-                   </table>
-               </div>
-           </div>
+                          <div class="modal fade" id="confirmationPopUp" tabindex="-1"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h1 class="modal-title fs-5" id="exampleModalLabel">Are You Sure?</h1>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
 
-
-     </div>
-</div>
-
+                                  <%if(productData[i].status===true){%>
+                                    <strong> Do you want to unlist the Product ?</strong>
+                                    <%}else{%>
+                                      <strong> Do you want to list the Product ?</strong>
+                                      <%}%>
+                                        <div class="modal-footer mt-2">
+                                          <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                          <a id="prodConfirmBTN" class="btn btn-primary">Confirm</a>
+                                        </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                  </tr>
+                  <%}%>
+                    <%}else{%>
+                      <tr>
+                        <td>Product not found</td>
+                      </tr>
+                      <%}%>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
 
-          
+    </div>
+  </div>
 
-<%- include('./adminLogFooter.ejs') %>
+
+
+
+
+  <%- include('./adminLogFooter.ejs') %>

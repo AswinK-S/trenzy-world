@@ -79,6 +79,10 @@ user.post('/deleteAdd/:id',addressController.deleteAdd)
 user.get('/orders',orderController.getOrderPage)
 //user single order detail
 user.get('/orders/orderDetail/:id',orderController.singleOrderDetails)
+// cancel order
+user.get('/cancelOrder/:id',orderController.cancelOrder)
+//return order
+user.get('/returnOrder/:id',orderController.returnOrder)
 
 //==============================================================cart section=======================================\\
 

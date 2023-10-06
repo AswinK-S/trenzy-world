@@ -1,5 +1,48 @@
 <%- include('../partials/header.ejs') %>
 
+    <!-- navbar -->
+    <div class="container-fluid mb-5">
+        <!-- Your navigation bar here -->
+        <div class="row border-top px-xl-5">
+            <div class="col-lg-12">
+                <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
+                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarCollapse">
+                        <div class="navbar-nav mr-auto py-0">
+                            <a href="/userProfile" class="nav-item nav-link active">Dashboard</a>
+                            <a href="/editUserProfile" class="nav-item nav-link">Edit Profile</a>
+                            <a href="/addAddress" class="nav-item nav-link">Add Address</a>
+                            <a href="#" class="nav-item nav-link">Change Password</a>
+                            <a href="/orders" class="nav-item nav-link">Orders</a>
+                            <a href="#" class="nav-item nav-link">WishList</a>
+                            <a href="#" class="nav-item nav-link"></a>
+                        </div>
+                        <div class="navbar-nav ml-auto py-0">
+                            <% if(userData) { %>
+                                <form action="/logout" method="POST" class="mr-auto">
+                                    <button class="btn border" type="submit"
+                                        style="background: none; font-size: 22px; padding: 2px;">Logout</button>
+                                </form>
+                                <a href="/userProfile" class="btn border ml-2"
+                                    style="text-decoration: none; color: #D19C97;">
+                                    <i class="fas fa-user"></i>
+                                </a>
+                                <% } else { %>
+                                    <form action="/login" method="">
+                                        <button type="submit"
+                                            style="background: none; border: none; padding: 0;">Login</button>
+                                    </form>
+                                    <% } %>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+    </div>
+
     <section class="h-100 gradient-custom">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
@@ -62,9 +105,8 @@
                                         <div class="col-md-10">
                                             <div class="progress" style="height: 6px; border-radius: 16px;">
                                                 <div class="progress-bar" role="progressbar"
-                                                style="width: <%= progress %>;" 
-                                                aria-valuenow="<%= progress %>"
-                                                aria-valuemin="0" aria-valuemax="100"></div>
+                                                    style="width: <%= progress %>;" aria-valuenow="<%= progress %>"
+                                                    aria-valuemin="0" aria-valuemax="100"></div>
                                             </div>
                                             <div class="d-flex justify-content-around mb-1">
                                                 <p class="text-muted mt-1 mb-0 small ms-xl-5">Order placed</p>
@@ -78,22 +120,89 @@
 
                                     <!-- Display order status -->
                                     <div class="pt-3 mt-2 pb-3">
-                                        <% if(order.orderStatus !=='delivered'){ %>
-                                            <span class="border border-info  p-2">Cancel..?</span>
 
-                                            <%}else if (order.orderStatus=='delivered'){%>
-                                                <span class="border border-info  p-2">Return..?</span>
+                                        <% if(order.orderStatus !=='delivered' && order.orderStatus
+                                            !=='out_for_delivery' && order.orderStatus !=='canceled' &&
+                                            order.orderStatus !=='requested_for_return' ){ %>
+                                            <span class="border border-info  p-2"><a href="#confirmationPopUp"
+                                                    class="btn modalBTN" data-id="<%= order._id %>"
+                                                    data-bs-toggle="modal">Cancel..?</a></span>
+
+
+                                            <div class="modal fade" id="confirmationPopUp" tabindex="-1"
+                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h3 class="modal-title fs-5" id="exampleModalLabel">Are You
+                                                                Sure?</h3>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+
+                                                            <strong> Do you want to cancel the order ?</strong>
+                                                            <div class="modal-footer mt-2">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Close</button>
+                                                                <a id="orderCancel" class="btn btn-primary">Cancel
+                                                                    the order</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <%}else if (order.orderStatus=='delivered' ){%>
+                                                <span class="border border-info  p-2"><a href="#confirmationPopUp"
+                                                        class="btn modalBTN" data-id="<%= order._id %>"
+                                                        data-bs-toggle="modal">return..?</a></span>
+
+                                                <div class="modal fade" id="confirmationPopUp" tabindex="-1"
+                                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h3 class="modal-title fs-5" id="exampleModalLabel">Are
+                                                                    You
+                                                                    Sure?</h3>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+
+                                                                <strong> Do you want to return the order ?</strong>
+                                                                <div class="modal-footer mt-2">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-bs-dismiss="modal">Close</button>
+                                                                    <a id="returnOrder" class="btn btn-primary">Return
+                                                                        the order</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <% } %>
 
-                                        <% if (order.orderStatus==='canceled' ) { %>
-                                            <span class="border p-2">Cancelled</span>
-                                            <% } else if (order.orderStatus==='canceled_by_admin' ) { %>
-                                                <span class="border p-2">Cancelled by Admin</span>
-                                                <% } else if (order.orderStatus==='returned' ) { %>
-                                                    <span class="border p-2">Returned</span>
-                                                    <% } else if (order.orderStatus==='pending_return_approval' ) { %>
-                                                        <span class="border p-2">Pending Return Approval</span>
-                                                        <% } %>
+                                                    <% if (order.orderStatus==='canceled' ) { %>
+                                                        <span class="border p-2"
+                                                            style="border-color: red; color: red;">Cancelled</span>
+                                                        <% } else if (order.orderStatus==='canceled_by_admin' ) { %>
+                                                            <span class="border p-2">Cancelled by Admin</span>
+                                                            <% } else if (order.orderStatus==='returned' ) { %>
+                                                                <span class="border p-2">Returned</span>
+                                                                <% } else if
+                                                                    (order.orderStatus==='pending_return_approval' ) {
+                                                                    %>
+                                                                    <span class="border p-2">Pending Return
+                                                                        Approval</span>
+                                                                    <% } else
+                                                                        if(order.orderStatus==='requested_for_return'
+                                                                        ){%>
+                                                                        <span class="border p-2"
+                                                                            style="color:orange; border-color: orange;">Return
+                                                                            pending..</span>
+                                                                        <%}%>
                                     </div>
 
                                     <!-- Display order details -->
@@ -104,18 +213,16 @@
                                         </p>
                                     </div>
 
-                                    <!-- Display additional order information as needed -->
                                     <div class="d-flex justify-content-between pt-2">
                                         <p class="text-muted mb-0">Invoice Number: <%= order._id %>
                                         </p>
-                                        <!-- Add more order details here -->
                                     </div>
                         </div>
                         <div class="card-footer border-0 px-3 py-4"
                             style="background-color: #EDF1FF; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
                             <h5 class="d-flex align-items-center justify-content-end text-dark text-uppercase mb-0">
                                 Total
-                                paid : <span class="h3 mb-0 ms-2" > &nbsp &#8377; <%= order.total %></span></h5>
+                                paid : <span class="h3 mb-0 ms-2"> &nbsp &#8377; <%= order.total %></span></h5>
                         </div>
                     </div>
                 </div>
