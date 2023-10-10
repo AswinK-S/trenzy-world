@@ -1,8 +1,73 @@
 <%- include('./adminLogHeader.ejs') %>
 
+     <div class="container-fluid pt-4 px-4">
+          <div class="mb-2">
+               <a href="addCoupon">
+                    <button type="button" class="btn btn-primary">Add Coupon</button>
+               </a>
+          </div>
+          <div class="row g-4">
+               <div class="col-12">
+                    <div class="bg-light rounded h-100 p-4">
+                         <h6 class="mb-4">Coupons</h6>
+                         <% if (coupons.length> 0) { %>
+                              <table class="table table-striped">
+                                   <thead>
+                                        <tr>
+                                             <th scope="col">#</th>
+                                             <th scope="col">Name</th>
+                                             <th scope="col">Discount</th>
+                                             <th scope="col">Expiry Date</th>
+                                             <th scope="col">Purchase Limit</th>
+                                             <th scope="col">Status</th>
+                                        </tr>
+                                   </thead>
+                                   <tbody>
+                                        <% for (let i=0; i < coupons.length; i++) { %>
+                                             <tr>
+                                                  <td>
+                                                       <%= i + 1 %>
+                                                  </td>
+                                                  <td>
+                                                       <%= coupons[i].name %>
+                                                  </td>
+                                                  <td>
+                                                       <%= coupons[i].discount %>
+                                                  </td>
+                                                  <td>
+                                                       <%= coupons[i].expiryDate %>
+                                                  </td>
+                                                  <td>
+                                                       <%= coupons[i].purchaseLimit %>
+                                                  </td>
+                                                  <td>
+                                                       <button type="button" class="btn btn-outline-primary"><i
+                                                                 class="fa fa-edit"></i></button>
+                                                  </td>
+                                                  <td>
+                                                       <% if (coupons[i].status) { %>
+                                                            <a href="#confirmationPopUp" data-id="<%= coupons[i]._id %>"
+                                                                 data-bs-toggle="modal"
+                                                                 class="btn rounded-0 unBlock-btn modalBTN"
+                                                                 style="color:red; border: 1px solid red;">Unlisted</a>
+                                                            <% } else { %>
+                                                                 <a href="#confirmationPopUp"
+                                                                      data-id="<%= coupons[i]._id %>"
+                                                                      data-bs-toggle="modal"
+                                                                      class="btn rounded-0 unBlock-btn modalBTN"
+                                                                      style="color:green; border: 1px solid green;">Listed</a>
+                                                                 <% } %>
+                                                  </td>
+                                             </tr>
+                                             <% } %>
+                                   </tbody>
+                              </table>
+                              <% } else { %>
+                                   <p>No coupons found.</p>
+                                   <% } %>
+                    </div>
+               </div>
+          </div>
      </div>
-
-     <!-- Content End -->
-
 
      <%- include('./adminLogFooter.ejs') %>

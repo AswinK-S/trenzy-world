@@ -60,6 +60,9 @@ admin.post('/adminCategory/edit/:id',uploadForCat.single('image'),categoryContro
 
 // admin coupon
 admin.get('/adminCoupon',isAdmin.isLoggedIn,couponController.adminCoupon)
+admin.get('/addCoupon',couponController.getAddCoupon)
+
+admin.post('/addCoupon',couponController.postAddCoupon)
 
 // admin order
 admin.get('/adminOrder',isAdmin.isLoggedIn,orderController.adminOrder)

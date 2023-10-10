@@ -1,0 +1,68 @@
+<%- include('./adminLogHeader.ejs') %>
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-6">    
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">Add Coupon</h6>
+                <form action="addCoupon" method="post" id="coupon-form">
+
+                    
+
+                    <small style="color: red;" id="coupon-error" class="mt-3">
+                        <%= couponExists %>
+                    </small>
+                    
+
+                    <div class="mt-3 mb-3">
+                        <label for="addCat">Coupon Name</label>
+                        <input class="form-control mb-3" type="text" id="addCouponName" name="name"
+                            placeholder="enter the coupon name" aria-label="default input example">
+                    </div>
+
+                    <div class="mt-3 mb-3">
+                        <label for="addCat">Coupon Discount</label>
+                        <input class="form-control mb-3" type="text" id="addCoupon" name="discount"
+                            placeholder="enter the discount amount" aria-label="default input example">
+                    </div>
+
+                   
+
+                    <div class="md-form md-outline input-with-post-icon datepicker mt-3 mb-3">
+                        <input placeholder="Select date" type="date" id="addCoupon" name="date" class="form-control">
+                        <label for="example">select date</label>
+                      </div>
+
+                    <div class="mt-3 mb-3">
+                        <label for="addCat">Purchase Limit</label>
+                        <input class="form-control mb-3" type="text" id="addCoupon" name="limit"
+                            placeholder="enter the purchase limit" aria-label="default input example">
+                    </div>
+
+                    <button onclick="" type="submit" class="btn btn-primary">Add Coupon</button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.getElementById("coupon-form").addEventListener("submit", function (e) {
+    e.preventDefault(); // Prevent the form from submitting
+    const couponName = document.getElementById("addCouponName").value.trim();
+    const couponError = document.getElementById("coupon-error");
+
+    if (!couponName) {
+        // Display an error message in the <small> tag
+        couponError.textContent = "Coupon name cannot be empty";
+        return;
+    }
+
+    // If validation passes, clear the error message and submit the form
+    couponError.textContent = "";
+    this.submit();
+});
+
+    </script>
+<%- include('./adminLogFooter.ejs') %>

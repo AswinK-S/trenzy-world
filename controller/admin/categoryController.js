@@ -102,8 +102,6 @@ exports.getAddCategory = async (req, res) => {
 exports.postAddCategory = async (req, res) => {
     try {
         console.log("adding category")
-        const categoryData = await category.find({})
-
         const name = req.body.name
         const image = req.file.filename
         // const existingName = await category.findOne({name})
@@ -116,7 +114,7 @@ exports.postAddCategory = async (req, res) => {
         }
 
         const CategoryDet = new category({ name, image })
-        const cateData = await CategoryDet.save()
+        await CategoryDet.save()
 
         console.log('catagory save', CategoryDet)
 

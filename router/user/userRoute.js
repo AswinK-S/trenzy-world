@@ -60,57 +60,57 @@ user.get('/logout',userController.logout)
 
 
 //---------------------------------------------------------------------user profile---------------------------------------------\\
-user.get('/userProfile',isUser.blockStatus,addressController.userAccount)
+user.get('/userProfile',isUser.loggedIn,isUser.blockStatus,addressController.userAccount)
 
 //user get edit profile page
-user.get('/editUserProfile',addressController.getUserEdit)
+user.get('/editUserProfile',isUser.loggedIn,addressController.getUserEdit)
 //user post edit profile page
-user.post('/userProfile/edit/:id',addressController.updateUser)
+user.post('/userProfile/edit/:id',isUser.loggedIn,addressController.updateUser)
 
 //user get address page
-user.get('/addAddress',addressController.getAddAddress)
+user.get('/addAddress',isUser.loggedIn,addressController.getAddAddress)
 //user post add adress
-user.post('/addAddress',addressController.postAddAddress)
+user.post('/addAddress',isUser.loggedIn,addressController.postAddAddress)
 
-user.post('/deleteAdd/:id',addressController.deleteAdd)
+user.post('/deleteAdd/:id',isUser.loggedIn,addressController.deleteAdd)
  
      //---------------------------------user order----------------------------\\
 //user order page
-user.get('/orders',orderController.getOrderPage)
+user.get('/orders',isUser.loggedIn,orderController.getOrderPage)
 //user single order detail
-user.get('/orders/orderDetail/:id',orderController.singleOrderDetails)
+user.get('/orders/orderDetail/:id',isUser.loggedIn,orderController.singleOrderDetails)
 // cancel order
-user.get('/cancelOrder/:id',orderController.cancelOrder)
+user.get('/cancelOrder/:id',isUser.loggedIn,orderController.cancelOrder)
 //return order
-user.get('/returnOrder/:id',orderController.returnOrder)
+user.get('/returnOrder/:id',isUser.loggedIn,orderController.returnOrder)
 
 //==============================================================cart section=======================================\\
 
 //user get cart
-user.get('/cart',cartController.getCart)
+user.get('/cart',isUser.loggedIn,cartController.getCart)
 //user post cart
-user.post('/cart/:id',cartController.postCart)
+user.post('/cart/:id',isUser.loggedIn,cartController.postCart)
 
 //user add to cart
-user.post('/addToCart/:id',cartController.addToCart)
+user.post('/addToCart/:id',isUser.loggedIn,cartController.addToCart)
 
 //user delete product from the cart
-user.post('/removeProduct/:id',cartController.removeFromCart)
+user.post('/removeProduct/:id',isUser.loggedIn,cartController.removeFromCart)
 
 //----------------------------------------------------check out page----------------------------------------\\
 // get checkout page
-user.get('/checkout',cartController.getCheckOut)
+user.get('/checkout',isUser.loggedIn,cartController.getCheckOut)
 
 //------------------------- post checkout page - payment
-user.post('/postCheckOut',cartController.postCheckOut)
+user.post('/postCheckOut',isUser.loggedIn,cartController.postCheckOut)
 //new address in checkOut page
-user.post('/checkoutNewAdd',cartController.checkoutNewAdd)
+user.post('/checkoutNewAdd',isUser.loggedIn,cartController.checkoutNewAdd)
 
-user.post('/verifyPayment',cartController.verifyPayment)
+user.post('/verifyPayment',isUser.loggedIn,cartController.verifyPayment)
 
 //user confirmation page
-user.get('/confirmation/:id',cartController.getConfirmation)
+user.get('/confirmation/:id',isUser.loggedIn,cartController.getConfirmation)
 //download invoice
-user.get('/download-invoice/:id',cartController.getInvoice)
+user.get('/download-invoice/:id',isUser.loggedIn,cartController.getInvoice)
 
 module.exports = user;

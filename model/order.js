@@ -44,6 +44,9 @@ const orders = mongoose.Schema({
     },
     address: {
         type:Object
+    },
+    couponName : {
+        type : String
     }
 
 })
