@@ -32,9 +32,12 @@
                                             <input type="hidden" name="selectedAddressId" id="selectedAddressId"
                                                 value="">
                                             <h5>Select Address</h5>
-                                            <small style="color: red;" class="mt-3">
-                                                <%=locals.addressError?addressError:'' %>
-                                            </small>
+                                            <!-- <small style="color: red;" class="mt-3" id="error-message-container"> -->
+                                            <small style="color: red;" class="mt-3 error-message-container"></small>
+                                                
+                                           <!-- </small> -->
+                                            <!-- <p id="error-message-container"></p> -->
+                                            
 
                                         </div>
                                         <div class="card-body">
@@ -123,7 +126,7 @@
                                         <h5 class="font-weight-bold">Total</h5>
                                         <!-- Calculate and display the total amount here -->
                                         <!-- Example: -->
-                                        <h5 class="font-weight-bold">$<%= cart[0].total + 10 %>
+                                        <h5 class="font-weight-bold">&#8377 <%= cart[0].total + 10 %>
                                         </h5>
                                     </div>
                                 </div>
@@ -133,6 +136,12 @@
                             <div class="card border-info mb-3">
                                 <div class="card-header bg-secondary border-0">
                                     <h5 class="font-weight-semi-bold m-0">Payment</h5>
+
+                                    <input type="hidden" name="selectPayment" id="selectPayment">
+
+                                    <p style="color: red;" class="mt-3" id="payment-error">
+                                    </p>         
+
                                 </div>
                                 <div class="card-body">
                                     <!-- Payment options, radio buttons, etc. -->
@@ -150,10 +159,20 @@
                                             <label class="custom-control-label" for="onlinePayment">Online
                                                 Payment</label>
                                         </div>
-                                        <input type="hidden" name="selectPayment" id="selectPayment">
-                                        <small style="color: red;" class="mt-3">
-                                            <%=locals.paymentError?paymentError:'' %>
-                                        </small>
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" class="custom-control-input" name="payment" id="wallet"
+                                                value="wallet" onchange="updateSelectedPayment(this)">
+
+                                            <label class="custom-control-label" for="wallet">Wallet : <span
+                                                    class=" justify-content-center text-dark" id="wallet-balance">
+                                                    &#8377
+                                                    <%= user.wallet %>
+                                                </span></label>
+                                        </div>
+
+                                        <p style="color: red;" class="mt-3" id="wallet-error">
+                                        </p>
+                                        
                                     </div>
                                 </div>
                                 <div class="card-footer border-secondary bg-transparent">
@@ -224,7 +243,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" onclick="addAddress()">Save Address</button>
+                        <button type="submit" class="btn btn-primary">Save Address</button>
                     </div>
                 </form>
 
@@ -232,175 +251,7 @@
         </div>
     </div>
 
-    <!-- razorpayPayment -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="path/to/owl.carousel.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-
-    <!-- Your other scripts -->
-
-    <script>
-        //address selection 
-        function updateSelectedAddress(radio) {
-            const selectedAddressId = radio.getAttribute('data-address-id');
-            console.log('Selected Address ID:', selectedAddressId);
-            document.querySelector('input[name="selectedAddressId"]').value = selectedAddressId;
-        }
-        //payment selection
-        function updateSelectedPayment(radio) {
-            const selectedPayment = radio.value;
-            document.querySelector('#selectPayment').value = selectedPayment;
-        }
-
-        //modal for add addresss
-        function addAddress() {
-            const addressForm = document.getElementById('addressForm');
-            const formData = new FormData(addressForm);
-
-            fetch('/addNewAddress', {
-                method: 'POST',
-                body: formData,
-            })
-                .then(response => {
-                    if (response.ok) {
-                        $('#addAddressModal').modal('hide'); // Close the modal
-                        // Handle success, e.g., update the list of addresses
-                    } else {
-                        // Handle errors if needed
-                    }
-                })
-                .catch(error => {
-                    // Handle network errors or other issues
-                });
-        }
-
-
-
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
-        integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer">
-        </script>
-
-    <!-- //razorpay -->
-    <script>
-
-        jQuery.noConflict(); // Release the $ variable
-        jQuery(function ($) {
-            document.getElementById("checkout-form").addEventListener("submit", function (e) {
-                e.preventDefault(); // Prevent the form from submitting
-
-                // Handle form submission and AJAX request
-                var formData = $(this).serialize();
-                console.log('entered form data : j', formData)
-                $.ajax({
-                    url: "/postCheckOut",
-                    type: "POST",
-                    data: formData,
-                    success: function (res) {
-
-                        console.log('scssss1')
-                        if (res.success) {
-                            console.log("entered success ................", res)
-                            console.log("Res :L ", res.data)
-                            // const orderID = res.data.orderId
-
-                            // If the payment method is onlinePayment, show the Razorpay payment popup
-                            if (res.paymentMethod === 'onlinePayment'){
-                                // console.log("orderID : ",orderID)
-                                // console.log('online pymnt ajax scss____________',res)
-                                var options = {
-                                    "key":"rzp_test_xA2y47uVo1g6yl",
-                                    "amount": res.data.amount,
-                                    "currency": "INR",
-                                    "name": "Trenzy World",
-                                    "description": "India's best Mens Fashion website",
-                                    "image": "https://dummyimage.com/600x400/000/fff",
-                                    "order_id": res.data.id,
-                                    "handler": function (response) {
-                                        console.log("response : :1122 ",response)
-                                        // Handle the Razorpay response
-                                        // console.log("Razorpay Response:", response);
-                                        // if (response.razorpay_payment_id) {
-                                        //     // Payment was successful
-                                        //     alert("Payment Succeeded");
-                                        //     // Optionally, redirect to a confirmation page
-                                        //     window.location.href = "/verifyPayment/" + res.order_id;
-                                        // } else if (response.error) {
-                                        //     // Handle payment failure
-                                        //     alert("Payment Failed: " + response.error.description);
-                                        // } else {
-                                        //     // Handle other unexpected cases
-                                        //     alert("Payment Failed: Unexpected error");
-                                        // }
-                                        verifyPayment(response,res.data.newOid)
-                                    }
-                                    // "prefill": {
-                                    //     "contact": res.contact,
-                                    //     "name": res.name,
-                                    //     "email": res.email
-                                    // },
-                                    // "notes": {
-                                    //     "description": res.description
-                                    // },
-                                    // "theme": {
-                                    //     "color": "#2300a3"
-                                    // }
-                                };
-                                var razorpayObject = new Razorpay(options);
-                                razorpayObject.open();
-
-
-                            } else if (res.paymentMethod === 'COD') {
-                                console.log('cod ajax')
-                                // If payment is not onlinePayment, handle other cases
-                                // For example, if it's COD, redirect to a confirmation page
-                                window.location.href = "/confirmation/" + res.order_id;
-                            }
-                        } else {
-                            console.log('ajax failed')
-                            // Handle any errors from the server
-                            alert(res.msg);
-                        }
-                    },
-                    error: function (error) {
-                        console.log('ajax error')
-                        // Handle AJAX request error
-                        console.error(error);
-                    }
-                });
-
-
-                function verifyPayment(payment, orderId) {
-                    console.log("verify ____________________________________________________")
-                    console.log("verify poayment",payment)
-                    console.log("verify poayment",orderId)
-                    $.ajax({
-                     
-                        url: '/verifyPayment',
-                        method: 'post',
-                        data: {
-                            payment,
-                            orderId
-                        },
-                        success: (res) => {
-                            if (res.success == true) {
-                                // location.href = "/orderSuccess"
-                                location.href="/confirmation/" + orderId;
-                            } else {
-                                alert('payment failed')
-                            }
-                        }
-                    })
-                }
-            });
-        });
-
-    </script>
 
 
     <%- include('../partials/footer.ejs') %>

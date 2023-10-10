@@ -110,5 +110,7 @@ user.post('/verifyPayment',cartController.verifyPayment)
 
 //user confirmation page
 user.get('/confirmation/:id',cartController.getConfirmation)
+//download invoice
+user.get('/download-invoice/:id',cartController.getInvoice)
 
 module.exports = user;
