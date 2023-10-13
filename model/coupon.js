@@ -23,6 +23,10 @@ const coupon = mongoose.Schema({
     },
     users :{
         type : Array
+    },
+    description:{
+        type : String,
+        required : true
     }
     
 })

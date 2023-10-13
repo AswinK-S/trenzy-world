@@ -21,22 +21,31 @@
   $('#sortTable').DataTable();
 </script>
 
+
+
+
 <script>
   $('.modalBTN').click(function () {
     //user modal
-    var userId = $(this).data('id');
-    var routeURL = '/admin/userStatus/' + userId
+    let userId = $(this).data('id');
+    let routeURL = '/admin/userStatus/' + userId
     $(".modal-footer #confirmBTN").attr('href', routeURL);
 
     //category  modal
-    var categoryId = $(this).data('id');
-    var catrouteURL = '/admin/categoryStatus/' + categoryId
+    let categoryId = $(this).data('id');
+    let catrouteURL = '/admin/categoryStatus/' + categoryId
     $(".modal-footer #catconfirmBTN").attr('href', catrouteURL);
 
     //product modal
-    var productId = $(this).data('id');
-    var prodrouteURL = '/admin/productStatus/' + productId
+    let productId = $(this).data('id');
+    let prodrouteURL = '/admin/productStatus/' + productId
     $(".modal-footer #prodConfirmBTN").attr('href', prodrouteURL);
+    
+    //coupon modal
+    let couponId = $(this).data('id')
+    let = couponUrl = '/admin/couponStatus/'+ couponId
+    $('.modal-footer #couponConfirmBTN').attr('href',couponUrl)
+
   });
 </script>
 

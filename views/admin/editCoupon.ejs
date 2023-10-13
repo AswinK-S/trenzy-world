@@ -1,0 +1,68 @@
+<%- include('./adminLogHeader.ejs') %>
+
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-6">
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Edit Coupon</h6>
+                    <form action="/admin/adminCoupon/editCoupon/<%= coupon._id %>" method="post">
+
+
+
+                        <small style="color: red;" id="coupon-error" class="mt-3">
+                            <%= couponExists %>
+                        </small>
+
+
+                        <div class="mt-3 mb-3 ">
+                            <label for="addCouponName">Coupon Name</label>
+                            <input class="form-control mb-3" type="text" id="addCouponName" name="name"
+                                placeholder="enter the coupon name" aria-label="default input example"
+                                value="<%=coupon.name  %>">
+                        </div>
+
+                        <div class="mt-3 mb-3">
+                            <label for="addCouponDiscount">Coupon Discount</label>
+                            <input class="form-control mb-3" type="text" id="addCouponDiscount" name="discount"
+                                placeholder="enter the discount amount" aria-label="default input example"
+                                value="<%= coupon.discount  %>">
+                        </div>
+
+
+                        <div class="md-form md-outline input-with-post-icon datepicker mt-3 mb-3">
+
+                            <% const dd=coupon.expiryDate.getDate(); const mm=coupon.expiryDate.getMonth() + 1; const
+                                yyyy=coupon.expiryDate.getFullYear(); const formattedDate=`${dd}-${mm}-${yyyy}`; %>
+                                <label class="form-label" for="addCouponDate">Current Expiry Date (<%=formattedDate %>
+                                        )
+                                        <input placeholder="Select date" type="date" id="addCouponDate" name="date"
+                                            class="form-control" value="<%= formattedDate %>">
+                        </div>
+
+
+
+                        <div class="mt-3 mb-3">
+                            <label for="addCoupon">Purchase Limit</label>
+                            <input class="form-control mb-3" type="text" id="addCoupon" name="limit"
+                                placeholder="enter the purchase limit" aria-label="default input example"
+                                value="<%= coupon.purchaseLimit  %>">
+                        </div>
+
+                        <div class="mt-3 mb-3">
+                            <label for="addCoupon">Description</label>
+                            <input class="form-control mb-3" type="text" id="addCoupon" name="description"
+                                placeholder="enter the description" aria-label="default input example"
+                                value="<%= coupon.description  %>">
+                        </div>
+
+                        <button onclick="" type="submit" class="btn btn-primary">Edit Coupon</button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <%- include('./adminLogFooter.ejs') %>

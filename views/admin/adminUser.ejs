@@ -245,13 +245,13 @@
                                             <%if(users[i].status===true){%>
 
                                             <td>
-                                                 <a href="#confirmationPopUp" class="btn rounded-0 block-btn modalBTN" data-bs-toggle="modal"
-                                                 data-id="<%= users[i]._id %>">BLOCK</a>
+                                                 <a href="#confirmationPopUp" class="btn  rounded-0 block-btn modalBTN" data-bs-toggle="modal"
+                                                 data-id="<%= users[i]._id %>" style="color:green; border: 1px solid green;">BLOCK</a>
 
                                             </td>
                                             <%}else{%>
                                               <td><a href="#confirmationPopUp" data-id="<%= users[i]._id %>" data-bs-toggle="modal"
-                                                class="btn rounded-0 unBlock-btn modalBTN">UNBLOCK</a>
+                                                class="btn rounded-0 unBlock-btn modalBTN" style="color:red; border: 1px solid red;">UNBLOCK</a>
                                               </td>
                                               <%}%>
                                               <div class="modal fade" id="confirmationPopUp" tabindex="-1"

@@ -61,13 +61,19 @@ admin.post('/adminCategory/edit/:id',uploadForCat.single('image'),categoryContro
 // admin coupon
 admin.get('/adminCoupon',isAdmin.isLoggedIn,couponController.adminCoupon)
 admin.get('/addCoupon',couponController.getAddCoupon)
-
+admin.get('/couponStatus/:id',couponController.couponStatus)
+//add coupon
 admin.post('/addCoupon',couponController.postAddCoupon)
+//edit coupon
+admin.get('/adminCoupon/editCoupon/:id',couponController.getEditCoupon)
+//post edit coupon
+admin.post('/adminCoupon/editCoupon/:id',couponController.postEditCoupon)
 
 // admin order
 admin.get('/adminOrder',isAdmin.isLoggedIn,orderController.adminOrder)
 admin.get('/adminOrder/editOrder/:id',orderController.getAdminEditStatus)
 admin.post('/adminOrder/orderEdit/:id',isAdmin.isLoggedIn,orderController.orderStatus)
+
 // adnim banner
 admin.get('/adminBanner',isAdmin.isLoggedIn,bannerController.adminBanner)
 

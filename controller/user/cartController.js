@@ -2,6 +2,8 @@ const Product = require('../../model/product.js')
 const Cart = require('../../model/cart.js')
 const Address = require('../../model/adress.js')
 const Order = require('../../model/order.js');
+const Coupons = require('../../model/coupon.js')
+
 const Razorpay = require('razorpay');
 const crypto = require("crypto");
 const User = require('../../model/customer.js')
@@ -50,8 +52,11 @@ exports.getCart = async (req, res) => {
             return res.render('user/cart', { cart: null });
         }
 
+        const coupons = await Coupons.find({status:true})
+        console.log('coupons',coupons)
+
         // If the user has a cart with products, display the cart
-        res.render('user/cart', { cart });
+        res.render('user/cart', { cart,coupons });
     } catch (error) {
         console.log(error.message);
     }

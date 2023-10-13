@@ -19,7 +19,9 @@
                                              <th scope="col">Discount</th>
                                              <th scope="col">Expiry Date</th>
                                              <th scope="col">Purchase Limit</th>
+                                             <th scope="col">Edit</th>
                                              <th scope="col">Status</th>
+
                                         </tr>
                                    </thead>
                                    <tbody>
@@ -35,29 +37,75 @@
                                                        <%= coupons[i].discount %>
                                                   </td>
                                                   <td>
-                                                       <%= coupons[i].expiryDate %>
+                                                       <%= (new Date(coupons[i].expiryDate)).toLocaleDateString('en-GB')
+                                                            %>
+
                                                   </td>
                                                   <td>
                                                        <%= coupons[i].purchaseLimit %>
                                                   </td>
                                                   <td>
-                                                       <button type="button" class="btn btn-outline-primary"><i
-                                                                 class="fa fa-edit"></i></button>
+                                                       <a href="adminCoupon/editCoupon/<%=coupons[i]._id%>">
+                                                            <button type="button" class="btn btn-outline-primary"><i
+                                                                      class="fa fa-edit"></i></button>
+                                                       </a>
                                                   </td>
-                                                  <td>
-                                                       <% if (coupons[i].status) { %>
+                                                  <% if (coupons[i].status==true) { %>
+
+                                                       <td>
                                                             <a href="#confirmationPopUp" data-id="<%= coupons[i]._id %>"
                                                                  data-bs-toggle="modal"
                                                                  class="btn rounded-0 unBlock-btn modalBTN"
-                                                                 style="color:red; border: 1px solid red;">Unlisted</a>
-                                                            <% } else { %>
+                                                                 style="color:green; border: 1px solid green;">Listed</a>
+                                                       </td>
+
+                                                       <% } else { %>
+                                                            <td>
                                                                  <a href="#confirmationPopUp"
                                                                       data-id="<%= coupons[i]._id %>"
                                                                       data-bs-toggle="modal"
                                                                       class="btn rounded-0 unBlock-btn modalBTN"
-                                                                      style="color:green; border: 1px solid green;">Listed</a>
-                                                                 <% } %>
-                                                  </td>
+                                                                      style="color:red; border: 1px solid red;">Unlisted</a>
+                                                            </td>
+                                                            <% } %>
+                                                                 <div class="modal fade" id="confirmationPopUp"
+                                                                      tabindex="-1" aria-labelledby="exampleModalLabel"
+                                                                      aria-hidden="true">
+                                                                      <div class="modal-dialog">
+                                                                           <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                     <h1 class="modal-title fs-5"
+                                                                                          id="exampleModalLabel">Are You
+                                                                                          Sure?</h1>
+                                                                                     <button type="button"
+                                                                                          class="btn-close"
+                                                                                          data-bs-dismiss="modal"
+                                                                                          aria-label="Close"></button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+
+                                                                                     <%if(coupons[i].status===true){%>
+                                                                                          <strong> Do you want to unlist
+                                                                                               the Coupon ?</strong>
+                                                                                          <%}else{%>
+                                                                                               <strong> Do you want to
+                                                                                                    list the Coupon
+                                                                                                    ?</strong>
+                                                                                               <%}%>
+                                                                                                    <div
+                                                                                                         class="modal-footer mt-2">
+                                                                                                         <button
+                                                                                                              type="button"
+                                                                                                              class="btn btn-secondary"
+                                                                                                              data-bs-dismiss="modal">Close</button>
+                                                                                                         <a id="couponConfirmBTN"
+                                                                                                              class="btn btn-primary">Confirm</a>
+                                                                                                    </div>
+                                                                                </div>
+                                                                           </div>
+                                                                      </div>
+                                                                 </div>
+
                                              </tr>
                                              <% } %>
                                    </tbody>
