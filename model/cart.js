@@ -28,6 +28,9 @@ const cart = mongoose.Schema({
     total : {
         type:Number,
         default: 0
+    },
+    couponApplied:{
+        type:String
     }
 })
 

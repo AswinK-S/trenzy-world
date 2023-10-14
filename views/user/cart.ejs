@@ -109,6 +109,7 @@
                         <div class="card-header bg-secondary border-0">
                             <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
                         </div>
+                        <% if(cart.couponApplied=="") %>
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-3 pt-1">
                                 <h6 class="font-weight-medium">Subtotal</h6>
@@ -139,6 +140,11 @@
                                 <div class="input-group">
                                     <input type="text" id="coupon-code" class="form-control p-4"
                                         placeholder="Coupon Code">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-sm btn-secondary" id="remove-coupon-button" type="button">
+                                                <i class="fas fa-times"></i> <!-- Font Awesome "x" icon -->
+                                            </button>
+                                        </div>
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" id="apply-coupon-button" type="submit">Apply
                                             Coupon</button>
@@ -218,10 +224,10 @@
                                 console.log('response  :', response.message)
 
                                 $('#cart-total').text(` ${response.newTotal}`)
-                                $('#coupon-error-message').text('coupon applied')
+                                $('#coupon-error-message').text(response.message)
                             } else {
                                 console.log('response false', response.message)
-                                if (response.message == "already claimed the coupon") {
+                                if (response.message == "Already claimed the coupon") {
                                     $('#coupon-error-message').text(response.message)
                                 }
                                 else if (response.message.startsWith('Minimum Purchase of ₹')) {
@@ -237,6 +243,26 @@
                     })
                 })
 
+                //remove coupon
+                $('#remove-coupon-button').click(function (e){
+                    e.preventDefault()
+                    $.ajax({
+                        type:'POST',
+                        url:'/removeCoupon',
+                        success:function (response){
+                            if(response.success){
+                                $('#cart-total').text(`${response.cartTotal}`)
+                                $("#coupon-code").val("");
+                                $('#coupon-error-message').text("")
+
+                            }else{
+                                $('#cart-total').text(`${response.orginalCartTotal}`)
+                                $("#coupon-code").val("");
+                                 $('#coupon-error-message').text("")
+                            }
+                        }
+                    })
+                })
 
             });
         </script>

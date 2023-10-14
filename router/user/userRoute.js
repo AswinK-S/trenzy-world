@@ -117,5 +117,6 @@ user.get('/download-invoice/:id',isUser.loggedIn,cartController.getInvoice)
 //-------------------------------------------------------coupon---------------------------------------------\\
 
 user.post('/validateCoupon',couponController.postCouponValidation)
+user.post('/removeCoupon',couponController.postRemoveCoupon)
 
 module.exports = user;

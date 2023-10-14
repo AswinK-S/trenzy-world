@@ -45,18 +45,39 @@ exports.getCart = async (req, res) => {
         }
 
         // Find the user's cart based on userId
-        const cart = await Cart.findOne({ user: userId }).populate('products.products');
-
+        let cart = await Cart.findOne({ user: userId }).populate('products.products');
         if (!cart || cart.products.length === 0) {
             // If no cart or no products in the cart, display an empty cart
             return res.render('user/cart', { cart: null });
         }
 
-        const coupons = await Coupons.find({status:true})
-        console.log('coupons',coupons)
+        if (req.session.payableTotal) {
+            console.log('session.payabletoot', cart.couponApplied)
+            // Use the payableTotal as the cart total
+            if (cart.couponApplied === 'pending') {
+                let total = 0;
+                for (const product of cart.products) {
+                    total += product.quantity * product.products.price;
+                }
+                cart = await Cart.updateOne({ user: userId }, { $set: { total: total } })
+                cart = await Cart.findOne({ user: userId }).populate('products.products');
+                console.log('total', total)
+
+            }
+        } else {
+            total = 0;
+            for (const product of cart.products) {
+                total += product.quantity * product.products.price;
+            }
+            cart.total = total;
+            console.log('total', cart.total)
+        }
+
+        const coupons = await Coupons.find({ status: true })
+        console.log('coupons', coupons)
 
         // If the user has a cart with products, display the cart
-        res.render('user/cart', { cart,coupons });
+        res.render('user/cart', { cart, coupons });
     } catch (error) {
         console.log(error.message);
     }
@@ -275,9 +296,14 @@ exports.getCheckOut = async (req, res) => {
     try {
         console.log('check out');
         const userId = req.session.name;
-        const user = await User.findOne({_id:userId})
-        console.log('user :',user)
-        const cart = await Cart.find({ user: userId }).populate('products.products');
+        const user = await User.findOne({ _id: userId })
+        console.log('user :', user)
+        let cart = {}
+        if (req.session.payableTotal) {
+            console.log('payable session');
+            cart = await Cart.findOneAndUpdate({ user: userId }, { $set: { total: req.session.payableTotal } })
+        }
+        cart = await Cart.find({ user: userId }).populate('products.products');
         console.log("cart", cart);
         console.log('products',)
         const userAddresses = await Address.find({ user: userId }, 'addressField');
@@ -297,7 +323,7 @@ exports.getCheckOut = async (req, res) => {
 
 
         console.log('user addresses', allAddresses);
-        res.render('user/checkOut', { allAddresses, cart,user });
+        res.render('user/checkOut', { allAddresses, cart, user });
     } catch (error) {
         console.log(error.message);
     }
@@ -314,15 +340,15 @@ exports.postCheckOut = async (req, res) => {
         console.log('placing order')
         const userId = req.session.name;
         const selectedAddressId = req.body?.selectedAddressId;
-        const paymentMethod = req.body?.payment||'';
+        const paymentMethod = req.body?.payment || '';
         const user = await User.findOne({ _id: userId })
         console.log(user, "user")
         let walletAmount = parseInt(user.wallet)
         console.log('wallet amount :', walletAmount)
         console.log('seleted addrs :', selectedAddressId, 'payment :', paymentMethod)
 
-        if(!selectedAddressId){
-            return res.status(200).json({success: true,msg:"Please select any address"})
+        if (!selectedAddressId) {
+            return res.status(200).json({ success: true, msg: "Please select any address" })
         }
         if (selectedAddressId[0].length == 0 && selectedAddressId[1].length == 0) {
             // req.app.locals.addressError = "please select any address"
@@ -330,7 +356,7 @@ exports.postCheckOut = async (req, res) => {
             console.log('addd');
             return res.status(200).json({ success: true, msg: "Please select any address" });
         }
-         
+
 
         //extracting the addressid 
         let addressId = null
@@ -349,7 +375,7 @@ exports.postCheckOut = async (req, res) => {
 
         if (!paymentMethod) {
             // req.app.locals.paymentError = "please select any valid payment method"
-            
+
             // return res.redirect('/checkout')
             console.log('pymntttt');
             return res.status(200).json({ success: true, msg: "Please select any valid payment method" });
@@ -395,6 +421,13 @@ exports.postCheckOut = async (req, res) => {
             await newOrder.save();
             console.log("neworder", newOrder)
             const orderId = newOrder._id
+
+            //if  coupon discount applied 
+            if (req.session.appliedCoupon) {
+                let coupon = await Coupons.updateOne({ name: req.session.appliedCoupon }, { $push: { users: userId } });
+                console.log('coupon save', coupon)
+                await coupon.save();
+            }
 
             await updateProductQuantities(cart.products);
 
@@ -499,6 +532,13 @@ exports.postCheckOut = async (req, res) => {
                 console.log("neworder", newOrder)
                 const orderId = newOrder._id
 
+                //if  coupon discount applied 
+                if (req.session.appliedCoupon) {
+                    let coupon = await Coupons.updateOne({ name: req.session.appliedCoupon }, { $push: { users: userId } });
+                    console.log('coupon save', coupon)
+                    await coupon.save();
+                }
+
                 await updateProductQuantities(cart.products);
 
                 await Cart.deleteOne({ user: userId })
@@ -516,7 +556,7 @@ exports.postCheckOut = async (req, res) => {
                 // req.app.locals.paymentError = "Insufficient wallet balance";
                 // return res.redirect('/checkout');
 
-                return res.status(200).json({success:true,msg:'Insufficient wallet balance'})
+                return res.status(200).json({ success: true, msg: 'Insufficient wallet balance' })
             }
         }
 
@@ -530,12 +570,19 @@ exports.postCheckOut = async (req, res) => {
 
 
 // Helper function to calculate the total order amount
-function calculateTotalAmount(products) {
+async function calculateTotalAmount(products) {
     console.log('calculating price')
     console.log('products', products)
     let total = 0;
     for (const item of products) {
         total += item.products.price * item.quantity;
+
+        //if  coupon discount applied 
+        if (req.session.appliedCoupon) {
+            let coupon = await Coupons.updateOne({ name: req.session.appliedCoupon }, { $push: { users: userId } });
+            console.log('coupon save', coupon)
+            await coupon.save();
+        }
     }
     return total;
 }
@@ -569,7 +616,7 @@ exports.verifyPayment = async (req, res) => {
     try {
         console.log(" varify payment")
         console.log("req.body", req.body)
-
+        const userId = req.session.name;
         const orderId = req.body.orderId
         console.log(orderId, "orderId");
 
@@ -584,6 +631,14 @@ exports.verifyPayment = async (req, res) => {
         if (razorpay_signature === expectedSign) {
             console.log("successs")
             await Order.findOneAndUpdate({ _id: orderId }, { $set: { orderStatus: 'Sucess' } })
+
+            //if  coupon discount applied 
+            if (req.session.appliedCoupon) {
+                let coupon = await Coupons.updateOne({ name: req.session.appliedCoupon }, { $push: { users: userId } });
+                console.log('coupon save', coupon)
+                await coupon.save();
+            }
+
             await Cart.deleteOne({ user: req.session.name })
             return res.send({ success: true })
         }
@@ -631,7 +686,7 @@ exports.checkoutNewAdd = async (req, res) => {
         await userAddress.save();
 
         console.log('New address added:', newAddress);
-        res.status(200).json({ok:'true'})
+        res.status(200).json({ ok: 'true' })
         // res.redirect('/checkout');
     } catch (error) {
         console.error(error.message);
