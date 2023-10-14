@@ -10,6 +10,7 @@ const addressController = require('../../controller/user/addressController')
 const cartController = require('../../controller/user/cartController')
 const productController = require('../../controller/user/productController')
 const orderController = require('../../controller/user/orderController')
+const couponController = require('../../controller/user/couponController')
 
 
 //home
@@ -112,5 +113,9 @@ user.post('/verifyPayment',isUser.loggedIn,cartController.verifyPayment)
 user.get('/confirmation/:id',isUser.loggedIn,cartController.getConfirmation)
 //download invoice
 user.get('/download-invoice/:id',isUser.loggedIn,cartController.getInvoice)
+
+//-------------------------------------------------------coupon---------------------------------------------\\
+
+user.post('/validateCoupon',couponController.postCouponValidation)
 
 module.exports = user;
