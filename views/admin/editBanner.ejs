@@ -1,0 +1,42 @@
+
+<%- include('./adminLogHeader.ejs') %>
+
+
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">File Input</h6>
+                <form action="/admin/adminBanner/edit/<%=banner._id%>" method="post" enctype="multipart/form-data">
+
+                    <div>
+                        <label for="formFileLg" class="form-label">Large file input example</label>
+                        <input class="form-control form-control-md" id="formFileLg" name="image" type="file"
+                            accept="image/*" value="<%=banner.image %>" single>
+                    </div>
+
+                    <div class="mt-3 mb-3">
+                        <label for="addCat">Banner name</label>
+                        <input class="form-control mb-3" type="text" id="addCat" value="<%=banner.name %>" name="name"
+                            placeholder="Default input" aria-label="default input example"> 
+                    </div>
+
+                    <div class="mt-3 mb-3">
+                        <label for="addCat">Banner description</label>
+                        <input class="form-control mb-3" type="text" id="addCat" value="<%=banner.name %>" name="description"
+                            placeholder="Default input" aria-label="default input example"> 
+                    </div>
+
+                    <small style="color: red;" class="mt-3">
+                        <%=locals.error?error:'' %>
+                    </small>
+                    <button onclick="" type="submit" class="btn btn-primary">Update</button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <%- include('./adminLogFooter.ejs') %>
+

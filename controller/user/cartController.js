@@ -28,6 +28,10 @@ const RAZORPAY_ID_KEY = process.env.RAZORPAY_ID_KEY;
 const RAZORPAY_SECRET_KEY = process.env.RAZORPAY_SECRET_KEY;
 
 
+//address id to use in verifypayment and in selecting address in checkOut page
+let addressId = null
+
+
 var Instance = new Razorpay({
     key_id: RAZORPAY_ID_KEY,
     key_secret: RAZORPAY_SECRET_KEY
@@ -341,6 +345,7 @@ exports.postCheckOut = async (req, res) => {
         const userId = req.session.name;
         const selectedAddressId = req.body?.selectedAddressId;
         const paymentMethod = req.body?.payment || '';
+        const appliedcoupon = req.session.appliedCoupon
         const user = await User.findOne({ _id: userId })
         console.log(user, "user")
         let walletAmount = parseInt(user.wallet)
@@ -358,8 +363,6 @@ exports.postCheckOut = async (req, res) => {
         }
 
 
-        //extracting the addressid 
-        let addressId = null
         //if there is multiple address the address will be inside  an array
         if (Array.isArray(selectedAddressId)) {
             for (let i = 0; i < selectedAddressId.length; i++) {
@@ -390,7 +393,8 @@ exports.postCheckOut = async (req, res) => {
         }
 
         // Calculate the total order amount based on cart contents
-        const subTotal = calculateTotalAmount(cart.products);
+        const subTotal = await calculateTotalAmount(cart.products, appliedcoupon, userId);
+        console.log('subTotal :', subTotal)
         const totalAmount = subTotal + 10
         console.log('total amt', totalAmount)
 
@@ -422,15 +426,13 @@ exports.postCheckOut = async (req, res) => {
             console.log("neworder", newOrder)
             const orderId = newOrder._id
 
-            //if  coupon discount applied 
-            if (req.session.appliedCoupon) {
-                let coupon = await Coupons.updateOne({ name: req.session.appliedCoupon }, { $push: { users: userId } });
-                console.log('coupon save', coupon)
-                await coupon.save();
+            // Check if a coupon is applied
+            if (appliedcoupon) {
+                console.log('Coupon is applied:', appliedcoupon);
+                await updateCouponUsers(appliedcoupon, userId);
             }
 
             await updateProductQuantities(cart.products);
-
             await Cart.deleteOne({ user: userId })
             // Redirect to the confirmation page with order details
             // res.redirect(`confirmation/${orderId}`);
@@ -443,6 +445,246 @@ exports.postCheckOut = async (req, res) => {
 
 
         } else if (paymentMethod == 'onlinePayment') {
+            // const newOrder = new Order({
+            //     user: userId,
+            //     products: cart.products.map(item => ({
+            //         products: item.products._id,
+            //         name: item.products.name,
+            //         price: item.products.price,
+            //         quantity: item.quantity,
+            //         size: item.size
+            //     })),
+            //     orderStatus: 'Pending',
+            //     paymentMode: paymentMethod,
+            //     total: totalAmount,
+            //     date: new Date(),
+            //     address: {
+
+            //         addressId: addressId,
+            //     }
+            // });
+
+
+            // // Save the new order to the database
+            // await newOrder.save();
+            // console.log("neworder", newOrder)
+            // const orderId = newOrder._id
+            // console.log('oordrrrid :', orderId)
+            // await updateProductQuantities(cart.products);
+
+
+            // console.log('userId', userId)
+            // const addres = await Address.findOne({ user: userId })
+            // console.log('address', addres)
+            // const addrs = addres.addressField
+            // console.log('addrs', addrs)
+            // const selectedAddrss = addrs.find((item) => {
+            //     return item._id == addressId;
+            // })
+            // console.log('selected address', selectedAddrss)
+
+            const amount = totalAmount
+            console.log("___amount :L : ", amount)
+            const options = {
+                amount: amount * 100,
+                currency: 'INR',
+                receipt: crypto.randomBytes(10).toString('hex')
+            }
+
+            Instance.orders.create(options, (error, order) => {
+                if (error) {
+                    console.log(error.message);
+                    return res.status(500).json({ success: false, message: "Something went wrong!" })
+                } else {
+                    // order.newOid = newOrder._id
+                    // req.session.OrderId=newOrder._id
+
+                    console.log(order, "order");
+
+                    res.status(200).json({ success: true, message: "success", data: order, paymentMethod: paymentMethod })
+                }
+            })
+        } else if (paymentMethod == 'wallet') {
+            console.log('wallet purchase')
+            if (walletAmount >= totalAmount) {
+                console.log('wallet has amount');
+                const newOrder = new Order({
+                    user: userId,
+                    products: cart.products.map(item => ({
+                        products: item.products._id,
+                        name: item.products.name,
+                        price: item.products.price,
+                        quantity: item.quantity,
+                        size: item.size
+                    })),
+                    orderStatus: 'sucess',
+                    paymentMode: paymentMethod,
+                    total: totalAmount,
+                    date: new Date(),
+                    address: {
+
+                        addressId: addressId,
+                    }
+                });
+
+
+
+                // Save the new order to the database
+                await newOrder.save();
+                console.log("neworder", newOrder)
+                const orderId = newOrder._id
+
+                // Check if a coupon is applied
+                if (appliedcoupon) {
+                    console.log('Coupon is applied:', appliedcoupon);
+                    await updateCouponUsers(appliedcoupon, userId);
+                }
+
+                await updateProductQuantities(cart.products);
+
+                await Cart.deleteOne({ user: userId })
+                await User.updateOne({ _id: userId }, { $inc: { wallet: -totalAmount } })
+                // Redirect to the confirmation page with order details
+                // res.redirect(`confirmation/${orderId}`);
+
+                res.status(200).json({
+                    success: true,
+                    paymentMethod: paymentMethod,
+                    order_id: orderId,
+                });
+            } else {
+                console.log('not enough amount in wallet')
+                // req.app.locals.paymentError = "Insufficient wallet balance";
+                // return res.redirect('/checkout');
+
+                return res.status(200).json({ success: true, msg: 'Insufficient wallet balance' })
+            }
+        }
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+
+
+
+// Helper function to calculate the total order amount
+async function calculateTotalAmount(products, appliedcoupon, userId) {
+    console.log('calculating price')
+    console.log('products', products)
+    let total = 0;
+    for (const item of products) {
+        total += (item.products.price * item.quantity);
+    }
+
+    // Check if a coupon is applied
+    if (appliedcoupon) {
+        try {
+            console.log('Coupon is applied:', appliedcoupon);
+
+            // Find the existing coupon by name
+            const coupon = await Coupons.findOne({ name: appliedcoupon });
+            console.log('coupon', coupon);
+            if (coupon) {
+                total = total - coupon.discount
+                console.log('discount amount deducted ', coupon, total);
+            }
+            else {
+                console.log('Coupon not found:', appliedcoupon);
+            }
+        } catch (error) {
+            console.error('Error while handling coupon:', error);
+        }
+    }
+
+    console.log('total____: ', total)
+    return total;
+}
+
+// Helper function to update product quantities in the Product collection
+async function updateProductQuantities(cartProducts) {
+    try {
+        console.log('updateproductquantites', cartProducts);
+        for (const item of cartProducts) {
+            const productId = item.products._id;
+            const purchasedQuantity = item.quantity;
+
+            const product = await Product.findById(productId);
+
+            if (product && product.quantity >= purchasedQuantity) {
+                product.quantity -= purchasedQuantity;
+                await product.save();
+            } else {
+                console.error(`Product ${productId} not found or insufficient quantity.`);
+            }
+        }
+    } catch (error) {
+        console.error('Error updating product quantities:', error);
+    }
+}
+
+//helper function to update the users array of the coupon when the coupon is applied
+async function updateCouponUsers(couponName, userId) {
+    try {
+        // Find the existing coupon by name
+        const coupon = await Coupons.findOne({ name: couponName });
+
+        if (coupon) {
+            // Check if the user's ID is not already in the "users" array
+            if (!coupon.users.includes(userId)) {
+                // Update the "users" array of the existing coupon
+                console.log('updating the coupon');
+                await Coupons.findOneAndUpdate(
+                    { name: couponName },
+                    { $push: { users: userId } }
+                );
+
+                console.log('User added to existing coupon.');
+            } else {
+                console.log('User already exists in the coupon:', coupon.users);
+            }
+        } else {
+            console.log('Coupon not found:', couponName);
+        }
+    } catch (error) {
+        console.error('Error while handling coupon:', error);
+    }
+}
+
+
+//veryfy payment
+exports.verifyPayment = async (req, res) => {
+
+    try {
+        console.log(" varify payment")
+        console.log("req.body", req.body)
+        const userId = req.session.name;
+        // const orderId = req.body.orderId
+        const appliedcoupon = req.session.appliedCoupon
+        // console.log(orderId, "orderId");
+        const totalAmount =parseInt(req.body.amount/100) 
+        console.log('total amount', totalAmount);
+        const { razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature } = req.body.payment
+
+        console.log('req. payment :', req.body.payment)
+
+        const sign = razorpay_order_id + '|' + razorpay_payment_id;
+        const expectedSign = crypto.createHmac("sha256", RAZORPAY_SECRET_KEY).update(sign.toString()).digest('hex');
+        if (razorpay_signature === expectedSign) {
+            console.log("successs")
+            // await Order.findOneAndUpdate({ _id: orderId }, { $set: { orderStatus: 'Sucess' } })
+
+            // Fetch the user's cart contents
+            const cart = await Cart.findOne({ user: userId }).populate('products.products');
+            console.log('cart', cart)
+            if (!cart) {
+                console.log('cart is not there');
+            }
+            const paymentMethod = 'onlinePayment'
             const newOrder = new Order({
                 user: userId,
                 products: cart.products.map(item => ({
@@ -481,166 +723,15 @@ exports.postCheckOut = async (req, res) => {
             })
             console.log('selected address', selectedAddrss)
 
-            const amount = totalAmount
-            console.log("___amount :L : ", amount)
-            const options = {
-                amount: amount * 100,
-                currency: 'INR',
-                receipt: crypto.randomBytes(10).toString('hex')
+            // Check if a coupon is applied
+            if (appliedcoupon) {
+                console.log('Coupon is applied:', appliedcoupon);
+                await updateCouponUsers(appliedcoupon, userId);
             }
 
-            Instance.orders.create(options, (error, order) => {
-                if (error) {
-                    console.log(error.message);
-                    return res.status(500).json({ success: false, message: "Something went wrong!" })
-                } else {
-                    order.newOid = newOrder._id
-                    // req.session.OrderId=newOrder._id
-
-                    console.log(order, "order");
-
-                    res.status(200).json({ success: true, message: "success", data: order, paymentMethod: paymentMethod })
-                }
-            })
-        } else if (paymentMethod == 'wallet') {
-            console.log('wallet purchase')
-            if (walletAmount >= totalAmount) {
-                console.log('wallet has amount');
-                const newOrder = new Order({
-                    user: userId,
-                    products: cart.products.map(item => ({
-                        products: item.products._id,
-                        name: item.products.name,
-                        price: item.products.price,
-                        quantity: item.quantity,
-                        size: item.size
-                    })),
-                    orderStatus: 'sucess',
-                    paymentMode: paymentMethod,
-                    total: totalAmount,
-                    date: new Date(),
-                    address: {
-
-                        addressId: addressId,
-                    }
-                });
-
-
-
-                // Save the new order to the database
-                await newOrder.save();
-                console.log("neworder", newOrder)
-                const orderId = newOrder._id
-
-                //if  coupon discount applied 
-                if (req.session.appliedCoupon) {
-                    let coupon = await Coupons.updateOne({ name: req.session.appliedCoupon }, { $push: { users: userId } });
-                    console.log('coupon save', coupon)
-                    await coupon.save();
-                }
-
-                await updateProductQuantities(cart.products);
-
-                await Cart.deleteOne({ user: userId })
-                await User.updateOne({ _id: userId }, { $inc: { wallet: -totalAmount } })
-                // Redirect to the confirmation page with order details
-                // res.redirect(`confirmation/${orderId}`);
-
-                res.status(200).json({
-                    success: true,
-                    paymentMethod: paymentMethod,
-                    order_id: orderId,
-                });
-            } else {
-                console.log('not enough amount in wallet')
-                // req.app.locals.paymentError = "Insufficient wallet balance";
-                // return res.redirect('/checkout');
-
-                return res.status(200).json({ success: true, msg: 'Insufficient wallet balance' })
-            }
-        }
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-};
-
-
-
-
-// Helper function to calculate the total order amount
-async function calculateTotalAmount(products) {
-    console.log('calculating price')
-    console.log('products', products)
-    let total = 0;
-    for (const item of products) {
-        total += item.products.price * item.quantity;
-
-        //if  coupon discount applied 
-        if (req.session.appliedCoupon) {
-            let coupon = await Coupons.updateOne({ name: req.session.appliedCoupon }, { $push: { users: userId } });
-            console.log('coupon save', coupon)
-            await coupon.save();
-        }
-    }
-    return total;
-}
-
-// Helper function to update product quantities in the Product collection
-async function updateProductQuantities(cartProducts) {
-    try {
-        console.log('updateproductquantites', cartProducts);
-        for (const item of cartProducts) {
-            const productId = item.products._id;
-            const purchasedQuantity = item.quantity;
-
-            const product = await Product.findById(productId);
-
-            if (product && product.quantity >= purchasedQuantity) {
-                product.quantity -= purchasedQuantity;
-                await product.save();
-            } else {
-                console.error(`Product ${productId} not found or insufficient quantity.`);
-            }
-        }
-    } catch (error) {
-        console.error('Error updating product quantities:', error);
-    }
-}
-
-
-//veryfy payment
-exports.verifyPayment = async (req, res) => {
-
-    try {
-        console.log(" varify payment")
-        console.log("req.body", req.body)
-        const userId = req.session.name;
-        const orderId = req.body.orderId
-        console.log(orderId, "orderId");
-
-        const { razorpay_order_id,
-            razorpay_payment_id,
-            razorpay_signature } = req.body.payment
-
-
-
-        const sign = razorpay_order_id + '|' + razorpay_payment_id;
-        const expectedSign = crypto.createHmac("sha256", RAZORPAY_SECRET_KEY).update(sign.toString()).digest('hex');
-        if (razorpay_signature === expectedSign) {
-            console.log("successs")
-            await Order.findOneAndUpdate({ _id: orderId }, { $set: { orderStatus: 'Sucess' } })
-
-            //if  coupon discount applied 
-            if (req.session.appliedCoupon) {
-                let coupon = await Coupons.updateOne({ name: req.session.appliedCoupon }, { $push: { users: userId } });
-                console.log('coupon save', coupon)
-                await coupon.save();
-            }
 
             await Cart.deleteOne({ user: req.session.name })
-            return res.send({ success: true })
+            return res.send({ success: true, orderId })
         }
 
 

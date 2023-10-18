@@ -12,6 +12,15 @@ exports.userAccount = async (req, res) => {
         const userId = req.session.name;
         const userData = await User.findOne({ _id: userId });
         console.log('user data', userData);
+        let referralLink =""
+        
+        if (userData.referral) {
+            console.log("refferal is there")
+            const referralCode = userData.referral; // Replace with the actual referral code
+            const signUpURL = 'http://localhost:3000/signUp'; // Replace with your website's sign-up URL
+            referralLink = `${signUpURL}?referral=${referralCode}`;
+
+        }
 
         const userAddresses = await Address.find({ user: userId }, 'addressField');
         const allAddresses = [];
@@ -23,7 +32,7 @@ exports.userAccount = async (req, res) => {
         }
 
         console.log('user addresses', allAddresses);
-        res.render("user/userProfile", { userData, allAddresses });
+        res.render("user/userProfile", { userData, allAddresses,referralLink });
     } catch (error) {
         console.log(error.message);
     }
@@ -31,12 +40,12 @@ exports.userAccount = async (req, res) => {
 
 
 //get user details edit page 
-exports.getUserEdit= async(req,res)=>{
+exports.getUserEdit = async (req, res) => {
     console.log('user profile edit page')
     const userId = req.session.name
     const userData = await User.findOne({ _id: userId })
-    console.log('user data',userData)
-    res.render('user/editProfile',{userData})
+    console.log('user data', userData)
+    res.render('user/editProfile', { userData })
 
 }
 
@@ -62,13 +71,13 @@ exports.updateUser = async (req, res) => {
 }
 
 //user get address
-exports.getAddAddress = async(req,res)=>{
-    try{
+exports.getAddAddress = async (req, res) => {
+    try {
         console.log('adress page')
         const userId = req.session.name
         const userData = await User.findOne({ _id: userId })
-        res.render('user/addAdress',{userData})
-    }catch(error){
+        res.render('user/addAdress', { userData })
+    } catch (error) {
         console.log(error.message)
     }
 }
@@ -117,12 +126,12 @@ exports.postAddAddress = async (req, res) => {
 
 
 //user delete address
-exports.deleteAdd=async(req,res)=>{
+exports.deleteAdd = async (req, res) => {
     try {
         console.log('delete address')
-        const userId=req.session.name
-        const addressId=req.params.id
-        console.log("address id ",addressId);
+        const userId = req.session.name
+        const addressId = req.params.id
+        console.log("address id ", addressId);
         await Address.updateOne(
             { user: userId },
             { $pull: { addressField: { _id: addressId } } }

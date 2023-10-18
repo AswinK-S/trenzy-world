@@ -1,8 +1,59 @@
 <%- include('./adminLogHeader.ejs') %>
 
-     </div>
+<div class="container-fluid pt-4 px-4">
+  <div class="mb-2">
+    <a href="adminBanner/addBanner">
+      <button type="button" class="btn btn-primary">Add banner</button>
+    </a>
+  </div>
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="bg-light rounded h-100 p-4">
+        <h6 class="mb-4">Banner</h6>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Image</th>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (banner.length > 0) {
+              for (let i = 0; i < banner.length; i++) { %>
+                <tr>
+                  <td><%= i + 1 %></td>
+                  <td>
+                    <% if (banner[i].image) { %>
+                      <div>
+                        <img class="img-fluid" width="40rem" src="/bannerImages/<%= banner[i].image %>"
+                          alt="<%= banner[i].name %>">
+                      </div>
+                    <% } else { %>
+                      No image
+                    <% } %>
+                  </td>
+                  <td><%= banner[i].name %></td>
+                  <td><%= banner[i].description  %></td>
+                  <td>
+                    <a href="adminBanner/edit/<%=banner[i]._id%>">
+                      <button type="button" class="btn btn-outline-primary"><i class="fa fa-edit"></i></button>
+                    </a>
+                  </td>
+                </tr>
+              <% }
+            } else { %>
+              <tr>
+                <td colspan="4">Banners not found</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
-     <!-- Content End -->
-
-
-       <%- include('./adminLogFooter.ejs') %>
+<%- include('./adminLogFooter.ejs') %>

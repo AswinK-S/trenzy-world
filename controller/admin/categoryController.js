@@ -56,7 +56,7 @@ exports.getCategoryEdit = async (req, res) => {
 
         console.log('img', catagoryData.image)
 
-        res.render('admin/editCategory', { catagoryData, })
+        res.render('admin/editCategory', { catagoryData })
     } catch (error) {
         console.log(error.message)
     }

@@ -31,6 +31,9 @@ const customer = mongoose.Schema({
     wallet:{
         type:Number,
         default: 0
+    },
+    referral:{
+        type:String
     }
 
 

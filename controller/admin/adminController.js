@@ -60,12 +60,33 @@ exports.getAdmin = async (req, res, next) => {
         const chartData = totalSalesByMonth.map(item => item.totalSales);
 
 
+        // //total sales by year
+        const totalSalesByYear = await Order.aggregate([
+            {
+                $project: {
+                    year: { $year: '$date' },
+                    total: 1,
+                }
+            },
+            {
+                $group: {
+                    _id: { year: '$year' },
+                    totalSales: { $sum: '$total' }
+                }
+            },
+            {
+                $sort: { '_id.year': 1 }
+            },
+        ])
+
+        const chartLabel = totalSalesByYear.map(item => item._id.year.toString());
+        const chartDatas = totalSalesByYear.map(item => item.totalSales);
 
         console.log('chartLabels :', chartLabels, 'chartData :', chartData);
 
         console.log('Total Sales by Month:', totalSalesByMonth);
 
-        res.render('admin/adminDash', { totalSalesAmount, totalRevenue, chartData, chartLabels })
+        res.render('admin/adminDash', { totalSalesAmount, totalRevenue, chartData, chartLabels,chartLabel,chartDatas })
     } catch (error) {
         console.log(error)
     }

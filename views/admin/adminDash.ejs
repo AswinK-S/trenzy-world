@@ -4,15 +4,7 @@
 
     <div class="container-fluid pt-4 px-4">
         <div class="row g-4">
-            <!-- <div class="col-sm-6 col-xl-3">
-                        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-chart-line fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Today Sale</p>
-                                <h6 class="mb-0">$1234</h6>
-                            </div>
-                        </div>
-                    </div> -->
+            
             <div class="col-sm-6 col-xl-3">
                 <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                     <i class="fa fa-chart-bar fa-3x text-primary"></i>
@@ -23,15 +15,7 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="col-sm-6 col-xl-3">
-                        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-chart-area fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Today Revenue</p>
-                                <h6 class="mb-0">$1234</h6>
-                            </div>
-                        </div>
-                    </div> -->
+            
             <div class="col-sm-6 col-xl-3">
                 <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                     <i class="fa fa-chart-pie fa-3x text-primary"></i>
@@ -52,45 +36,68 @@
 
 
 
-
-    <!-- Sales Chart Start -->
-
+    <!-- Monthly Chart -->
     <div class="container-fluid pt-4 px-4">
         <div class="row g-4">
             <div class="col-sm-12 col-xl-6">
                 <div class="bg-light text-center rounded p-4">
                     <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h6 class="mb-0">Salse & Revenue</h6>
-                        <!-- <a href="">Show All</a> -->
+                        <h6 class="mb-0">Monthly Sales</h6>
                     </div>
-                    <canvas id="salesChart" width="400" height="200"></canvas>
+                    <canvas id="monthlySalesChart" width="400" height="200"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Sales Chart End -->
+    <!-- Yearly Chart -->
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-6">
+                <div class="bg-light text-center rounded p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h6 class="mb-0">Yearly Sales </h6>
+                    </div>
+                    <canvas id="yearlySalesChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Buttons to toggle charts -->
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12">
+                <div class="d-flex align-items-center justify-content-center mb-4">
+                    <button id="toggleYearly" class="btn btn-primary m-2">View Yearly</button>
+                    <button id="toggleMonthly" class="btn btn-primary m-2">View Monthly</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Access the chartData and chartLabels variables here
-            var chartData = JSON.parse('<%- JSON.stringify(chartData) %>');
-            var chartLabels = JSON.parse('<%- JSON.stringify(chartLabels) %>');
+            var chartDataMonthly = JSON.parse('<%- JSON.stringify(chartData) %>');
+            var chartLabelsMonthly = JSON.parse('<%- JSON.stringify(chartLabels) %>');
+            var chartDataYearly = JSON.parse('<%- JSON.stringify(chartDatas) %>');
+            var chartLabelsYearly = JSON.parse('<%- JSON.stringify(chartLabel) %>');
     
-            // Get the chart canvas element by ID
-            const ctx = document.getElementById("salesChart").getContext("2d");
+            // Get the chart canvas elements by ID
+            const ctxMonthly = document.getElementById("monthlySalesChart").getContext("2d");
+            const ctxYearly = document.getElementById("yearlySalesChart").getContext("2d");
     
-            // Create the chart
-            const salesChart = new Chart(ctx, {
+            // Create the initial monthly chart
+            const monthlyChart = new Chart(ctxMonthly, {
                 type: "line",
                 data: {
-                    labels: chartLabels,
+                    labels: chartLabelsMonthly,
                     datasets: [
                         {
-                            label: "Sales",
-                            data: chartData,
+                            label: "Monthly Sales",
+                            data: chartDataMonthly,
                             borderColor: "rgba(75, 192, 192, 1)",
                             backgroundColor: "rgba(75, 192, 192, 0.2)",
                         },
@@ -105,8 +112,58 @@
                     }
                 },
             });
+    
+            // Create the yearly chart (initially hidden)
+            const yearlyChart = new Chart(ctxYearly, {
+                type: "line",
+                data: {
+                    labels: chartLabelsYearly,
+                    datasets: [
+                        {
+                            label: "Yearly Sales",
+                            data: chartDataYearly,
+                            borderColor: "rgba(75, 192, 192, 1)",
+                            backgroundColor: "rgba(75, 192, 192, 0.2)",
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                },
+            });
+    
+            // Keep track of the active chart
+            let activeChart = monthlyChart;
+    
+            // Hide the yearly chart initially
+            document.getElementById("yearlySalesChart").style.display = "none";
+    
+            // Toggle between yearly and monthly charts
+            document.getElementById("toggleYearly").addEventListener("click", function () {
+                if (activeChart === monthlyChart) {
+                    activeChart = yearlyChart;
+                    document.getElementById("monthlySalesChart").style.display = "none";
+                    document.getElementById("yearlySalesChart").style.display = "block";
+                }
+            });
+    
+            document.getElementById("toggleMonthly").addEventListener("click", function () {
+                if (activeChart === yearlyChart) {
+                    activeChart = monthlyChart;
+                    document.getElementById("yearlySalesChart").style.display = "none";
+                    document.getElementById("monthlySalesChart").style.display = "block";
+                }
+            });
         });
     </script>
+    
+    
+
 
 
     <%- include('./adminLogFooter.ejs') %>

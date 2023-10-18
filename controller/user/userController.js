@@ -8,7 +8,7 @@ const smtpTransport = require('nodemailer-smtp-transport');
 const User = require('../../model/customer.js')
 const Product = require('../../model/product.js')
 const Category = require('../../model/category.js');
-
+const Banner = require('../../model/banner.js')
 
 // login page
 exports.login = async (req, res) => {
@@ -194,8 +194,9 @@ exports.getHome = async (req, res) => {
         const t_shirt = await Category.findOne({ $and: [{ "name": "T-Shirt" }, { "status": "true" }] })
         const jeans = await Category.findOne({ $and: [{ "name": "Jeans" }, { "status": "true" }] })
         const pant = await Category.findOne({ $and: [{ "name": "Casual Pant" }, { "status": "true" }] })
+        const banner = await Banner.find({})
 
-        res.render('home', { user, product, shirt, pant, jeans, t_shirt })
+        res.render('home', { user, product, shirt, pant, jeans, t_shirt,banner })
 
     } catch (error) {
         console.log(error)
@@ -247,6 +248,10 @@ exports.signUp = async (req, res) => {
     try {
 
         console.log('signUp page')
+        const referralCode = req.query.referral
+        console.log('referralcode', referralCode)
+        req.session.referral=referralCode
+
         const emailExistMessage = req.app.locals.specialContext
         req.app.locals.specialContext = null
         res.render('user/signUp', { emailExistMessage })
@@ -356,6 +361,7 @@ exports.verifyOTPPost = async (req, res) => {
         if (otp1 === otp2) {
             const user = req.session.userData
             console.log(user);
+            const referralCode = generateReferralCode()
             const hashedPassword = await bcrypt.hash(user.password, 10);
             const newUser = new User({
                 name: user.name,
@@ -363,9 +369,20 @@ exports.verifyOTPPost = async (req, res) => {
                 email: user.email,
                 phone: user.phone,
                 password: hashedPassword,
+                referral:referralCode
             });
             await newUser.save()
 
+            if (req.session.referral) {
+                const referrer = await User.findOne({ referral: req.session.referral});
+                if (referrer) {
+                    console.log('referrer')
+                    // Add referral income to the referrer's wallet
+                    const referralIncome = 50; // You can set the desired amount
+                    referrer.wallet += referralIncome;
+                    await referrer.save();
+                }
+            }
             res.redirect('/login');
         } else {
             req.app.locals.otpError = 'invalid otp'
@@ -377,7 +394,11 @@ exports.verifyOTPPost = async (req, res) => {
     }
 }
 
-
+// Generate a unique code or link,
+function generateReferralCode() {
+    // You can use libraries like shortid or generate your custom code.
+    return 'REF' + Math.random().toString(36).substr(2, 8);
+  }
 
 
 

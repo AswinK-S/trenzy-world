@@ -4,6 +4,7 @@ const router = express.Router()
 const nocache = require('nocache')
 const uploadForCat = require('../../config/multerCate')//multer category
 const uploadProd =require('../../config/multerProd')//multer product
+const uploadBanner = require('../../config/multerBanner')//multer banner
 
 //middlewear
 const isAdmin = require('../../middleware/adminAuth')
@@ -76,5 +77,13 @@ admin.post('/adminOrder/orderEdit/:id',isAdmin.isLoggedIn,orderController.orderS
 
 // adnim banner
 admin.get('/adminBanner',isAdmin.isLoggedIn,bannerController.adminBanner)
+
+admin.get('/adminBanner/addBanner',isAdmin.isLoggedIn,bannerController.getAddBanner)       //get  add banner page
+admin.post('/adminBanner/addBanner',uploadBanner.single('image'),bannerController.postAddBanner)  //post category 
+
+admin.get('/adminBanner/edit/:id',isAdmin.isLoggedIn,bannerController.getbannerEdit)     // edit category
+admin.post('/adminBanner/edit/:id',uploadBanner.single('image'),bannerController.postBannerEdit)   // post edit category
+
+
 
 module.exports = admin

@@ -88,7 +88,41 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
     integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
     crossorigin="anonymous" referrerpolicy="no-referrer">
-    </script>
+</script>
+
+<!-- script to copy the referral link -->
+<script>
+    // Function to copy referral link to clipboard
+    function copyReferralLink() {
+        var referralLink = document.getElementById("referralLink");
+        var copyMessage = document.getElementById("copyMessage");
+
+        // Create a temporary input element to hold the text to be copied
+        var tempInput = document.createElement("input");
+        tempInput.value = referralLink.innerText;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+
+        // Show the message on the webpage
+        copyMessage.style.display = "block";
+        copyMessage.textContent = "Link copied to clipboard";
+
+        setTimeout(function () {
+            copyMessage.style.display = "none";
+        }, 3000);
+    }
+
+    // Add a click event listener to the referral link
+    var referralLinkElement = document.getElementById("referralLink");
+    referralLinkElement.addEventListener("click", function (event) {
+        event.preventDefault();
+        copyReferralLink();
+    });
+</script>
+
+
 
 <script>
     //address selection 
@@ -179,7 +213,7 @@
                                 "handler": function (response) {
                                     console.log("response : :1122 ", response)
 
-                                    verifyPayment(response, res.data.newOid)
+                                    verifyPayment(response,res.data.amount)
                                 }
 
                             };
@@ -267,22 +301,22 @@
             });
 
 
-            function verifyPayment(payment, orderId) {
+            function verifyPayment(payment,amount) {
                 console.log("verify ____________________________________________________")
                 console.log("verify poayment", payment)
-                console.log("verify poayment", orderId)
+                // console.log("verify poayment", orderId)
                 $.ajax({
 
                     url: '/verifyPayment',
                     method: 'post',
                     data: {
-                        payment,
-                        orderId
+                        payment,amount
                     },
                     success: (res) => {
+                        console.log('addddddjnhgkgkkjhfdhfhkjbvbj',res)
                         if (res.success == true) {
                             // location.href = "/orderSuccess"
-                            location.href = "/confirmation/" + orderId;
+                            location.href = "/confirmation/" + res.orderId;
                         } else {
                             alert('payment failed')
                         }
