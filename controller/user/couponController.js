@@ -5,7 +5,7 @@ exports.postCouponValidation = async (req, res) => {
     try {
         console.log('coupon validation');
         console.log('coupon code',req.body.couponCode)
-        const couponCode = req.body.couponCode; // Corrected typo
+        const couponCode = req.body.couponCode; 
         const userId = req.session.name;
         let cart = await Cart.findOne({ user: userId })
         console.log('coupon code', couponCode, 'user id:', userId, 'cart :', cart.total);

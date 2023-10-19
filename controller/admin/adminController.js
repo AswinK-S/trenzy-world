@@ -21,6 +21,13 @@ exports.adminLogin = async (req, res, next) => {
 exports.getAdmin = async (req, res, next) => {
     try {
         console.log('admin dashboard')
+        const orders = await Order.find({ })
+        .populate({
+            path: 'products.products',
+            select: 'name price quantity', // Select the fields you need
+        }).populate('user','name')
+
+        console.log('orders :',orders);
 
         //total sales
         const totalSales = await Order.aggregate([
@@ -86,7 +93,7 @@ exports.getAdmin = async (req, res, next) => {
 
         console.log('Total Sales by Month:', totalSalesByMonth);
 
-        res.render('admin/adminDash', { totalSalesAmount, totalRevenue, chartData, chartLabels,chartLabel,chartDatas })
+        res.render('admin/adminDash', { totalSalesAmount, totalRevenue, chartData, chartLabels,chartLabel,chartDatas, orders })
     } catch (error) {
         console.log(error)
     }

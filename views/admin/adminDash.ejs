@@ -4,7 +4,7 @@
 
     <div class="container-fluid pt-4 px-4">
         <div class="row g-4">
-            
+
             <div class="col-sm-6 col-xl-3">
                 <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                     <i class="fa fa-chart-bar fa-3x text-primary"></i>
@@ -15,7 +15,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-sm-6 col-xl-3">
                 <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                     <i class="fa fa-chart-pie fa-3x text-primary"></i>
@@ -77,6 +77,78 @@
     </div>
 
 
+
+    <!-- Recent Sales Start -->
+    <div class="container-fluid pt-4 px-4">
+        <div class="bg-light text-center rounded p-4">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h6 class="mb-0">Recent Sales</h6>
+                <a href="#">Show All</a>
+            </div>
+            <div class="mb-3">
+                <label for="fromDate" class="form-label">From Date:</label>
+                <input type="date" id="fromDate" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="toDate" class="form-label">To Date:</label>
+                <input type="date" id="toDate" class="form-control">
+            </div>
+            <button id="filterByDate" class="btn btn-primary">Filter by Date</button>
+
+            <% if (orders.length> 0) { %>
+                <div class="table-responsive">
+                    <table id="recentSalesTable" class="table text-start align-middle table-bordered table-hover mb-0">
+                        <thead>
+                            <tr class="text-dark">
+                                <th scope="col">Order ID</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Product Details</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% orders.forEach(order=> { %>
+                                <tr>
+                                    <td>
+                                        <%= order._id %>
+                                    </td> <!-- Order ID -->
+                                    <td>
+                                        <%= order.date.toDateString() %>
+                                    </td> <!-- Date -->
+                                    <td>
+                                        <%= order.user.name %>
+                                    </td> <!-- Customer -->
+                                    <td>
+                                        <% order.products.forEach(product=> { %>
+                                            <!-- Product Details: Format as needed -->
+                                            <%= product.name %> (Price: <%= product.price %>, Quantity: <%=
+                                                        product.quantity %>)<br>
+                                                        <% }) %>
+                                    </td>
+                                    <td>
+                                        <%= order.products.reduce((total, product)=> total + product.quantity, 0) %>
+                                    </td> <!-- Total Quantity -->
+                                    <td>
+                                        <%= order.products.reduce((total, product)=> total + product.price *
+                                            product.quantity, 0) %>
+                                    </td> <!-- Total Price -->
+                                    <td>
+                                        <%= order.total %>
+                                    </td> <!-- Total Amount -->
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+                <% } %>
+        </div>
+    </div>
+    <!-- Recent Sales End -->
+
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Access the chartData and chartLabels variables here
@@ -84,11 +156,11 @@
             var chartLabelsMonthly = JSON.parse('<%- JSON.stringify(chartLabels) %>');
             var chartDataYearly = JSON.parse('<%- JSON.stringify(chartDatas) %>');
             var chartLabelsYearly = JSON.parse('<%- JSON.stringify(chartLabel) %>');
-    
+
             // Get the chart canvas elements by ID
             const ctxMonthly = document.getElementById("monthlySalesChart").getContext("2d");
             const ctxYearly = document.getElementById("yearlySalesChart").getContext("2d");
-    
+
             // Create the initial monthly chart
             const monthlyChart = new Chart(ctxMonthly, {
                 type: "line",
@@ -112,7 +184,7 @@
                     }
                 },
             });
-    
+
             // Create the yearly chart (initially hidden)
             const yearlyChart = new Chart(ctxYearly, {
                 type: "line",
@@ -136,13 +208,13 @@
                     }
                 },
             });
-    
+
             // Keep track of the active chart
             let activeChart = monthlyChart;
-    
+
             // Hide the yearly chart initially
             document.getElementById("yearlySalesChart").style.display = "none";
-    
+
             // Toggle between yearly and monthly charts
             document.getElementById("toggleYearly").addEventListener("click", function () {
                 if (activeChart === monthlyChart) {
@@ -151,7 +223,7 @@
                     document.getElementById("yearlySalesChart").style.display = "block";
                 }
             });
-    
+
             document.getElementById("toggleMonthly").addEventListener("click", function () {
                 if (activeChart === yearlyChart) {
                     activeChart = monthlyChart;
@@ -159,10 +231,24 @@
                     document.getElementById("monthlySalesChart").style.display = "block";
                 }
             });
+
+            // Add your code for date filtering here
+            const fromDateInput = document.getElementById("fromDate");
+            const toDateInput = document.getElementById("toDate");
+            const filterButton = document.getElementById("filterByDate");
+            const salesTable = document.getElementById("recentSalesTable").DataTable();
+
+            filterButton.addEventListener("click", function () {
+                const fromDate = fromDateInput.value;
+                const toDate = toDateInput.value;
+
+                // Perform filtering based on the date range
+                salesTable.columns(1).search(fromDate + "|" + toDate, true, false).draw();
+            })
         });
     </script>
-    
-    
+
+
 
 
 

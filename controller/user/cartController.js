@@ -318,14 +318,6 @@ exports.getCheckOut = async (req, res) => {
                 allAddresses.push(...userAddress.addressField);
             }
         }
-
-        // const addressError = req.app.locals.addressError;
-        // req.app.locals.addressError = null;
-
-        // const paymentError = req.app.locals.paymentError;
-        // req.app.locals.paymentError = null;
-
-
         console.log('user addresses', allAddresses);
         res.render('user/checkOut', { allAddresses, cart, user });
     } catch (error) {
@@ -434,8 +426,6 @@ exports.postCheckOut = async (req, res) => {
 
             await updateProductQuantities(cart.products);
             await Cart.deleteOne({ user: userId })
-            // Redirect to the confirmation page with order details
-            // res.redirect(`confirmation/${orderId}`);
 
             res.status(200).json({
                 success: true,
@@ -445,43 +435,6 @@ exports.postCheckOut = async (req, res) => {
 
 
         } else if (paymentMethod == 'onlinePayment') {
-            // const newOrder = new Order({
-            //     user: userId,
-            //     products: cart.products.map(item => ({
-            //         products: item.products._id,
-            //         name: item.products.name,
-            //         price: item.products.price,
-            //         quantity: item.quantity,
-            //         size: item.size
-            //     })),
-            //     orderStatus: 'Pending',
-            //     paymentMode: paymentMethod,
-            //     total: totalAmount,
-            //     date: new Date(),
-            //     address: {
-
-            //         addressId: addressId,
-            //     }
-            // });
-
-
-            // // Save the new order to the database
-            // await newOrder.save();
-            // console.log("neworder", newOrder)
-            // const orderId = newOrder._id
-            // console.log('oordrrrid :', orderId)
-            // await updateProductQuantities(cart.products);
-
-
-            // console.log('userId', userId)
-            // const addres = await Address.findOne({ user: userId })
-            // console.log('address', addres)
-            // const addrs = addres.addressField
-            // console.log('addrs', addrs)
-            // const selectedAddrss = addrs.find((item) => {
-            //     return item._id == addressId;
-            // })
-            // console.log('selected address', selectedAddrss)
 
             const amount = totalAmount
             console.log("___amount :L : ", amount)
