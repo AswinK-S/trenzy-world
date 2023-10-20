@@ -28,7 +28,7 @@ exports.getAdmin = async (req, res, next) => {
         }).populate('user','name')
 
         console.log('orders :',orders);
-
+       
         //total sales
         const totalSales = await Order.aggregate([
             {

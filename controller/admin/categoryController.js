@@ -69,7 +69,7 @@ exports.postEditCat = async (req, res) => {
 
         const editId = req.params.id
         let name = req.body.name
-        const editData = await category.findByIdAndUpdate({ _id: editId }, { $set: { name: name } })
+        await category.findByIdAndUpdate({ _id: editId }, { $set: { name: name } })
 
         if (req.file) {
             await category.findByIdAndUpdate({ _id: editId }, { $set: { image: req.file.filename } })

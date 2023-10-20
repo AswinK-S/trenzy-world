@@ -1,3 +1,5 @@
+<script src="/js/validation/coupon.js"></script>
+
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/libCopy/chart/chart.min.js"></script>
@@ -37,11 +39,11 @@
     let productId = $(this).data('id');
     let prodrouteURL = '/admin/productStatus/' + productId
     $(".modal-footer #prodConfirmBTN").attr('href', prodrouteURL);
-    
+
     //coupon modal
     let couponId = $(this).data('id')
-    let = couponUrl = '/admin/couponStatus/'+ couponId
-    $('.modal-footer #couponConfirmBTN').attr('href',couponUrl)
+    let = couponUrl = '/admin/couponStatus/' + couponId
+    $('.modal-footer #couponConfirmBTN').attr('href', couponUrl)
 
   });
 </script>

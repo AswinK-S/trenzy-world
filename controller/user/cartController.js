@@ -579,7 +579,7 @@ async function updateProductQuantities(cartProducts) {
 }
 
 //helper function to update the users array of the coupon when the coupon is applied
-async function updateCouponUsers(couponName, userId) {
+async function updateCouponUsers(couponName, userId,orderId) {
     try {
         // Find the existing coupon by name
         const coupon = await Coupons.findOne({ name: couponName });
@@ -593,7 +593,7 @@ async function updateCouponUsers(couponName, userId) {
                     { name: couponName },
                     { $push: { users: userId } }
                 );
-
+                await Order.findOneAndUpdate({_id:orderId},{$set:{couponName:couponName}})
                 console.log('User added to existing coupon.');
             } else {
                 console.log('User already exists in the coupon:', coupon.users);
@@ -654,7 +654,7 @@ exports.verifyPayment = async (req, res) => {
                 address: {
 
                     addressId: addressId,
-                }
+                },
             });
 
 
@@ -679,7 +679,7 @@ exports.verifyPayment = async (req, res) => {
             // Check if a coupon is applied
             if (appliedcoupon) {
                 console.log('Coupon is applied:', appliedcoupon);
-                await updateCouponUsers(appliedcoupon, userId);
+                await updateCouponUsers(appliedcoupon, userId,orderId);
             }
 
 
