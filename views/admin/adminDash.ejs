@@ -31,52 +31,6 @@
 
     <!-- Sale & Revenue End -->
 
-    <!-- chart -->
-
-
-
-
-    <!-- Monthly Chart -->
-    <div class="container-fluid pt-4 px-4">
-        <div class="row g-4">
-            <div class="col-sm-12 col-xl-6">
-                <div class="bg-light text-center rounded p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h6 class="mb-0">Monthly Sales</h6>
-                    </div>
-                    <canvas id="monthlySalesChart" width="400" height="200"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Yearly Chart -->
-    <div class="container-fluid pt-4 px-4">
-        <div class="row g-4">
-            <div class="col-sm-12 col-xl-6">
-                <div class="bg-light text-center rounded p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h6 class="mb-0">Yearly Sales </h6>
-                    </div>
-                    <canvas id="yearlySalesChart" width="400" height="200"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Buttons to toggle charts -->
-    <div class="container-fluid pt-4 px-4">
-        <div class="row g-4">
-            <div class="col-sm-12">
-                <div class="d-flex align-items-center justify-content-center mb-4">
-                    <button id="toggleYearly" class="btn btn-primary m-2">View Yearly</button>
-                    <button id="toggleMonthly" class="btn btn-primary m-2">View Monthly</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
 
     <!-- Recent Sales Start -->
     <div class="container-fluid pt-4 px-4">
@@ -85,15 +39,6 @@
                 <h6 class="mb-0">Recent Sales</h6>
                 <a href="#">Show All</a>
             </div>
-            <div class="mb-3">
-                <label for="fromDate" class="form-label">From Date:</label>
-                <input type="date" id="fromDate" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label for="toDate" class="form-label">To Date:</label>
-                <input type="date" id="toDate" class="form-control">
-            </div>
-            <button id="filterByDate" class="btn btn-primary">Filter by Date</button>
 
             <% if (orders.length> 0) { %>
                 <div class="table-responsive">
@@ -149,13 +94,69 @@
     <!-- Recent Sales End -->
 
 
+    <!-- Monthly Chart -->
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-6">
+                <div class="bg-light text-center rounded p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h6 class="mb-0">Monthly Sales</h6>
+                    </div>
+                    <canvas id="monthlySalesChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yearly Chart -->
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-6">
+                <div class="bg-light text-center rounded p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h6 class="mb-0">Yearly Sales </h6>
+                    </div>
+                    <canvas id="yearlySalesChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buttons to toggle charts -->
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12">
+                <div class="d-flex align-items-center justify-content-center mb-4">
+                    <button id="toggleYearly" class="btn btn-primary m-2">View Yearly</button>
+                    <button id="toggleMonthly" class="btn btn-primary m-2">View Monthly</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/v/dt/dt-1.13.6/datatables.min.js"></script>
+
     <script>
+        jQuery.noConflict(); // Release the $ variable for use by other libraries
+    
+        jQuery(document).ready(function ($) {
+            $('#recentSalesTable').DataTable();
+        });
+    </script>
+
+    <script>
+
         document.addEventListener("DOMContentLoaded", function () {
             // Access the chartData and chartLabels variables here
-            var chartDataMonthly = JSON.parse('<%- JSON.stringify(chartData) %>');
-            var chartLabelsMonthly = JSON.parse('<%- JSON.stringify(chartLabels) %>');
-            var chartDataYearly = JSON.parse('<%- JSON.stringify(chartDatas) %>');
-            var chartLabelsYearly = JSON.parse('<%- JSON.stringify(chartLabel) %>');
+            let chartDataMonthly = JSON.parse('<%- JSON.stringify(chartData) %>');
+            let chartLabelsMonthly = JSON.parse('<%- JSON.stringify(chartLabels) %>');
+            let chartDataYearly = JSON.parse('<%- JSON.stringify(chartDatas) %>');
+            let chartLabelsYearly = JSON.parse('<%- JSON.stringify(chartLabel) %>');
 
             // Get the chart canvas elements by ID
             const ctxMonthly = document.getElementById("monthlySalesChart").getContext("2d");
@@ -232,19 +233,6 @@
                 }
             });
 
-            // Add your code for date filtering here
-            const fromDateInput = document.getElementById("fromDate");
-            const toDateInput = document.getElementById("toDate");
-            const filterButton = document.getElementById("filterByDate");
-            const salesTable = document.getElementById("recentSalesTable").DataTable();
-
-            filterButton.addEventListener("click", function () {
-                const fromDate = fromDateInput.value;
-                const toDate = toDateInput.value;
-
-                // Perform filtering based on the date range
-                salesTable.columns(1).search(fromDate + "|" + toDate, true, false).draw();
-            })
         });
     </script>
 
