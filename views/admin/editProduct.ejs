@@ -11,12 +11,14 @@
                             <label for="product_name">Product Name:</label>
                             <input type="text" class="form-control form-control-md" value="<%=prodData.name %>"
                                 id="product_name" name="product_name" required>
+                                <small style="color: red;" id="productError"></small>
                         </div>
 
                         <div class="form-group">
                             <label for="product_brand">Brand:</label>
                             <input type="text" class="form-control" id="product_brand" value="<%=prodData.brand %>"
                                 name="product_brand" required>
+                                <small style="color: red;" id="productError"></small>
                         </div>
 
                         <div class="form-group">
@@ -43,12 +45,32 @@
                             <label for="product_price">Price:</label>
                             <input type="number" class="form-control" id="product_price" value="<%=prodData.price  %>"
                                 name="product_price" step="0.01" required>
+                                <small style="color: red;" id="productError"></small>
                         </div>
                         <div class="form-group">
                             <label for="product_price">Quantity:</label>
                             <input type="number" class="form-control" id="product_quantity" value="<%=prodData.quantity  %>"
                                 name="product_quantity" step="0.01" required>
+                                <small style="color: red;" id="productError"></small>
                         </div>
+
+                        <div class="form-group">
+                            <label for="addoffer">Offer</label>
+                            <input class="form-control " type="number" id="addOffer" name="offer"
+                                aria-label="default input example" value="<%= prodData.offer %>" required>
+                        </div>
+
+                        <% let formattedDate = ''; %>
+                        <% if (prodData.expiryDate) { %>
+                            <% const dd = prodData.expiryDate.getDate(); %>
+                            <% const mm = prodData.expiryDate.getMonth() + 1; %>
+                            <% const yyyy = prodData.expiryDate.getFullYear(); %>
+                            <% formattedDate = `${dd}-${mm}-${yyyy}`; %>
+                        <% } %>
+                        <label class="form-label" for="expDate">Current Expiry Date (<%= formattedDate %>)</label>
+                        <input placeholder="Select date" type="date" id="expDate" name="date" class="form-control" value="<%= formattedDate %>">
+                        
+                        
 
                         <div class="form-group">
                             <label for="product_description">Product Description:</label>
@@ -96,7 +118,7 @@
                         </div>
 
 
-                        <button type="submit" class="btn btn-primary">Update Product</button>
+                        <button onclick="return validateEditProductForm()" type="submit" class="btn btn-primary">Update Product</button>
                     </form>
                 </div>
             </div>

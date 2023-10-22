@@ -176,6 +176,9 @@
                                     <a href="/product/<%=product[i]._id  %>"> <img class="img-fluid w-100"
                                             src="/productImages/<%= product[i].image[0] %>" alt="">
                                     </a>
+
+                                    
+
                                 </div>
                                 <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                                     <h6 class="text-truncate mb-3">
@@ -185,11 +188,22 @@
                                         <h6>&#8377 <%= product[i].price %>
                                         </h6>
                                         <h6 class="text-muted ml-2"><del></del></h6>
+
+                                        <% if (product[i].offer && product[i].expiryDate) { %>
+                                            <% if (currentDate <= product[i].expiryDate) { %>
+                                                <!-- Display your badge or logo here -->
+                                                <i class="lni lni-offer" style="color: red; font-size: 20px;"></i>
+                                            </span>
+                                            <% } %>
+                                        <% } %>
                                     </div>
                                 </div>
+
                                 <div class="card-footer d-flex justify-content-between bg-light border">
                                     <a href="/product/<%= product[i]._id %>" class="btn btn-sm text-dark p-0"><i
                                             class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+
+                                           
                                     <% if (product[i].quantity==0) { %>
                                         <p style="color: red;">Out of stock!</p>
                                         <% } else { %>

@@ -40,7 +40,7 @@ exports.getAdmin = async (req, res, next) => {
         ])
         const totalSalesAmount = totalSales.length > 0 ? totalSales[0].total : 0;
         const totalRevenue = totalSalesAmount > 0 ? totalSalesAmount / 10 : 0;
-        console.log('Total Sales:', totalSalesAmount, 'total reven :', totalRevenue);
+        // console.log('Total Sales:', totalSalesAmount, 'total reven :', totalRevenue);
 
         // //total sales by month
         const totalSalesByMonth = await Order.aggregate([
@@ -89,9 +89,9 @@ exports.getAdmin = async (req, res, next) => {
         const chartLabel = totalSalesByYear.map(item => item._id.year.toString());
         const chartDatas = totalSalesByYear.map(item => item.totalSales);
 
-        console.log('chartLabels :', chartLabels, 'chartData :', chartData);
+        // console.log('chartLabels :', chartLabels, 'chartData :', chartData);
 
-        console.log('Total Sales by Month:', totalSalesByMonth);
+        // console.log('Total Sales by Month:', totalSalesByMonth);
 
         res.render('admin/adminDash', { totalSalesAmount, totalRevenue, chartData, chartLabels,chartLabel,chartDatas, orders })
     } catch (error) {

@@ -13,13 +13,14 @@
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
-    <link href="/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet"> 
+    <link href="/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="/css/style.css" rel="stylesheet">
@@ -31,36 +32,41 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
+    <!-- offer icon link -->
+    <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css" />
 
 
-<!-- Add this in the <head> section of your HTML document -->
+
+    <!-- Add this in the <head> section of your HTML document -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.carousel.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.theme.default.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.theme.default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/owl.carousel.min.js"></script>
-    
+
 
     <script>
         document.getElementById('search').addEventListener('submit', function (event) {
-          event.preventDefault(); // Prevent the default form submission
-          const searchTerm = document.querySelector('#search input').value.trim();
-          if (searchTerm !== '') {
-            const newUrl = `/shop?search=${encodeURIComponent(searchTerm)}`;
-            console.log('ssss')
-            window.location.href = newUrl;
-          } else {
-            // Handle the case when the search term is empty (e.g., show an alert)
-            // For example:
-            // alert('Please enter a search term.');
-          }
+            event.preventDefault(); // Prevent the default form submission
+            const searchTerm = document.querySelector('#search input').value.trim();
+            if (searchTerm !== '') {
+                const newUrl = `/shop?search=${encodeURIComponent(searchTerm)}`;
+                console.log('ssss')
+                window.location.href = newUrl;
+            } else {
+                // Handle the case when the search term is empty (e.g., show an alert)
+                // For example:
+                // alert('Please enter a search term.');
+            }
         });
-      </script>
-      <style>
+    </script>
+    <style>
         .coupon-list li,
         .hidden-coupons li {
-            margin: 2px 0; /* Adjust the margin as needed */
+            margin: 2px 0;
+            /* Adjust the margin as needed */
         }
     </style>
-    
+
 
 </head>
 
@@ -71,7 +77,8 @@
         <div class="row align-items-center py-3 px-xl-5 border">
             <div class="col-lg-3 d-none d-lg-block">
                 <a href="/" class="text-decoration-none">
-                    <h2 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">Trenzy</span>world</h2>
+                    <h2 class="m-0 display-5 font-weight-semi-bold"><span
+                            class="text-primary font-weight-bold border px-3 mr-1">Trenzy</span>world</h2>
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
@@ -96,5 +103,5 @@
             </div>
         </div>
     </div>
-    
-<!-- Topbar End -->
+
+    <!-- Topbar End -->

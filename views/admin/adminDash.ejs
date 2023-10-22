@@ -82,7 +82,11 @@
                                             product.quantity, 0) %>
                                     </td> <!-- Total Price -->
                                     <td>
-                                        <%= order.couponName %>
+                                        <% if(order.couponName){ %>
+                                            <%= order.couponName %>
+                                                <% }else{ %>
+                                                    <%= 'no offer/discount' %>
+                                                        <% } %>
                                     </td>
                                     <td>
                                         <%= order.total %>

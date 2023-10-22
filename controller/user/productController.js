@@ -81,13 +81,15 @@ exports.shopPage = async (req, res) => {
         console.log('query', query);
         const product = await Product.find(query).limit(limit * 1).skip((page - 1) * limit).sort(sort);
         const products =await Product.find({})
-        console.log('product QUANTITY', products.quantity);
+        console.log('product QUANTITY', products?.offer,products?.expiryDate);
 
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
 
+        const currentDate = new Date();
+
         // Render the shop page template with products and pagination data
-        res.render('user/shop', { user, product, totalPages, currentPage: page, page, queryString });
+        res.render('user/shop', { user, product, totalPages, currentPage: page, page, queryString,currentDate });
     } catch (error) {
         console.log(error.message);
     }
@@ -104,8 +106,18 @@ exports.singleProduct = async (req, res) => {
         const id = req.params.id
         console.log('id', id)
         const product = await Product.findById({ _id: id })
-        console.log('product', product)
-        res.render('user/product', { user, product})
+        const currentDate = new Date();
+
+        if(product.offer && product.expiryDate){
+            if(currentDate <= product.expiryDate){
+                let orgnlPrice = product.price
+                let discountPrice = (orgnlPrice * product.offer) /100
+                let finalDiscPrce = orgnlPrice - discountPrice
+                await Product.updateOne({_id:id},{$set:{discountPrice:finalDiscPrce}})
+            }
+        }
+
+        res.render('user/product', { user, product,currentDate})
     } catch (error) {
         console.log(error.message);
     }

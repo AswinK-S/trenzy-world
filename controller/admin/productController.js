@@ -33,7 +33,7 @@ exports.addProduct = async (req, res) => {
 exports.postAddProduct = async (req, res) => {
     try {
         console.log('post add product');
-        const { name, category, brand, price, quantity, description,size } = req.body;
+        const { name, category, brand, price, quantity, description,size,offer,date } = req.body;
         let images = [];
 
         for (let file of req.files) {
@@ -43,16 +43,21 @@ exports.postAddProduct = async (req, res) => {
         const categoryId = await Category.findOne({ name: category });
         console.log('category', categoryId, category);
 
-        await new Products({
-            name: name,
-            category: categoryId._id,
-            brand,
-            price,
-            image: images,
-            quantity,
-            size,
-            description,
-        }).save();
+            await new Products({
+                name: name,
+                category: categoryId._id,
+                brand,
+                price,
+                image: images,
+                quantity,
+                size,
+                description,
+                offer:offer,
+                date,
+            }).save();
+        
+
+        
 
         res.redirect('/admin/adminProduct');
     } catch (error) {
@@ -117,7 +122,7 @@ exports.postEditProd = async (req,res)=>{
         const prodId = req.params.id
         // console.log("prod _ID",prodId );
         console.log('req.body',req.body );
-        const {product_name,product_brand,category,product_price,product_description,product_quantity}=req.body
+        const {product_name,product_brand,category,product_price,product_description,product_quantity,offer,date}=req.body
         
             const price = Number(product_price)
         
@@ -133,7 +138,10 @@ exports.postEditProd = async (req,res)=>{
             category:categoryId._id,
             price : price,
             quantity:product_quantity,
-            description : product_description
+            description : product_description,
+            expiryDate:date,
+            offer:offer,
+
         }})
         // console.log('edt',editPrdData)
         

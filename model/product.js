@@ -36,6 +36,18 @@ const products = mongoose.Schema({
     description:{
         type : String,
         required:true
+    },
+    offer:{
+        type: Number,
+        default: 0,
+    },
+    expiryDate:{
+        type : Date ,
+        required : true
+    },
+    discountPrice:{
+        type:Number,
+        default : 0
     }
 
 })
