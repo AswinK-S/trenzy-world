@@ -747,8 +747,14 @@ exports.getConfirmation = async (req, res) => {
     console.log('confirmation page')
     const orderId = req.params.id
     console.log('order id', orderId)
-    const order = await Order.findById(orderId).populate('products.products').exec();
-    console.log("order", order)
+    const order = await Order.findById(orderId)
+    .populate({
+      path: 'products.products',
+      select: 'name price quantity offer originalPrice' // Include the fields you need
+    })
+    .exec();
+
+      console.log("order", order)
     const userId = order.user
     console.log("userId", userId)
     const addId = order.address.addressId
@@ -761,7 +767,7 @@ exports.getConfirmation = async (req, res) => {
 
     const invoicePath = generateInvoice(order, selectedAddrss);
     console.log('invoice path', invoicePath);
-
+    console.log('offeree :',order);
     console.log('slctd addrs', selectedAddrss)
     res.render('user/confirmation', { order, selectedAddrss })
 }

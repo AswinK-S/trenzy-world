@@ -25,6 +25,12 @@
                             <li><a href="#" style="text-decoration: none;"><span class="text-dark">Item Name  <%= i+1 %> : </span>  <%=  order.products[i].name %></a></li>
                             <li><a href="#" style="text-decoration: none;"><span class="text-dark">quantity : </span>  <%=  order.products[i].quantity%></a></li>
                             <li><a href="#" style="text-decoration: none;"><span class="text-dark">price </span> &#8377 <%=  order.products[i].price %></a></li><br>
+
+                            <% if(order.products[i].orginalPrice>0){ %>
+                                <li><a href="#" style="text-decoration: none;"><span class="text-dark">Orginal price </span> &#8377 <%=  order.products[i].orginalPrice %></a></li><br>
+
+                                
+                                <% } %>
                             <% } %>
 
                         </ul>

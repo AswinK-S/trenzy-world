@@ -106,7 +106,7 @@
         <div class="row px-xl-5  p-2 d-flex justify-content-center">
 
             <!-- Left Column (Image) -->
-            <div class="col-lg-5 pb-3 col-12 text-center border border-dark p-2 m-1">
+            <div class="col-lg-4 pb-3 col-12 text-center border border-dark p-2 m-1">
                 <div class="row">
                     <div class="col-md-2"></div>
                     <div class="col-md-8 pb-5 ps-5 pe-5">
@@ -152,7 +152,7 @@
 
             <!-- Right Column (Product Details) -->
 
-            <div class="col-lg-5 pb-3 border border-dark m-1 p-2  ">
+            <div class="col-lg-4 pb-3 border border-dark m-1 p-2  ">
                 <h3 class="font-weight-semi-bold mb-3" style="margin-top: 100px;">
                     <%= product.name %>
                 </h3>
@@ -199,7 +199,9 @@
                             <!-- Display your badge or logo here -->
                             <div class="p-2">
                                 <span>Orginal price :</span><span class="font-weight-semi-bold  mt-5"
-                                    style="font-size: 22px;"> &#8377 <del><%= product.price %></del>  </span><br>
+                                    style="font-size: 22px;"> &#8377 <del>
+                                        <%= product.orginalPrice %>
+                                    </del> </span><br>
                             </div>
                             <div class="p-2">
                                 <span>Discount price :</span><span class="font-weight-semi-bold text-dark p-2 mt-5"
@@ -213,27 +215,35 @@
                                         product.offer %> %</span>
                             </div>
 
-                            <% } %>
-                                <% }else{ %>
-                                    <h3 class="font-weight-semi-bold mb-4 mt-5">&#8377 <%= product.price %>
-                                            <% } %>
+                            <% } else{ %>
+                                <h3 class="font-weight-semi-bold mb-4 mt-5">&#8377 <%= product.price %>
+                                        <% } %>
+                                            <% }else{ %>
+                                                <h3 class="font-weight-semi-bold mb-4 mt-5">&#8377 <%= product.price %>
+                                                        <% } %>
 
-                                                <div class="d-flex flex-column align-items-center mb-4 pt-3">
-                                                    <% if (product.quantity==0) { %>
-                                                        <button onclick="" class="btn btn-primary px-3" disabled>
-                                                            <i class="fa fa-shopping-cart mr-1"></i> Add To Cart
-                                                        </button>
-                                                        <p style="color: red;" class="pt-3">Out of Stock!</p>
-                                                        <% } else { %>
-                                                            <button onclick="return validateForm1()"
-                                                                class="btn btn-primary px-3">
-                                                                <i class="fa fa-shopping-cart mr-1"></i> Add To Cart
-                                                            </button>
-                                                            <% } %>
+                                                            <div
+                                                                class="d-flex flex-column align-items-center mb-4 pt-3">
+                                                                <% if (product.quantity==0) { %>
+                                                                    <button onclick="" class="btn btn-primary px-3"
+                                                                        disabled>
+                                                                        <i class="fa fa-shopping-cart mr-1"></i> Add To
+                                                                        Cart
+                                                                    </button>
+                                                                    <p style="color: red;" class="pt-3">Out of Stock!
+                                                                    </p>
+                                                                    <% } else { %>
+                                                                        <button onclick="return validateForm1()"
+                                                                            class="btn btn-primary px-3">
+                                                                            <i class="fa fa-shopping-cart mr-1"></i> Add
+                                                                            To Cart
+                                                                        </button>
+                                                                        <% } %>
 
-                                                                <span id="sizeError" class="text-danger pt-3"></span>
+                                                                            <span id="sizeError"
+                                                                                class="text-danger pt-3"></span>
 
-                                                </div>
+                                                            </div>
 
 
                 </form>

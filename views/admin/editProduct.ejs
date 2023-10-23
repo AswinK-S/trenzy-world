@@ -70,7 +70,11 @@
                         <label class="form-label" for="expDate">Current Expiry Date (<%= formattedDate %>)</label>
                         <input placeholder="Select date" type="date" id="expDate" name="date" class="form-control" value="<%= formattedDate %>">
                         
-                        
+                        <div class="form-group">
+                            <label for="orginalPrice">Product Orginal Price:</label>
+                            <input type="number" class="form-control" id="orginalPrice"
+                                name="orginalPrice" value="<%=prodData.orginalPrice %>" >
+                        </div>
 
                         <div class="form-group">
                             <label for="product_description">Product Description:</label>

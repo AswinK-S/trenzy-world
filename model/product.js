@@ -48,6 +48,10 @@ const products = mongoose.Schema({
     discountPrice:{
         type:Number,
         default : 0
+    },
+    orginalPrice:{
+        type:Number,
+        default:0
     }
 
 })

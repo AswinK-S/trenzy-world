@@ -27,7 +27,8 @@ const orders = mongoose.Schema({
         size:{
             type:String,
             required:true
-        }
+        },
+    
     }],
     orderStatus: {
         type:String

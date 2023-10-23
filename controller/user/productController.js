@@ -13,9 +13,10 @@ exports.shopPage = async (req, res) => {
         console.log("queryString", queryString);
         const user = req.session.name
         const price = req.query.price;
-        let sort = req.query.sort || {name:1}
+        let sort = req.query.sort || { name: 1 }
         console.log("price : ", req.query.price);
-        let query = { status: true,
+        let query = {
+            status: true,
             $or: [
                 { name: { $regex: search, $options: 'i' } },
                 { brand: { $regex: search, $options: 'i' } }
@@ -65,10 +66,10 @@ exports.shopPage = async (req, res) => {
         }
 
 
-        if(sort==1){
-            sort={price:1}
-        }else{
-            sort={price:-1}
+        if (sort == 1) {
+            sort = { price: 1 }
+        } else {
+            sort = { price: -1 }
         }
 
 
@@ -80,8 +81,8 @@ exports.shopPage = async (req, res) => {
 
         console.log('query', query);
         const product = await Product.find(query).limit(limit * 1).skip((page - 1) * limit).sort(sort);
-        const products =await Product.find({})
-        console.log('product QUANTITY', products?.offer,products?.expiryDate);
+        const products = await Product.find({})
+        console.log('product QUANTITY', products?.offer, products?.expiryDate);
 
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
@@ -89,7 +90,7 @@ exports.shopPage = async (req, res) => {
         const currentDate = new Date();
 
         // Render the shop page template with products and pagination data
-        res.render('user/shop', { user, product, totalPages, currentPage: page, page, queryString,currentDate });
+        res.render('user/shop', { user, product, totalPages, currentPage: page, page, queryString, currentDate });
     } catch (error) {
         console.log(error.message);
     }
@@ -105,19 +106,29 @@ exports.singleProduct = async (req, res) => {
         const user = req.session.name
         const id = req.params.id
         console.log('id', id)
-        const product = await Product.findById({ _id: id })
+        let product = await Product.findById({ _id: id })
         const currentDate = new Date();
 
-        if(product.offer && product.expiryDate){
-            if(currentDate <= product.expiryDate){
-                let orgnlPrice = product.price
-                let discountPrice = (orgnlPrice * product.offer) /100
-                let finalDiscPrce = orgnlPrice - discountPrice
-                await Product.updateOne({_id:id},{$set:{discountPrice:finalDiscPrce}})
+        if (product.offer && product.expiryDate) {
+
+            if (currentDate <= product.expiryDate) {
+
+                if (product.orginalPrice === 0) {
+
+                    console.log('offer ',product.price);
+
+                    let orgnlPrice = product.price
+                    let discountPrice = (orgnlPrice * product.offer) / 100
+                    let finalDiscPrce = Math.ceil(orgnlPrice - discountPrice)
+                    await Product.updateOne({ _id: id }, { $set: { discountPrice: finalDiscPrce } })
+                    await Product.updateOne({_id:id},{$set:{price:finalDiscPrce}})
+                    await Product.updateOne({_id:id},{$set:{orginalPrice:orgnlPrice}})
+                }
+
             }
         }
 
-        res.render('user/product', { user, product,currentDate})
+        res.render('user/product', { user, product, currentDate })
     } catch (error) {
         console.log(error.message);
     }
