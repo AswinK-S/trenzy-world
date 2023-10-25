@@ -1,1 +1,193 @@
-₹
+₹ 
+
+
+1.cijenec565@ibtrades.com
+2.vavado7172@cindalle.com
+
+
+//post check out
+exports.postCheckOut = async (req, res) => {
+    try {
+        console.log('placing order')
+        const userId = req.session.name;
+        const selectedAddressId = req.body?.selectedAddressId;
+        const paymentMethod = req.body?.payment || '';
+        const appliedcoupon = req.session.appliedCoupon
+        const user = await User.findOne({ _id: userId })
+        console.log(user, "user")
+        let walletAmount = parseInt(user.wallet)
+        console.log('wallet amount :', walletAmount)
+        console.log('seleted addrs :', selectedAddressId, 'payment :', paymentMethod)
+
+        if (!selectedAddressId) {
+            return res.status(200).json({ success: true, msg: "Please select any address" })
+        }
+        if (selectedAddressId[0].length == 0 && selectedAddressId[1].length == 0) {
+            
+            console.log('addd');
+            return res.status(200).json({ success: true, msg: "Please select any address" });
+        }
+
+
+        //extracting the addressid 
+        let addressId = null
+        //if there is multiple address the address will be inside  an array
+        if (Array.isArray(selectedAddressId)) {
+            for (let i = 0; i < selectedAddressId.length; i++) {
+                if (selectedAddressId[i] !== null) {
+                    addressId = selectedAddressId[i];
+                    break;
+                }
+            }
+        } else if (typeof selectedAddressId === 'string') {
+            addressId = selectedAddressId;
+        }
+        console.log('addrsId', addressId)
+
+        if (!paymentMethod) {
+           
+            console.log('pymntttt');
+            return res.status(200).json({ success: true, msg: "Please select any valid payment method" });
+
+        }
+
+        // Fetch the user's cart contents
+        const cart = await Cart.findOne({ user: userId }).populate('products.products');
+        console.log('cart', cart)
+        if (!cart) {
+            console.log('cart is not there');
+        }
+
+        // Calculate the total order amount based on cart contents
+        const subTotal = await calculateTotalAmount(cart.products, appliedcoupon, userId);
+        console.log('subTotal :', subTotal)
+        const totalAmount = subTotal + 10
+        console.log('total amt', totalAmount)
+
+        // Create a new order document cod
+        if (paymentMethod == 'COD') {
+            const newOrder = new Order({
+                user: userId,
+                products: cart.products.map(item => ({
+                    products: item.products._id,
+                    name: item.products.name,
+                    price: item.products.price,
+                    quantity: item.quantity,
+                    size: item.size
+                })),
+                orderStatus: 'sucess',
+                paymentMode: paymentMethod,
+                total: totalAmount,
+                date: new Date(),
+                address: {
+
+                    addressId: addressId,
+                }
+            });
+
+
+
+            // Save the new order to the database
+            await newOrder.save();
+            console.log("neworder", newOrder)
+            const orderId = newOrder._id
+
+            // Check if a coupon is applied
+            if (appliedcoupon) {
+                console.log('Coupon is applied:', appliedcoupon);
+                await updateCouponUsers(appliedcoupon, userId);
+            }
+
+            await updateProductQuantities(cart.products);
+            await Cart.deleteOne({ user: userId })
+            
+
+            res.status(200).json({
+                success: true,
+                paymentMethod: paymentMethod,
+                order_id: orderId,
+            });
+
+
+        } else if (paymentMethod == 'onlinePayment') {
+            
+            const amount = totalAmount
+            console.log("___amount :L : ", amount)
+            const options = {
+                amount: amount * 100,
+                currency: 'INR',
+                receipt: crypto.randomBytes(10).toString('hex')
+            }
+
+            Instance.orders.create(options, (error, order) => {
+                if (error) {
+                    console.log(error.message);
+                    return res.status(500).json({ success: false, message: "Something went wrong!" })
+                } else {
+                    order.newOid = newOrder._id
+
+                    console.log(order, "order");
+
+                    res.status(200).json({ success: true, message: "success", data: order, paymentMethod: paymentMethod })
+                }
+            })
+        } else if (paymentMethod == 'wallet') {
+            console.log('wallet purchase')
+            if (walletAmount >= totalAmount) {
+                console.log('wallet has amount');
+                const newOrder = new Order({
+                    user: userId,
+                    products: cart.products.map(item => ({
+                        products: item.products._id,
+                        name: item.products.name,
+                        price: item.products.price,
+                        quantity: item.quantity,
+                        size: item.size
+                    })),
+                    orderStatus: 'sucess',
+                    paymentMode: paymentMethod,
+                    total: totalAmount,
+                    date: new Date(),
+                    address: {
+
+                        addressId: addressId,
+                    }
+                });
+
+
+
+                // Save the new order to the database
+                await newOrder.save();
+                console.log("neworder", newOrder)
+                const orderId = newOrder._id
+
+                // Check if a coupon is applied
+                if (appliedcoupon) {
+                    console.log('Coupon is applied:', appliedcoupon);
+                    await updateCouponUsers(appliedcoupon, userId);
+                }
+
+                await updateProductQuantities(cart.products);
+
+                await Cart.deleteOne({ user: userId })
+                await User.updateOne({ _id: userId }, { $inc: { wallet: -totalAmount } })
+               
+
+                res.status(200).json({
+                    success: true,
+                    paymentMethod: paymentMethod,
+                    order_id: orderId,
+                });
+            } else {
+                console.log('not enough amount in wallet')
+               
+
+                return res.status(200).json({ success: true, msg: 'Insufficient wallet balance' })
+            }
+        }
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};

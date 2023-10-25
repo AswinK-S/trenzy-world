@@ -17,7 +17,7 @@ exports.userAccount = async (req, res) => {
         if (userData.referral) {
             console.log("refferal is there")
             const referralCode = userData.referral; // Replace with the actual referral code
-            const signUpURL = 'http://localhost:3000/signUp'; // Replace with your website's sign-up URL
+            const signUpURL = 'https://trenzyworld.online/signUp'; // Replace with your website's sign-up URL
             referralLink = `${signUpURL}?referral=${referralCode}`;
 
         }
