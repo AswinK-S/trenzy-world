@@ -28,116 +28,126 @@ exports.login = async (req, res) => {
 exports.forgotPassword = async (req, res) => {
     try {
         console.log('enter email to get otp')
-        const EmailError=req.app.locals.emailNotExists
-        req.app.locals.emailNotExists=null
-        res.render('user/forgotPassword',{EmailError})
+        const EmailError = req.app.locals.emailNotExists
+        req.app.locals.emailNotExists = null
+        res.render('user/forgotPassword', { EmailError })
     } catch (error) {
         console.log(error.message)
     }
 }
 
 //get otp page for forgot password
-exports.getPasswordOtpPage = async(req,res)=>{
+exports.getPasswordOtpPage = async (req, res) => {
     try {
         console.log('otp page for forgot password');
-        const otpError=req.app.locals.otpError
-        req.app.locals.otpError=null
-        res.render('user/otpForgotPassword',{otpError})
+        const otpError = req.app.locals.otpError
+        req.app.locals.otpError = null
+        res.render('user/otpForgotPassword', { otpError })
     } catch (error) {
         console.log(error.message);
     }
 }
 
 
+//-----------------------------------utility function otp generation
+
+function generateOtp() {
+    console.log('generation otp');
+    return Math.floor(100000 + Math.random() * 900000);
+}
+
+
+//-----------------------------------------utility function   send otp by email
+
+async function sendOTPByEmail(email, otp) {
+    const emailMessage = `Your OTP to create a new password is: ${otp}`;
+
+    const transporter = nodemailer.createTransport(
+        smtpTransport({
+            service: 'gmail',
+            auth: {
+                user: 'trenzyworld4@gmail.com',
+                pass: process.env.GMAIL_PASS,
+            },
+            secure: true, // Use TLS
+            port: 465, // Gmail SMTP port with TLS
+        })
+    );
+
+    await transporter.verify();
+
+    const mailOptions = {
+        from: 'trenzyworld4@gmail.com',
+        to: email,
+        subject: 'OTP for Registration',
+        text: emailMessage,
+    };
+
+    return new Promise((resolve, reject) => {
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                reject(error);
+            } else {
+                console.log('Email sent:', info.response);
+                resolve();
+            }
+        });
+    });
+}
+
+
+
 //user post forgot password email page
-exports.ForgotPasswordEmail = async(req,res)=>{
+exports.ForgotPasswordEmail = async (req, res) => {
     try {
         console.log('forgot password email checking')
-        const email=req.body.email
-        req.session.emai=email
-        console.log('email',email)
-        const isEmailExist = await User.findOne({email:email})
-        console.log('email exists',isEmailExist);
-        if(isEmailExist===null){
+        const email = req.body.email
+        req.session.emai = email
+        console.log('email', email)
+        const isEmailExist = await User.findOne({ email: email })
+        console.log('email exists', isEmailExist);
+        if (isEmailExist === null) {
             console.log("no such email")
-            req.app.locals.emailNotExists ="no such email found"
+            req.app.locals.emailNotExists = "no such email found"
             res.redirect('/forgotPassword')
-        }else{
+        } else {
             //generate otp
-        const otp = Math.floor(100000 + Math.random() * 900000);
-        console.log('genereated otp', otp)
-        req.session.forgotPasswordOtp = otp
 
-        // Send the OTP to the user's email
-        const emailMessage = `Your OTP to create new password is: ${otp}`;
-        // Create the Nodemailer transporter and verify the SMTP server connection
-        const transporter = nodemailer.createTransport(
-            smtpTransport({
-                service: 'gmail',
-                auth: {
-                    user: 'trenzyworld4@gmail.com',
-                    pass: process.env.GMAIL_PASS,
-                },
-                secure: true, // Use TLS
-                port: 465, // Gmail SMTP port with TLS
-            })
-        );
+            const otp = generateOtp()
+            console.log('genereated otp', otp)
+            req.session.forgotPasswordOtp = otp
 
-        transporter.verify(function (error, success) {
-            if (error) {
-                console.log('SMTP server connection error:', error);
-                // Handle the error and redirect the user to an error page or retry the OTP sending
-                res.redirect('/errorPage');
-            } else {
-                console.log('SMTP server connection is ready');
-                // SMTP server connection is successful, proceed with sending the email
-                const mailOptions = {
-                    from: 'trenzyworld4@gmail.com',
-                    to: req.body.email, // Use the user's provided email
-                    subject: 'OTP for Registration',
-                    text: emailMessage,
-                };
+            // Send OTP via email
+            await sendOTPByEmail(email, otp);
 
-                transporter.sendMail(mailOptions, async (error, info) => {
-                    if (error) {
-                        console.error('Error sending email:', error);
-                        // Handle the error and redirect the user to an error page or retry the OTP sending
-                        // res.redirect('/errorPage'); // Replace '/errorPage' with your actual error page
-                    } else {
-                        console.log('Email sent:', info.response);
-                        // Redirect the user to the OTP verification page
-                        res.redirect('/forgotPasswordOtpPage');
-                    }
-                });
-            }
-        })
+            res.redirect('/forgotPasswordOtpPage');
+
         }
-
-
-        
 
     } catch (error) {
         console.log(error.message)
     }
 }
 
+
 //verify otp for forgot password
-exports.verifyForgotPassOtp = async (req,res)=>{
+exports.verifyForgotPassOtp = async (req, res) => {
     try {
         console.log('verify forpass otp');
-        const otp=Number(req.body.otp)
-        const otp1=req.session.forgotPasswordOtp
-        console.log('otp : ',otp,'otp 1: ',otp1);
-        console.log('type of otp:',typeof otp, 'type of  otp1: ',otp1 )
-        if(otp1===otp){
+        const otp = Number(req.body.otp)
+        const otp1 = req.session.forgotPasswordOtp
+        console.log('otp : ', otp, 'otp 1: ', otp1);
+        console.log('type of otp:', typeof otp, 'type of  otp1: ', otp1)
+        if (otp1 === otp) {
             console.log("match");
             res.redirect('/newPassword')
-        }else{
+        } else {
             console.log("not match")
-            req.app.locals.otpError ="wrong otp"
+            req.app.locals.otpError = "wrong otp"
             res.redirect('/forgotPasswordOtpPage')
         }
-        
+
     } catch (error) {
         console.log(error.message)
     }
@@ -145,7 +155,7 @@ exports.verifyForgotPassOtp = async (req,res)=>{
 
 
 //user new password page
-exports.newPasswordPage = async(req,res)=>{
+exports.newPasswordPage = async (req, res) => {
     try {
         console.log('new password page')
         res.render('user/newPassword')
@@ -155,21 +165,83 @@ exports.newPasswordPage = async(req,res)=>{
 }
 
 //post password
-exports.changePassword = async(req,res)=>{
-    try{
+exports.changePassword = async (req, res) => {
+    try {
         console.log('entering new password');
-        const password =req.body.password
+        const password = req.body.password
         const email = req.session.email
-        console.log('email',email);
-        console.log('password',password);
-        const newPass =await bcrypt.hash(password,10)
-        await User.updateOne({email:email},{$set:{password:newPass}})
+        console.log('email', email);
+        console.log('password', password);
+        const newPass = await bcrypt.hash(password, 10)
+        await User.updateOne({ email: email }, { $set: { password: newPass } })
         res.redirect('/login')
-        
-    }catch(error){
+
+    } catch (error) {
         console.log(error.message)
     }
 }
+
+//get otp for  changepassword
+exports.getOtp = async(req,res)=>{
+    try {
+        console.log('otp page to change password');
+        const email = req.query.email;
+        const otp =  generateOtp()
+        console.log('genereated otp', otp)
+        req.session.changePasswordOtp = otp
+
+       
+        // Send OTP via email
+        await sendOTPByEmail(email, otp);
+        res.json({ success: true })
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+
+//verify otp for change password
+exports.verifyChangePassOtp = async (req, res) => {
+    try {
+        console.log('verify change otp');
+        const otp = Number(req.body.otp)
+        const otp1 = req.session.changePasswordOtp
+        console.log('otp : ', otp, 'otp 1: ', otp1);
+        console.log('type of otp:', typeof otp, 'type of  otp1: ', otp1)
+        if (otp1 === otp) {
+            console.log("match");
+            res.render('user/cnfrmNewPsswrd')
+        } else {
+            console.log("not match")
+            req.app.locals.otpError = "wrong otp"
+            res.redirect('/changePsswrd')
+        }
+
+    } catch (error) {
+        console.log(error.message)
+    }
+} 
+
+
+//get change password page
+exports.setNewPsswrd = async (req, res) => {
+    try {
+        console.log('change password page');
+        const userId = req.session.name
+        console.log('user id :', userId);
+        const user = await User.findOne({ _id: userId })
+        req.session.email=user.email
+        console.log('usereee :', user);
+        const otpError = req.app.locals.otpError
+        req.app.locals.otpError = null
+        res.render('user/changePassword', { user,otpError })
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
 
 //logout
 exports.logout = async (req, res) => {
@@ -189,14 +261,14 @@ exports.getHome = async (req, res) => {
     try {
 
         const user = req.session.name
-        const product = await Product.find({status:true}).limit(8)
+        const product = await Product.find({ status: true }).limit(8)
         const shirt = await Category.findOne({ $and: [{ "name": "Shirt" }, { "status": "true" }] })
         const t_shirt = await Category.findOne({ $and: [{ "name": "T-Shirt" }, { "status": "true" }] })
         const jeans = await Category.findOne({ $and: [{ "name": "Jeans" }, { "status": "true" }] })
         const pant = await Category.findOne({ $and: [{ "name": "Casual Pant" }, { "status": "true" }] })
         const banner = await Banner.find({})
-        console.log('jeanssss',jeans)
-        res.render('home', { user, product, shirt, pant, jeans, t_shirt,banner })
+        console.log('jeanssss', jeans)
+        res.render('home', { user, product, shirt, pant, jeans, t_shirt, banner })
 
     } catch (error) {
         console.log(error)
@@ -250,7 +322,7 @@ exports.signUp = async (req, res) => {
         console.log('signUp page')
         const referralCode = req.query.referral
         console.log('referralcode', referralCode)
-        req.session.referral=referralCode
+        req.session.referral = referralCode
 
         const emailExistMessage = req.app.locals.specialContext
         req.app.locals.specialContext = null
@@ -369,12 +441,12 @@ exports.verifyOTPPost = async (req, res) => {
                 email: user.email,
                 phone: user.phone,
                 password: hashedPassword,
-                referral:referralCode
+                referral: referralCode
             });
             await newUser.save()
 
             if (req.session.referral) {
-                const referrer = await User.findOne({ referral: req.session.referral});
+                const referrer = await User.findOne({ referral: req.session.referral });
                 if (referrer) {
                     console.log('referrer')
                     // Add referral income to the referrer's wallet
@@ -394,11 +466,12 @@ exports.verifyOTPPost = async (req, res) => {
     }
 }
 
+
 // Generate a unique code or link,
 function generateReferralCode() {
     // You can use libraries like shortid or generate your custom code.
     return 'REF' + Math.random().toString(36).substr(2, 8);
-  }
+}
 
 
 

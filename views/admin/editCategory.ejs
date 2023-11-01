@@ -24,8 +24,13 @@
                     <small style="color: red;" class="mt-3">
                         <%=locals.error?error:'' %>
                     </small>
-                    <button onclick="" type="submit" class="btn btn-primary">Update</button>
 
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <button onclick="return validateForm()" type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                    
                 </form>
 
             </div>
