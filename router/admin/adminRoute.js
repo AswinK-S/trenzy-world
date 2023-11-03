@@ -30,6 +30,8 @@ admin.post('/adminLogOut',adminController.logout)
 admin.get('/adminDash',isAdmin.isLoggedIn,adminController.getAdmin)
 admin.post('/adminDash',adminController.adminDash)
 
+//pdf sales report download
+admin.get('/generatePDF', adminController.generatePDF);
 
 // admin user 
 admin.get('/adminUser',isAdmin.isLoggedIn,adminController.getUserData)

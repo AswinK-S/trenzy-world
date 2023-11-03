@@ -5,7 +5,7 @@ exports.adminBanner =async (req,res)=>{
     try{
         console.log('banner page')
         const banner = await Banner.find({})
-        console.log('bnner',banner)
+        // console.log('bnner',banner)
         res.render('admin/adminBanner',{banner})
     }catch(error){
         console.log(error.message)
@@ -36,17 +36,17 @@ exports.postAddBanner = async (req,res)=>{
         const description =req.body.description
         const image = req.file.filename
         const existingName = await Banner.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
-        console.log('existingName', existingName)
+        // console.log('existingName', existingName)
         if (existingName) {
             req.app.locals.specialContext = 'Name already exists';
-            console.log('banner exist')
+            // console.log('banner exist')
             return res.redirect('/admin/adminBanner/addBanner')
         }
 
         const bannerDetail = new Banner ({ name, image,description })
         await bannerDetail.save()
 
-        console.log('banner save', bannerDetail)
+        // console.log('banner save', bannerDetail)
 
         res.redirect('/admin/adminBanner')
     }catch(error){
@@ -59,9 +59,9 @@ exports.getbannerEdit = async(req,res)=>{
     try{
         console.log('edit page')
         const id = req.params.id
-        console.log('id___:',id)
+        // console.log('id___:',id)
         const banner =  await Banner.findOne({_id:id})
-        console.log('banner_____',banner)
+        // console.log('banner_____',banner)
         res.render('admin/editBanner',{banner})
     }catch(error){
         console.log(error.message)
@@ -76,9 +76,9 @@ exports.postBannerEdit = async (req,res)=>{
 
         let name = req.body.name
         let description = req.body.description
-        console.log('id :',editId,'name :',name);
+        // console.log('id :',editId,'name :',name);
         const editData = await Banner.findByIdAndUpdate({ _id: editId }, { $set: { name: name ,description:description} })
-        console.log('edit data ',editData)
+        // console.log('edit data ',editData)
         if (req.file) {
             await Banner.findByIdAndUpdate({ _id: editId }, { $set: { image: req.file.filename } })
         }

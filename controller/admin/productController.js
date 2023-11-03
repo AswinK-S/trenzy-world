@@ -21,7 +21,7 @@ exports.addProduct = async (req, res) => {
         // Get the error message from res.locals
        
         const category = await Category.find({ status: true });
-        console.log("caaat",category);
+        // console.log("caaat",category);
         res.render('admin/addProduct', { category });
     } catch (error) {
         console.log(error.message);
@@ -41,7 +41,7 @@ exports.postAddProduct = async (req, res) => {
         }
 
         const categoryId = await Category.findOne({ name: category });
-        console.log('category', categoryId, category);
+        // console.log('category', categoryId, category);
 
             await new Products({
                 name: name,
@@ -71,9 +71,9 @@ exports.productStatus = async (req,res)=>{
     try {
         console.log('product status')
         const productId = await req.params.id
-        console.log('_id',productId)
+        // console.log('_id',productId)
         const productData = await Products.findOne({_id:productId})
-        console.log('proddata',productData)
+        // console.log('proddata',productData)
         if(productData){
             console.log('sts',productData.status)
             if(productData.status===true){
@@ -97,14 +97,10 @@ exports.editProduct = async (req,res)=>{
     try {
         console.log('edit product page')
         const prodId= req.params.id
-        console.log('PROD ID',prodId )
+        // console.log('PROD ID',prodId )
         const prodData = await Products.findOne({_id:prodId}).populate('category')
         const cateData= await Category.find({status:true})
 
-        // console.log("catedata",cateData);
-        // console.log('prod data',prodData)
-        // console.log('prod images',prodData.image)
-        // console.log('product category',prodData.category)
 
         res.render('admin/editProduct',{prodData,cateData})
     } catch (error) {
@@ -121,13 +117,13 @@ exports.postEditProd = async (req,res)=>{
 
         const prodId = req.params.id
         // console.log("prod _ID",prodId );
-        console.log('req.body',req.body );
+        // console.log('req.body',req.body );
         const {product_name,product_brand,category,product_price,product_description,product_quantity,offer,date,orginalPrice}=req.body
         
             const price = Number(product_price)
         
 
-        console.log(typeof product_price);
+        // console.log(typeof product_price);
 
         const categoryId = await Category.findOne({name:category})
         // console.log('categoryId',categoryId);
@@ -149,9 +145,9 @@ exports.postEditProd = async (req,res)=>{
         
         if(req.files && req.files.length>0){
             const images=req.files.map((file)=>file.filename)
-            console.log('images :',images);
+            // console.log('images :',images);
             const product = await Products.findById(prodId)
-            console.log('image edit product ;',product)
+            // console.log('image edit product ;',product)
             product.image.push(images[0])
             await product.save()
         }
@@ -169,7 +165,7 @@ exports.imageDelete = async (req,res)=>{
         console.log('delete image')
         const prodId = req.params.id
         const imageUrl = req.query.imageURL
-        console.log('imageurl : ', imageUrl,'prod id : ', prodId)
+        // console.log('imageurl : ', imageUrl,'prod id : ', prodId)
 
         const product = await Products.findById(prodId);
         if (!product) {

@@ -14,7 +14,7 @@ exports.adminOrder = async (req, res) => {
 
 
 
-        console.log('orders___', orders)
+        // console.log('orders___', orders)
         res.render('admin/adminOrder', { orders })
     } catch (error) {
         console.log(error)
@@ -27,7 +27,7 @@ exports.getAdminEditStatus = async function (req, res) {
         console.log('edit page order status');
         const orderId = req.params.id
         const orders = await Order.findOne({ _id: orderId })
-        console.log('orders', orders)
+        // console.log('orders', orders)
         const address_Id = orders.address.addressId
         const userId = orders.user
         console.log('addid+__', address_Id)
@@ -55,7 +55,7 @@ exports.orderStatus = async (req, res) => {
         console.log('order status');
         const orderId = req.params.id
         const status = req.body.orderStatus
-        console.log('order status______', status, "orderid__", orderId)
+        // console.log('order status______', status, "orderid__", orderId)
         await Order.updateOne({ _id: orderId }, { $set: { orderStatus: status } })
         res.redirect('/admin/adminOrder')
     } catch (error) {
