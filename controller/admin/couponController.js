@@ -27,11 +27,11 @@ exports.getAddCoupon = async (req,res)=>{
 //admin post add coupon
 exports.postAddCoupon = async (req,res)=>{
     try {
-        console.log('adding coupon',req.body)
+        // console.log('adding coupon',req.body)
         const name = req.body.name
          
         const coupon = await Coupon.find({})
-        console.log("coupon",coupon.length)
+        // console.log("coupon",coupon.length)
 
         if(coupon.length > 0){
             const couponExists = await Coupon.findOne({
@@ -69,9 +69,9 @@ exports.couponStatus = async (req,res)=>{
     try{
         console.log('coupon status')
         const couponId = req.params.id
-        console.log('coupon id is ',couponId);
+        // console.log('coupon id is ',couponId);
         const coupon = await Coupon.findOne({_id:couponId})
-        console.log('coup  :',coupon)
+        // console.log('coup  :',coupon)
 
         if(coupon){
             console.log('object');
@@ -111,7 +111,7 @@ exports.postEditCoupon = async (req, res) => {
         const couponId = req.params.id; // Assuming you have the coupon ID in the URL
         const editedCoupon = await Coupon.findById(couponId); // Fetch the edited coupon
 
-        console.log( 'date :',req.body.date)
+        // console.log( 'date :',req.body.date)
         if (!editedCoupon) {
             console.log('coupon not found');
             // Handle if the edited coupon doesn't exist
@@ -147,7 +147,7 @@ exports.postEditCoupon = async (req, res) => {
 
 
         await editedCoupon.save();
-        console.log('Coupon updated:', editedCoupon);
+        // console.log('Coupon updated:', editedCoupon);
         res.redirect('/admin/adminCoupon'); // Redirect to the adminCoupon page
     } catch (error) {
         console.log(error.message);
