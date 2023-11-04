@@ -74,8 +74,8 @@ exports.postBannerEdit = async (req,res)=>{
         console.log('editing banner');
         const editId = req.params.id
 
-        let name = req.body.name
-        let description = req.body.description
+        const name = req.body.name
+        const description = req.body.description
         console.log('id :',editId,'name :',name);
         const editData = await Banner.findByIdAndUpdate({ _id: editId }, { $set: { name: name ,description:description} })
         console.log('edit data ',editData)

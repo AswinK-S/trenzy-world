@@ -80,6 +80,8 @@ exports.getCart = async (req, res) => {
         const coupons = await Coupons.find({ status: true })
         console.log('coupons', coupons)
 
+        
+
         // If the user has a cart with products, display the cart
         res.render('user/cart', { cart, coupons });
     } catch (error) {
@@ -344,6 +346,13 @@ exports.postCheckOut = async (req, res) => {
         console.log('wallet amount :', walletAmount)
         console.log('seleted addrs :', selectedAddressId, 'payment :', paymentMethod)
 
+        // const addedAddress = await  Address.find({user:userId})
+        // console.log('added address',addedAddress);
+
+        // if(addedAddress.addressField.length<1){
+        //     return res.status(200).json({success:true,msg:"please add address to place order"})
+        // }
+        
         if (!selectedAddressId) {
             return res.status(200).json({ success: true, msg: "Please select any address" })
         }

@@ -5,7 +5,7 @@ const Order = require('../../model/order')
 //login page
 exports.adminLogin = async (req, res, next) => {
     try {
-        var passwordError = req.app.locals.specialContext
+        const passwordError = req.app.locals.specialContext
         req.app.locals.specialContext = null
 
         console.log("adminlogin page")
