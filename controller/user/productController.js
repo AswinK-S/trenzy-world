@@ -26,15 +26,25 @@ exports.shopPage = async (req, res) => {
         // Function to search and set category in the queryy
         const setSearchCategory = async (queryString) => {
             if (queryString.length > 0) {
+                let searchTerm = queryString.toLowerCase()
                 const matchingCategories = await Category.find({
                     name: { $regex: new RegExp(queryString, 'i') }
                 });
 
                 if (matchingCategories.length > 0) {
                     console.log('Matching Categories', matchingCategories);
+                    if(matchingCategories.length===1){
                     catName = matchingCategories[0]._id;
-                    console.log('name', catName);
                     query.category = catName;
+                    
+                    }else{
+                       let result= matchingCategories.filter((item)=>{return item.name.toLowerCase()===searchTerm})
+                       if(result){
+                         catName=result[0]._id
+                        query.category=catName
+                       }
+                    }
+
                 }
             }
         }
@@ -47,7 +57,6 @@ exports.shopPage = async (req, res) => {
             const price1 = parseInt(price);
             const minPrice = price1 - 999;
             const maxPrice = price1;
-            console.log('string', minPrice, maxPrice);
 
             query.price = {
                 $gte: minPrice,
@@ -58,7 +67,6 @@ exports.shopPage = async (req, res) => {
             console.log('price2', price, queryString);
             minPrice = Math.min(...price.map(Number)) - 999;
             maxPrice = Math.max(...price.map(Number));
-            console.log('ara', minPrice, maxPrice);
             query.price = {
                 $gte: minPrice,
                 $lte: maxPrice
@@ -82,15 +90,13 @@ exports.shopPage = async (req, res) => {
         console.log('query', query);
         const product = await Product.find(query).limit(limit * 1).skip((page - 1) * limit).sort(sort);
         const products = await Product.find({})
-        console.log('product QUANTITY', products?.offer, products?.expiryDate);
-
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
 
         const currentDate = new Date();
 
         // Render the shop page template with products and pagination data
-        res.render('user/shop', { user, product, totalPages, currentPage: page, page, queryString, currentDate });
+        res.render('user/shop', { user, product, totalPages,page, queryString, currentDate });
     } catch (error) {
         console.log(error.message);
     }
@@ -102,10 +108,8 @@ exports.shopPage = async (req, res) => {
 // product detail page
 exports.singleProduct = async (req, res) => {
     try {
-        console.log('product page');
         const user = req.session.name
         const id = req.params.id
-        console.log('id', id)
         let product = await Product.findById({ _id: id })
         const currentDate = new Date();
 
@@ -115,7 +119,6 @@ exports.singleProduct = async (req, res) => {
 
                 if (product.orginalPrice === 0) {
 
-                    console.log('offer ',product.price);
 
                     let orgnlPrice = product.price
                     let discountPrice = (orgnlPrice * product.offer) / 100

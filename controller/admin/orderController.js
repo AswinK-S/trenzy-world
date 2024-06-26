@@ -14,7 +14,7 @@ exports.adminOrder = async (req, res) => {
 
 
 
-        console.log('orders___', orders)
+        // console.log('orders___', orders)
         res.render('admin/adminOrder', { orders })
     } catch (error) {
         console.log(error)

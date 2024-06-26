@@ -32,7 +32,7 @@ const RAZORPAY_SECRET_KEY = process.env.RAZORPAY_SECRET_KEY;
 let addressId = null
 
 
-var Instance = new Razorpay({
+let Instance = new Razorpay({
     key_id: RAZORPAY_ID_KEY,
     key_secret: RAZORPAY_SECRET_KEY
 })
@@ -80,7 +80,7 @@ exports.getCart = async (req, res) => {
         const coupons = await Coupons.find({ status: true })
         console.log('coupons', coupons)
 
-        
+
 
         // If the user has a cart with products, display the cart
         res.render('user/cart', { cart, coupons });
@@ -352,7 +352,7 @@ exports.postCheckOut = async (req, res) => {
         // if(addedAddress.addressField.length<1){
         //     return res.status(200).json({success:true,msg:"please add address to place order"})
         // }
-        
+
         if (!selectedAddressId) {
             return res.status(200).json({ success: true, msg: "Please select any address" })
         }
@@ -454,6 +454,7 @@ exports.postCheckOut = async (req, res) => {
             }
 
             Instance.orders.create(options, (error, order) => {
+                console.log('order from checkout---------------', order);
                 if (error) {
                     console.log(error.message);
                     return res.status(500).json({ success: false, message: "Something went wrong!" })
@@ -588,7 +589,7 @@ async function updateProductQuantities(cartProducts) {
 }
 
 //helper function to update the users array of the coupon when the coupon is applied
-async function updateCouponUsers(couponName, userId,orderId) {
+async function updateCouponUsers(couponName, userId, orderId) {
     try {
         // Find the existing coupon by name
         const coupon = await Coupons.findOne({ name: couponName });
@@ -602,7 +603,7 @@ async function updateCouponUsers(couponName, userId,orderId) {
                     { name: couponName },
                     { $push: { users: userId } }
                 );
-                await Order.findOneAndUpdate({_id:orderId},{$set:{couponName:couponName}})
+                await Order.findOneAndUpdate({ _id: orderId }, { $set: { couponName: couponName } })
                 console.log('User added to existing coupon.');
             } else {
                 console.log('User already exists in the coupon:', coupon.users);
@@ -626,7 +627,7 @@ exports.verifyPayment = async (req, res) => {
         // const orderId = req.body.orderId
         const appliedcoupon = req.session.appliedCoupon
         // console.log(orderId, "orderId");
-        const totalAmount =parseInt(req.body.amount/100) 
+        const totalAmount = parseInt(req.body.amount / 100)
         console.log('total amount', totalAmount);
         const { razorpay_order_id,
             razorpay_payment_id,
@@ -688,7 +689,7 @@ exports.verifyPayment = async (req, res) => {
             // Check if a coupon is applied
             if (appliedcoupon) {
                 console.log('Coupon is applied:', appliedcoupon);
-                await updateCouponUsers(appliedcoupon, userId,orderId);
+                await updateCouponUsers(appliedcoupon, userId, orderId);
             }
 
 
@@ -757,13 +758,13 @@ exports.getConfirmation = async (req, res) => {
     const orderId = req.params.id
     console.log('order id', orderId)
     const order = await Order.findById(orderId)
-    .populate({
-      path: 'products.products',
-      select: 'name price quantity offer originalPrice' // Include the fields you need
-    })
-    .exec();
+        .populate({
+            path: 'products.products',
+            select: 'name price quantity offer originalPrice' // Include the fields you need
+        })
+        .exec();
 
-      console.log("order", order)
+    console.log("order", order)
     const userId = order.user
     console.log("userId", userId)
     const addId = order.address.addressId
@@ -776,7 +777,7 @@ exports.getConfirmation = async (req, res) => {
 
     const invoicePath = generateInvoice(order, selectedAddrss);
     console.log('invoice path', invoicePath);
-    console.log('offeree :',order);
+    console.log('offeree :', order);
     console.log('slctd addrs', selectedAddrss)
     res.render('user/confirmation', { order, selectedAddrss })
 }

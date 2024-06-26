@@ -104,7 +104,7 @@
                 <div class="border-bottom mb-4 pb-4">
                     <h5 class="font-weight-semi-bold mb-4">Filter by price</h5>
                     <form method="GET">
-                        
+
                         <div
                             class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                             <input type="checkbox" class="custom-control-input" id="price-1" name="price" value="1000">
@@ -123,7 +123,8 @@
                             <label class="custom-control-label" for="price-3">&#8377 2001 - &#8377 3000</label>
                             <span class="badge border font-weight-normal">#</span>
                         </div>
-                        <input type="text"  class="form-control" id="search" name="search" value="<%=queryString%> " hidden>
+                        <input type="text" class="form-control" id="search" name="search" value="<%=queryString%> "
+                            hidden>
                         <!-- Add unique id and name attributes for the remaining checkboxes -->
                         <div class="input-group-btn">
                             <button class="btn btn-primary" type="submit">Filter</button>
@@ -150,7 +151,7 @@
                                     <input type="text" name="search" class="form-control"
                                         placeholder="Search by name,category">
                                     <div class="input-group-btn">
-                                            <button class="btn btn-primary"><i class="fa fa-search"></i></button>
+                                        <button class="btn btn-primary"><i class="fa fa-search"></i></button>
                                     </div>
                                 </div>
                             </form>
@@ -173,11 +174,11 @@
                             <div class="card product-item border-0 mb-4">
                                 <div
                                     class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                                    <a href="/product/<%=product[i]._id  %>"> <img class="img-fluid w-100"
-                                            src="/productImages/<%= product[i].image[0] %>" alt="">
+                                    <a href="/product/<%=product[i]._id  %>"> 
+                                        <img class="img-fluid w-100" src="/productImages/<%= product[i].image[0] %>" alt="">
                                     </a>
 
-                                    
+
 
                                 </div>
                                 <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
@@ -190,12 +191,12 @@
                                         <h6 class="text-muted ml-2"><del></del></h6>
 
                                         <% if (product[i].offer && product[i].expiryDate) { %>
-                                            <% if (currentDate <= product[i].expiryDate) { %>
+                                            <% if (currentDate <=product[i].expiryDate) { %>
                                                 <!-- Display your badge or logo here -->
                                                 <i class="lni lni-offer" style="color: red; font-size: 20px;"></i>
-                                            </span>
-                                            <% } %>
-                                        <% } %>
+                                                </span>
+                                                <% } %>
+                                                    <% } %>
                                     </div>
                                 </div>
 
@@ -203,7 +204,7 @@
                                     <a href="/product/<%= product[i]._id %>" class="btn btn-sm text-dark p-0"><i
                                             class="fas fa-eye text-primary mr-1"></i>View Detail</a>
 
-                                           
+
                                     <% if (product[i].quantity==0) { %>
                                         <p style="color: red;">Out of stock!</p>
                                         <% } else { %>

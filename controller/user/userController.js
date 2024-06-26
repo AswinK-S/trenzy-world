@@ -195,7 +195,6 @@ exports.getHome = async (req, res) => {
         const jeans = await Category.findOne({ $and: [{ "name": "Jeans" }, { "status": "true" }] })
         const pant = await Category.findOne({ $and: [{ "name": "Casual Pant" }, { "status": "true" }] })
         const banner = await Banner.find({})
-        console.log('jeanssss',jeans)
         res.render('home', { user, product, shirt, pant, jeans, t_shirt,banner })
 
     } catch (error) {
