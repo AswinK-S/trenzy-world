@@ -228,7 +228,7 @@
                             } else {
                                 console.log('response false', response.message)
                                 if (response.message == "Already claimed the coupon") {
-                                    $('#coupon-error-message').text(response.message)
+                                        
                                 }
                                 else if (response.message.startsWith('Minimum Purchase of ₹')) {
                                     $('#coupon-error-message').text(response.message)

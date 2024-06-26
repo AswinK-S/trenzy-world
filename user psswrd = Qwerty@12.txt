@@ -1,7 +1,0 @@
-user psswrd = Qwerty@12
-admin psswrd = qwerty
-
-
-git add .
-git commit -m "name"
-git push

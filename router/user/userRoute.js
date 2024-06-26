@@ -47,6 +47,14 @@ user.get('/newPassword',userController.newPasswordPage)
 //post set new password
 user.post('/createNewPass',userController.changePassword)
 
+//get change password page
+user.get('/changePsswrd',isUser.loggedIn,userController.setNewPsswrd)
+//get otp in mail for change password
+user.get('/sendOtp', userController.getOtp);
+//otp verification for change password
+user.post('/verifyOtp',userController.verifyChangePassOtp)
+
+
 //signup
 user.get('/signUp',isUser.loggedOut,userController.signUp)
 user.post('/signUp',userController.insertUser)
@@ -67,6 +75,7 @@ user.get('/userProfile',isUser.loggedIn,isUser.blockStatus,addressController.use
 user.get('/editUserProfile',isUser.loggedIn,addressController.getUserEdit)
 //user post edit profile page
 user.post('/userProfile/edit/:id',isUser.loggedIn,addressController.updateUser)
+
 
 //user get address page
 user.get('/addAddress',isUser.loggedIn,addressController.getAddAddress)

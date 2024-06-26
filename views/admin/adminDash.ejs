@@ -30,6 +30,21 @@
     </div>
 
     <!-- Sale & Revenue End -->
+    <h6 class="m-4">Download Sales report</h6>
+
+    <form action="/admin/generatePDF">
+        <div class="m-4 border bg-light">
+            <label class="p-2" for="fromDate">From Date: </label>
+            <input type="date" id="fromDate" name="fromDate">
+            <label class="p-2" for="toDate">To Date: </label>
+            <input type="date" id="toDate" name="toDate" max="<%= new Date().toISOString().split('T')[0] %>">
+            <button type="submit" class="m-3" id="downloadButton">Download pdf</button>
+            <small style="color: red;" class="mt-3">
+                <%=locals.dateError?dateError:'' %>
+            </small>
+        </div>
+
+    </form>
 
 
     <!-- Recent Sales Start -->
@@ -172,6 +187,8 @@
         });
     </script>
 
+
+
     <script>
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -258,6 +275,7 @@
 
         });
     </script>
+
 
 
 

@@ -7,18 +7,18 @@ exports.categoryStatus = async (req, res) => {
         const categoryId = req.params.id
         const categoryData = await category.findOne({ _id: categoryId })
 
-        console.log('category status', categoryId, categoryData)
+        // console.log('category status', categoryId, categoryData)
 
         if (categoryData) {
             if (categoryData.status === true) {
                 await category.findByIdAndUpdate({ _id: categoryId }, { $set: { status: false } })
-                console.log("category unlisted")
+                // console.log("category unlisted")
             } else {
                 await category.findByIdAndUpdate({ _id: categoryId }, { $set: { status: true } })
-                console.log('category listed')
+                // console.log('category listed')
             }
         }
-        console.log("redirecting")
+        // console.log("redirecting")
 
         res.redirect('/admin/adminCategory')
     } catch (error) {
@@ -33,7 +33,7 @@ exports.adminCategory = async (req, res) => {
         console.log('admin category page')
 
         const categoryData = await category.find({})
-        console.log('categoryData', categoryData);
+        // console.log('categoryData', categoryData);
 
         var message = req.app.locals.specialContext;
         req.app.locals.specialContext = null
@@ -54,7 +54,7 @@ exports.getCategoryEdit = async (req, res) => {
         console.log(id)
         const catagoryData = await category.findOne({ _id: id })
 
-        console.log('img', catagoryData.image)
+        // console.log('img', catagoryData.image)
 
         res.render('admin/editCategory', { catagoryData })
     } catch (error) {
@@ -106,17 +106,17 @@ exports.postAddCategory = async (req, res) => {
         const image = req.file.filename
         // const existingName = await category.findOne({name})
         const existingName = await category.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
-        console.log('existingName', existingName)
+        // console.log('existingName', existingName)
         if (existingName) {
             req.app.locals.specialContext = 'Name already exists';
-            console.log('category exist')
+            // console.log('category exist')
             return res.redirect('/admin/adminCategory/addCat')
         }
 
         const CategoryDet = new category({ name, image })
         await CategoryDet.save()
 
-        console.log('catagory save', CategoryDet)
+        // console.log('catagory save', CategoryDet)
 
         res.redirect('/admin/adminCategory')
     } catch (error) {
