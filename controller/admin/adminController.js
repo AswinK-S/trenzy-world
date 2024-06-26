@@ -9,7 +9,6 @@ exports.adminLogin = async (req, res, next) => {
         const passwordError = req.app.locals.specialContext
         req.app.locals.specialContext = null
 
-        console.log("adminlogin page")
 
         res.render('admin/adminLogin', { passwordError })
     } catch (error) {
@@ -21,7 +20,6 @@ exports.adminLogin = async (req, res, next) => {
 //dashboard
 exports.getAdmin = async (req, res, next) => {
     try {
-        console.log('admin dashboard')
         const orders = await Order.find({})
             .populate({
                 path: 'products.products',
@@ -211,10 +209,8 @@ exports.generatePDF = async (req, res) => {
 //logout
 exports.logout = async (req, res) => {
     try {
-        console.log("session before logging out", req.session.isLogged);
 
         req.session.destroy()
-        console.log("session after logout", req.session);
         res.redirect('/admin')
     } catch (error) {
         console.log(error.message)
@@ -225,15 +221,12 @@ exports.logout = async (req, res) => {
 //post admin dashboard
 exports.adminDash = async (req, res) => {
     try {
-        console.log('admin credentials checking')
-        // console.log(req.body.email)
-        // console.log(admin)
+      
 
         const adminData = await admin.findOne({ email: req.body.email })
         if (adminData) {
             if (req.body.password === adminData.password) {
                 req.session.isLogged = req.body.email;
-                // console.log('admin password and email is correct', req.session.isLogged)
                 res.redirect('/admin/adminDash')
             } else {
                 req.app.locals.specialContext = "incorrect password or email"

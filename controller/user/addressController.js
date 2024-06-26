@@ -11,7 +11,6 @@ exports.userAccount = async (req, res) => {
         console.log('user account');
         const userId = req.session.name;
         const userData = await User.findOne({ _id: userId });
-        console.log('user data', userData);
         let referralLink =""
         
         if (userData.referral) {
@@ -31,7 +30,6 @@ exports.userAccount = async (req, res) => {
             }
         }
 
-        console.log('user addresses', allAddresses);
         res.render("user/userProfile", { userData, allAddresses,referralLink });
     } catch (error) {
         console.log(error.message);
@@ -41,10 +39,8 @@ exports.userAccount = async (req, res) => {
 
 //get user details edit page 
 exports.getUserEdit = async (req, res) => {
-    console.log('user profile edit page')
     const userId = req.session.name
     const userData = await User.findOne({ _id: userId })
-    console.log('user data', userData)
     res.render('user/editProfile', { userData })
 
 }
@@ -52,9 +48,7 @@ exports.getUserEdit = async (req, res) => {
 // update user
 exports.updateUser = async (req, res) => {
     try {
-        console.log('update user')
         const userId = req.params.id
-        console.log(userId, 'userid')
         const data = await User.updateOne({ _id: userId }, {
             $set: {
                 name: req.body.name,
@@ -63,7 +57,6 @@ exports.updateUser = async (req, res) => {
                 phone: req.body.phone
             }
         })
-        console.log('object', data);
         res.redirect("/userProfile")
     } catch (error) {
         console.log(error.message);
@@ -73,7 +66,6 @@ exports.updateUser = async (req, res) => {
 //user get address
 exports.getAddAddress = async (req, res) => {
     try {
-        console.log('adress page')
         const userId = req.session.name
         const userData = await User.findOne({ _id: userId })
         res.render('user/addAdress', { userData })
@@ -85,10 +77,7 @@ exports.getAddAddress = async (req, res) => {
 //user post add address
 exports.postAddAddress = async (req, res) => {
     try {
-        console.log('Adding address');
         const userId = req.session.name;
-        console.log('User ID:', userId);
-        console.log('Request body:', req.body);
 
         const newAddress = {
             name: req.body.name,
@@ -114,10 +103,8 @@ exports.postAddAddress = async (req, res) => {
         // Save the user's address document
         await userAddress.save();
 
-        console.log('New address added:', newAddress);
         res.redirect('/userProfile');
     } catch (error) {
-        console.error(error.message);
         // Handle the error and provide an appropriate response to the user
         res.status(500).send('Error adding address');
     }
@@ -128,10 +115,8 @@ exports.postAddAddress = async (req, res) => {
 //user delete address
 exports.deleteAdd = async (req, res) => {
     try {
-        console.log('delete address')
         const userId = req.session.name
         const addressId = req.params.id
-        console.log("address id ", addressId);
         await Address.updateOne(
             { user: userId },
             { $pull: { addressField: { _id: addressId } } }

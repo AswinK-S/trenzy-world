@@ -4,9 +4,7 @@ const Category = require('../../model/category')
 // admin product page
 exports.adminProduct =async (req,res)=>{
     try{
-        console.log('product page')
         const productData= await Products.find({}).populate("category")
-        // console.log(productData)
         res.render('admin/adminProduct',{productData})
     }catch(error){
         console.log(error)
@@ -16,12 +14,10 @@ exports.adminProduct =async (req,res)=>{
 
 //get add product
 exports.addProduct = async (req, res) => {
-    console.log("in add Product")
     try {
         // Get the error message from res.locals
        
         const category = await Category.find({ status: true });
-        // console.log("caaat",category);
         res.render('admin/addProduct', { category });
     } catch (error) {
         console.log(error.message);
@@ -32,7 +28,6 @@ exports.addProduct = async (req, res) => {
 //post add product
 exports.postAddProduct = async (req, res) => {
     try {
-        console.log('post add product');
         const { name, category, brand, price, quantity, description,size,offer,date } = req.body;
         let images = [];
 

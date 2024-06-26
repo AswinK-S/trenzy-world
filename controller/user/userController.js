@@ -17,7 +17,6 @@ exports.login = async (req, res) => {
         req.app.locals.specialContext = null
         let userBlock = req.app.locals.userBlocked
         req.app.locals.userBlocked = null
-        console.log('login page')
         res.render('user/login', { error, userBlock })
     } catch (error) {
         console.log(error)
@@ -27,7 +26,6 @@ exports.login = async (req, res) => {
 // user forgot password page
 exports.forgotPassword = async (req, res) => {
     try {
-        console.log('enter email to get otp')
         const EmailError = req.app.locals.emailNotExists
         req.app.locals.emailNotExists = null
         res.render('user/forgotPassword', { EmailError })
@@ -39,7 +37,6 @@ exports.forgotPassword = async (req, res) => {
 //get otp page for forgot password
 exports.getPasswordOtpPage = async (req, res) => {
     try {
-        console.log('otp page for forgot password');
         const otpError = req.app.locals.otpError
         req.app.locals.otpError = null
         res.render('user/otpForgotPassword', { otpError })
@@ -52,7 +49,6 @@ exports.getPasswordOtpPage = async (req, res) => {
 //-----------------------------------utility function otp generation
 
 function generateOtp() {
-    console.log('generation otp');
     return Math.floor(100000 + Math.random() * 900000);
 }
 
@@ -86,10 +82,8 @@ async function sendOTPByEmail(email, otp) {
     return new Promise((resolve, reject) => {
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
-                console.error('Error sending email:', error);
                 reject(error);
             } else {
-                console.log('Email sent:', info.response);
                 resolve();
             }
         });
@@ -101,21 +95,16 @@ async function sendOTPByEmail(email, otp) {
 //user post forgot password email page
 exports.ForgotPasswordEmail = async (req, res) => {
     try {
-        console.log('forgot password email checking')
         const email = req.body.email
         req.session.emai = email
-        console.log('email', email)
         const isEmailExist = await User.findOne({ email: email })
-        console.log('email exists', isEmailExist);
         if (isEmailExist === null) {
-            console.log("no such email")
             req.app.locals.emailNotExists = "no such email found"
             res.redirect('/forgotPassword')
         } else {
             //generate otp
 
             const otp = generateOtp()
-            console.log('genereated otp', otp)
             req.session.forgotPasswordOtp = otp
 
             // Send OTP via email
@@ -134,16 +123,11 @@ exports.ForgotPasswordEmail = async (req, res) => {
 //verify otp for forgot password
 exports.verifyForgotPassOtp = async (req, res) => {
     try {
-        console.log('verify forpass otp');
         const otp = Number(req.body.otp)
         const otp1 = req.session.forgotPasswordOtp
-        console.log('otp : ', otp, 'otp 1: ', otp1);
-        console.log('type of otp:', typeof otp, 'type of  otp1: ', otp1)
         if (otp1 === otp) {
-            console.log("match");
             res.redirect('/newPassword')
         } else {
-            console.log("not match")
             req.app.locals.otpError = "wrong otp"
             res.redirect('/forgotPasswordOtpPage')
         }
@@ -157,7 +141,6 @@ exports.verifyForgotPassOtp = async (req, res) => {
 //user new password page
 exports.newPasswordPage = async (req, res) => {
     try {
-        console.log('new password page')
         res.render('user/newPassword')
     } catch (error) {
         console.log(error.message)
@@ -167,11 +150,8 @@ exports.newPasswordPage = async (req, res) => {
 //post password
 exports.changePassword = async (req, res) => {
     try {
-        console.log('entering new password');
         const password = req.body.password
         const email = req.session.email
-        console.log('email', email);
-        console.log('password', password);
         const newPass = await bcrypt.hash(password, 10)
         await User.updateOne({ email: email }, { $set: { password: newPass } })
         res.redirect('/login')
@@ -184,10 +164,8 @@ exports.changePassword = async (req, res) => {
 //get otp for  changepassword
 exports.getOtp = async(req,res)=>{
     try {
-        console.log('otp page to change password');
         const email = req.query.email;
         const otp =  generateOtp()
-        console.log('genereated otp', otp)
         req.session.changePasswordOtp = otp
 
        
@@ -205,16 +183,12 @@ exports.getOtp = async(req,res)=>{
 //verify otp for change password
 exports.verifyChangePassOtp = async (req, res) => {
     try {
-        console.log('verify change otp');
         const otp = Number(req.body.otp)
         const otp1 = req.session.changePasswordOtp
-        console.log('otp : ', otp, 'otp 1: ', otp1);
-        console.log('type of otp:', typeof otp, 'type of  otp1: ', otp1)
         if (otp1 === otp) {
             console.log("match");
             res.render('user/cnfrmNewPsswrd')
         } else {
-            console.log("not match")
             req.app.locals.otpError = "wrong otp"
             res.redirect('/changePsswrd')
         }
@@ -228,12 +202,9 @@ exports.verifyChangePassOtp = async (req, res) => {
 //get change password page
 exports.setNewPsswrd = async (req, res) => {
     try {
-        console.log('change password page');
         const userId = req.session.name
-        console.log('user id :', userId);
         const user = await User.findOne({ _id: userId })
         req.session.email=user.email
-        console.log('usereee :', user);
         const otpError = req.app.locals.otpError
         req.app.locals.otpError = null
         res.render('user/changePassword', { user,otpError })
@@ -246,7 +217,6 @@ exports.setNewPsswrd = async (req, res) => {
 //logout
 exports.logout = async (req, res) => {
     try {
-        console.log("Session Data before logout:", req.session.name);
         req.session.destroy()
         res.redirect('/')
     } catch (error) {
@@ -267,12 +237,7 @@ exports.getHome = async (req, res) => {
         const jeans = await Category.findOne({ $and: [{ "name": "Jeans" }, { "status": "true" }] })
         const pant = await Category.findOne({ $and: [{ "name": "Casual Pant" }, { "status": "true" }] })
         const banner = await Banner.find({})
-<<<<<<< HEAD
-        res.render('home', { user, product, shirt, pant, jeans, t_shirt,banner })
-=======
-        console.log('jeanssss', jeans)
         res.render('home', { user, product, shirt, pant, jeans, t_shirt, banner })
->>>>>>> 82721a7a3dfddfd72ddc5be60c78c0a2f564dacc
 
     } catch (error) {
         console.log(error)
@@ -284,31 +249,24 @@ exports.getHome = async (req, res) => {
 //login check
 exports.userLogin = async (req, res) => {
     try {
-        console.log("entering details")
         const { email, password } = req.body
         const customer = await User.findOne({ email: req.body.email })
-        console.log("customer det", customer)
         if (customer) {
             const isPasswordValid = await bcrypt.compare(password, customer.password)
             if (isPasswordValid) {
                 if (customer.status === true) {
                     req.session.name = customer._id
                     req.session.status = customer.status
-                    console.log(req.session.name)
-                    console.log("user logged in", customer)
                     res.redirect('/')
                 } else {
-                    console.log("status is false")
                     req.app.locals.specialContext = "user is blocked"
                     res.redirect('/login')
                 }
             } else {
-                console.log("password is wrong")
                 req.app.locals.specialContext = "password doesn't match"
                 res.redirect('/login')
             }
         } else {
-            console.log("no such user found");
             req.app.locals.specialContext = "user not exists"
             res.redirect('/login')
         }
@@ -323,9 +281,7 @@ exports.userLogin = async (req, res) => {
 exports.signUp = async (req, res) => {
     try {
 
-        console.log('signUp page')
         const referralCode = req.query.referral
-        console.log('referralcode', referralCode)
         req.session.referral = referralCode
 
         const emailExistMessage = req.app.locals.specialContext
@@ -342,7 +298,6 @@ exports.signUp = async (req, res) => {
 // Import the nodemailer-smtp-transport module
 exports.insertUser = async (req, res) => {
     try {
-        console.log('body email', req.body);
 
         const existEmail = await User.findOne({ email: req.body.email })
         if (existEmail) {
@@ -361,7 +316,6 @@ exports.insertUser = async (req, res) => {
 
         req.session.userData = user
         const otp = Math.floor(100000 + Math.random() * 900000);
-        console.log('genereated otp', otp)
         req.session.otp = otp
 
         // Send the OTP to the user's email
@@ -381,11 +335,9 @@ exports.insertUser = async (req, res) => {
 
         transporter.verify(function (error, success) {
             if (error) {
-                console.log('SMTP server connection error:', error);
                 // Handle the error and redirect the user to an error page or retry the OTP sending
                 res.redirect('/errorPage');
             } else {
-                console.log('SMTP server connection is ready');
                 // SMTP server connection is successful, proceed with sending the email
                 const mailOptions = {
                     from: 'trenzyworld4@gmail.com',
@@ -396,9 +348,8 @@ exports.insertUser = async (req, res) => {
 
                 transporter.sendMail(mailOptions, async (error, info) => {
                     if (error) {
-                        console.error('Error sending email:', error);
                         // Handle the error and redirect the user to an error page or retry the OTP sending
-                        res.redirect('/errorPage'); // Replace '/errorPage' with your actual error page
+                        res.redirect('/errorPage'); 
                     } else {
                         console.log('Email sent:', info.response);
                         // Redirect the user to the OTP verification page
@@ -417,7 +368,6 @@ exports.insertUser = async (req, res) => {
 // otp login page
 exports.otpLogin = async (req, res) => {
     try {
-        console.log('otp page')
         const otpError = req.app.locals.otpError
         req.app.locals.otpError = null
         res.render('user/otpLogin', { otpError })
@@ -430,13 +380,10 @@ exports.otpLogin = async (req, res) => {
 exports.verifyOTPPost = async (req, res) => {
     try {
         const { otp } = req.body;
-        console.log('confirm', otp)
         const otp1 = parseInt(otp, 10)
         const otp2 = req.session.otp
-        console.log('otps', typeof otp1, otp1, typeof otp2, otp2);
         if (otp1 === otp2) {
             const user = req.session.userData
-            console.log(user);
             const referralCode = generateReferralCode()
             const hashedPassword = await bcrypt.hash(user.password, 10);
             const newUser = new User({
@@ -452,7 +399,6 @@ exports.verifyOTPPost = async (req, res) => {
             if (req.session.referral) {
                 const referrer = await User.findOne({ referral: req.session.referral });
                 if (referrer) {
-                    console.log('referrer')
                     // Add referral income to the referrer's wallet
                     const referralIncome = 50; // You can set the desired amount
                     referrer.wallet += referralIncome;

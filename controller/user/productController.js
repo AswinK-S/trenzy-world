@@ -10,11 +10,9 @@ exports.shopPage = async (req, res) => {
         let search = req.query.search || '';
         search = search.replace(/\+$/, '').trim();
         const queryString = search.replace(/\+$/, '').trim();
-        console.log("queryString", queryString);
         const user = req.session.name
         const price = req.query.price;
         let sort = req.query.sort || { name: 1 }
-        console.log("price : ", req.query.price);
         let query = {
             status: true,
             $or: [
@@ -32,7 +30,6 @@ exports.shopPage = async (req, res) => {
                 });
 
                 if (matchingCategories.length > 0) {
-                    console.log('Matching Categories', matchingCategories);
                     if(matchingCategories.length===1){
                     catName = matchingCategories[0]._id;
                     query.category = catName;
@@ -53,7 +50,6 @@ exports.shopPage = async (req, res) => {
         await setSearchCategory(queryString);
 
         if (typeof price === 'string') {
-            console.log('price', price, queryString);
             const price1 = parseInt(price);
             const minPrice = price1 - 999;
             const maxPrice = price1;
@@ -62,9 +58,7 @@ exports.shopPage = async (req, res) => {
                 $gte: minPrice,
                 $lte: maxPrice
             };
-            console.log('price single', query);
         } else if (Array.isArray(price)) {
-            console.log('price2', price, queryString);
             minPrice = Math.min(...price.map(Number)) - 999;
             maxPrice = Math.max(...price.map(Number));
             query.price = {
@@ -87,7 +81,6 @@ exports.shopPage = async (req, res) => {
         }
         let limit = 6;
 
-        console.log('query', query);
         const product = await Product.find(query).limit(limit * 1).skip((page - 1) * limit).sort(sort);
         const products = await Product.find({})
         const totalProducts = await Product.countDocuments();

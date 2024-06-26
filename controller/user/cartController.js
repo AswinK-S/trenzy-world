@@ -16,7 +16,6 @@ const invoiceDir = path.join(__dirname, 'invoices');
 // Check if the directory exists, and create it if it doesn't
 if (!fs.existsSync(invoiceDir)) {
     fs.mkdirSync(invoiceDir);
-    console.log('Created "invoices" directory.');
 } else {
     console.log('The "invoices" directory already exists.');
 }
@@ -56,7 +55,6 @@ exports.getCart = async (req, res) => {
         }
 
         if (req.session.payableTotal) {
-            console.log('session.payabletoot', cart.couponApplied)
             // Use the payableTotal as the cart total
             if (cart.couponApplied === 'pending') {
                 let total = 0;
@@ -65,7 +63,6 @@ exports.getCart = async (req, res) => {
                 }
                 cart = await Cart.updateOne({ user: userId }, { $set: { total: total } })
                 cart = await Cart.findOne({ user: userId }).populate('products.products');
-                console.log('total', total)
 
             }
         } else {
@@ -74,11 +71,9 @@ exports.getCart = async (req, res) => {
                 total += product.quantity * product.products.price;
             }
             cart.total = total;
-            console.log('total', cart.total)
         }
 
         const coupons = await Coupons.find({ status: true })
-        console.log('coupons', coupons)
 
 
 
@@ -96,7 +91,6 @@ exports.postCart = async (req, res) => {
     try {
         const userId = req.session?.name;
         const productId = req.params.id;
-        console.log("proid", productId)
         let quantity = 1, price = 0
         let message = ''
         if (!userId) {
@@ -105,11 +99,9 @@ exports.postCart = async (req, res) => {
 
         const product = await Product.findOne({ _id: productId });
         let productQuantity = product.quantity
-        console.log("prodqnty111", productQuantity)
 
         if (!product) {
             // Handle the case where the product doesn't exist
-            console.log('Product not found');
             return res.redirect('/'); // Redirect to a home page or handle the error
         }
 
@@ -211,7 +203,6 @@ exports.addToCart = async (req, res) => {
 
         if (!product) {
             // Handle the case where the product doesn't exist
-            console.log('Product not found');
             return res.redirect('/'); // Redirect to a home page or handle the error
         }
 
@@ -262,7 +253,6 @@ exports.addToCart = async (req, res) => {
 
         res.redirect('/cart');
     } catch (error) {
-        console.log(error.message);
         // Handle errors and send an error response to the client if needed
         res.status(500).json({ success: false, error: 'Internal server error' });
     }
@@ -275,9 +265,7 @@ exports.removeFromCart = async (req, res) => {
     try {
         const userId = req.session.name;
         const productId = req.params.id
-        console.log('remove');
         const removeProduct = await Cart.updateOne({ user: userId }, { $pull: { products: { products: productId } } })
-        console.log('pull', removeProduct)
         let cart = await Cart.findOne({ user: userId })
         console.log('cart', cart)
         let total = 0
@@ -286,8 +274,6 @@ exports.removeFromCart = async (req, res) => {
             cart.total = total
             await cart.save()
         }
-        console.log('after deleting the ', cart)
-        console.log('total', total);
 
         res.redirect('/cart');
 
@@ -300,18 +286,14 @@ exports.removeFromCart = async (req, res) => {
 // get check out page
 exports.getCheckOut = async (req, res) => {
     try {
-        console.log('check out');
         const userId = req.session.name;
         const user = await User.findOne({ _id: userId })
-        console.log('user :', user)
         let cart = {}
         if (req.session.payableTotal) {
-            console.log('payable session');
             cart = await Cart.findOneAndUpdate({ user: userId }, { $set: { total: req.session.payableTotal } })
         }
         cart = await Cart.find({ user: userId }).populate('products.products');
-        console.log("cart", cart);
-        console.log('products',)
+       
         const userAddresses = await Address.find({ user: userId }, 'addressField');
         const allAddresses = [];
 
@@ -320,7 +302,6 @@ exports.getCheckOut = async (req, res) => {
                 allAddresses.push(...userAddress.addressField);
             }
         }
-        console.log('user addresses', allAddresses);
         res.render('user/checkOut', { allAddresses, cart, user });
     } catch (error) {
         console.log(error.message);
@@ -335,30 +316,22 @@ exports.getCheckOut = async (req, res) => {
 //post check out
 exports.postCheckOut = async (req, res) => {
     try {
-        console.log('placing order')
         const userId = req.session.name;
         const selectedAddressId = req.body?.selectedAddressId;
         const paymentMethod = req.body?.payment || '';
         const appliedcoupon = req.session.appliedCoupon
         const user = await User.findOne({ _id: userId })
-        console.log(user, "user")
         let walletAmount = parseInt(user.wallet)
         console.log('wallet amount :', walletAmount)
         console.log('seleted addrs :', selectedAddressId, 'payment :', paymentMethod)
 
-        // const addedAddress = await  Address.find({user:userId})
-        // console.log('added address',addedAddress);
 
-        // if(addedAddress.addressField.length<1){
-        //     return res.status(200).json({success:true,msg:"please add address to place order"})
-        // }
 
         if (!selectedAddressId) {
             return res.status(200).json({ success: true, msg: "Please select any address" })
         }
         if (selectedAddressId[0].length == 0 && selectedAddressId[1].length == 0) {
-            // req.app.locals.addressError = "please select any address"
-            // return res.redirect('/checkout')
+         
             console.log('addd');
             return res.status(200).json({ success: true, msg: "Please select any address" });
         }
@@ -375,29 +348,22 @@ exports.postCheckOut = async (req, res) => {
         } else if (typeof selectedAddressId === 'string') {
             addressId = selectedAddressId;
         }
-        console.log('addrsId', addressId)
 
         if (!paymentMethod) {
-            // req.app.locals.paymentError = "please select any valid payment method"
-
-            // return res.redirect('/checkout')
-            console.log('pymntttt');
+           
             return res.status(200).json({ success: true, msg: "Please select any valid payment method" });
 
         }
 
         // Fetch the user's cart contents
         const cart = await Cart.findOne({ user: userId }).populate('products.products');
-        console.log('cart', cart)
         if (!cart) {
             console.log('cart is not there');
         }
 
         // Calculate the total order amount based on cart contents
         const subTotal = await calculateTotalAmount(cart.products, appliedcoupon, userId);
-        console.log('subTotal :', subTotal)
         const totalAmount = subTotal + 10
-        console.log('total amt', totalAmount)
 
         // Create a new order document cod
         if (paymentMethod == 'COD') {
@@ -424,12 +390,10 @@ exports.postCheckOut = async (req, res) => {
 
             // Save the new order to the database
             await newOrder.save();
-            console.log("neworder", newOrder)
             const orderId = newOrder._id
 
             // Check if a coupon is applied
             if (appliedcoupon) {
-                console.log('Coupon is applied:', appliedcoupon);
                 await updateCouponUsers(appliedcoupon, userId);
             }
 
@@ -454,23 +418,17 @@ exports.postCheckOut = async (req, res) => {
             }
 
             Instance.orders.create(options, (error, order) => {
-                console.log('order from checkout---------------', order);
                 if (error) {
                     console.log(error.message);
                     return res.status(500).json({ success: false, message: "Something went wrong!" })
                 } else {
-                    // order.newOid = newOrder._id
-                    // req.session.OrderId=newOrder._id
-
-                    console.log(order, "order");
+          
 
                     res.status(200).json({ success: true, message: "success", data: order, paymentMethod: paymentMethod })
                 }
             })
         } else if (paymentMethod == 'wallet') {
-            console.log('wallet purchase')
             if (walletAmount >= totalAmount) {
-                console.log('wallet has amount');
                 const newOrder = new Order({
                     user: userId,
                     products: cart.products.map(item => ({
@@ -494,12 +452,10 @@ exports.postCheckOut = async (req, res) => {
 
                 // Save the new order to the database
                 await newOrder.save();
-                console.log("neworder", newOrder)
                 const orderId = newOrder._id
 
                 // Check if a coupon is applied
                 if (appliedcoupon) {
-                    console.log('Coupon is applied:', appliedcoupon);
                     await updateCouponUsers(appliedcoupon, userId);
                 }
 
@@ -507,8 +463,7 @@ exports.postCheckOut = async (req, res) => {
 
                 await Cart.deleteOne({ user: userId })
                 await User.updateOne({ _id: userId }, { $inc: { wallet: -totalAmount } })
-                // Redirect to the confirmation page with order details
-                // res.redirect(`confirmation/${orderId}`);
+             
 
                 res.status(200).json({
                     success: true,
@@ -516,16 +471,13 @@ exports.postCheckOut = async (req, res) => {
                     order_id: orderId,
                 });
             } else {
-                console.log('not enough amount in wallet')
-                // req.app.locals.paymentError = "Insufficient wallet balance";
-                // return res.redirect('/checkout');
+               
 
                 return res.status(200).json({ success: true, msg: 'Insufficient wallet balance' })
             }
         }
 
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
@@ -535,8 +487,7 @@ exports.postCheckOut = async (req, res) => {
 
 // Helper function to calculate the total order amount
 async function calculateTotalAmount(products, appliedcoupon, userId) {
-    console.log('calculating price')
-    console.log('products', products)
+  
     let total = 0;
     for (const item of products) {
         total += (item.products.price * item.quantity);
@@ -545,14 +496,12 @@ async function calculateTotalAmount(products, appliedcoupon, userId) {
     // Check if a coupon is applied
     if (appliedcoupon) {
         try {
-            console.log('Coupon is applied:', appliedcoupon);
 
             // Find the existing coupon by name
             const coupon = await Coupons.findOne({ name: appliedcoupon });
             console.log('coupon', coupon);
             if (coupon) {
                 total = total - coupon.discount
-                console.log('discount amount deducted ', coupon, total);
             }
             else {
                 console.log('Coupon not found:', appliedcoupon);
@@ -621,29 +570,20 @@ async function updateCouponUsers(couponName, userId, orderId) {
 exports.verifyPayment = async (req, res) => {
 
     try {
-        console.log(" varify payment")
-        console.log("req.body", req.body)
         const userId = req.session.name;
-        // const orderId = req.body.orderId
         const appliedcoupon = req.session.appliedCoupon
-        // console.log(orderId, "orderId");
         const totalAmount = parseInt(req.body.amount / 100)
-        console.log('total amount', totalAmount);
         const { razorpay_order_id,
             razorpay_payment_id,
             razorpay_signature } = req.body.payment
 
-        console.log('req. payment :', req.body.payment)
 
         const sign = razorpay_order_id + '|' + razorpay_payment_id;
         const expectedSign = crypto.createHmac("sha256", RAZORPAY_SECRET_KEY).update(sign.toString()).digest('hex');
         if (razorpay_signature === expectedSign) {
-            console.log("successs")
-            // await Order.findOneAndUpdate({ _id: orderId }, { $set: { orderStatus: 'Sucess' } })
 
             // Fetch the user's cart contents
             const cart = await Cart.findOne({ user: userId }).populate('products.products');
-            console.log('cart', cart)
             if (!cart) {
                 console.log('cart is not there');
             }
@@ -670,25 +610,18 @@ exports.verifyPayment = async (req, res) => {
 
             // Save the new order to the database
             await newOrder.save();
-            console.log("neworder", newOrder)
             const orderId = newOrder._id
-            console.log('oordrrrid :', orderId)
             await updateProductQuantities(cart.products);
 
 
-            console.log('userId', userId)
             const addres = await Address.findOne({ user: userId })
-            console.log('address', addres)
             const addrs = addres.addressField
-            console.log('addrs', addrs)
             const selectedAddrss = addrs.find((item) => {
                 return item._id == addressId;
             })
-            console.log('selected address', selectedAddrss)
 
             // Check if a coupon is applied
             if (appliedcoupon) {
-                console.log('Coupon is applied:', appliedcoupon);
                 await updateCouponUsers(appliedcoupon, userId, orderId);
             }
 
@@ -699,7 +632,6 @@ exports.verifyPayment = async (req, res) => {
 
 
     } catch (error) {
-        console.log(error.message);
         res.status(500).json({ error: 'Internal server error' });
 
     }
@@ -709,10 +641,7 @@ exports.verifyPayment = async (req, res) => {
 //add address in the check out page
 exports.checkoutNewAdd = async (req, res) => {
     try {
-        console.log('Adding address');
         const userId = req.session.name;
-        console.log('User ID:', userId);
-        console.log('Request body:', req.body);
 
         // Create a new address object from the request data
         const newAddress = {
@@ -739,7 +668,6 @@ exports.checkoutNewAdd = async (req, res) => {
         // Save the user's address document
         await userAddress.save();
 
-        console.log('New address added:', newAddress);
         res.status(200).json({ ok: 'true' })
         // res.redirect('/checkout');
     } catch (error) {
@@ -754,9 +682,7 @@ exports.checkoutNewAdd = async (req, res) => {
 
 //get confirmation page 
 exports.getConfirmation = async (req, res) => {
-    console.log('confirmation page')
     const orderId = req.params.id
-    console.log('order id', orderId)
     const order = await Order.findById(orderId)
         .populate({
             path: 'products.products',
@@ -764,11 +690,8 @@ exports.getConfirmation = async (req, res) => {
         })
         .exec();
 
-    console.log("order", order)
     const userId = order.user
-    console.log("userId", userId)
     const addId = order.address.addressId
-    console.log('addid', addId)
     const addres = await Address.findOne({ user: userId })
     const addrs = addres.addressField
     const selectedAddrss = addrs.find((item) => {
@@ -843,7 +766,6 @@ function generateInvoice(order, selectedAddrss) {
 // invoice 
 exports.getInvoice = (req, res) => {
     try {
-        console.log('invoice ')
         const orderId = req.params.id;
         const invoicePath = path.join(__dirname, 'invoices', `invoice_${orderId}.pdf`);
 

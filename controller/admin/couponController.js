@@ -3,7 +3,6 @@ const Coupon = require('../../model/coupon')
 // admin Coupon page
 exports.adminCoupon = async (req,res)=>{
     try{
-        console.log('coupon page')
         let coupons = await Coupon.find({})
         res.render('admin/adminCoupon',{coupons})
     }catch(error){
@@ -15,7 +14,6 @@ exports.adminCoupon = async (req,res)=>{
 //admin add Coupon page
 exports.getAddCoupon = async (req,res)=>{
     try {
-        console.log('get add coupon page')
         const couponExists = req.app.locals.couponExists
         req.app.locals.couponExists = null
         res.render('admin/addCoupon',{couponExists})
@@ -27,11 +25,9 @@ exports.getAddCoupon = async (req,res)=>{
 //admin post add coupon
 exports.postAddCoupon = async (req,res)=>{
     try {
-        // console.log('adding coupon',req.body)
         const name = req.body.name
          
         const coupon = await Coupon.find({})
-        // console.log("coupon",coupon.length)
 
         if(coupon.length > 0){
             const couponExists = await Coupon.findOne({
@@ -56,7 +52,6 @@ exports.postAddCoupon = async (req,res)=>{
             description : req.body.description
         })
         await newCoupon.save()
-        console.log('coupon', newCoupon)
         res.redirect('/admin/adminCoupon')
     } catch (error) {
         console.log(error.message)
@@ -69,9 +64,7 @@ exports.couponStatus = async (req,res)=>{
     try{
         console.log('coupon status')
         const couponId = req.params.id
-        // console.log('coupon id is ',couponId);
         const coupon = await Coupon.findOne({_id:couponId})
-        // console.log('coup  :',coupon)
 
         if(coupon){
             console.log('object');
@@ -90,7 +83,6 @@ exports.couponStatus = async (req,res)=>{
 //get coupon edit 
 exports.getEditCoupon = async (req,res)=>{
     try{
-        console.log('edit coupon')
         const couponId=req.params.id
         const couponExists = req.app.locals.couponExists
         req.app.locals.couponExists = null
@@ -107,11 +99,9 @@ exports.getEditCoupon = async (req,res)=>{
 // Post edit coupon
 exports.postEditCoupon = async (req, res) => {
     try {
-        console.log('Post edit coupon');
         const couponId = req.params.id; // Assuming you have the coupon ID in the URL
         const editedCoupon = await Coupon.findById(couponId); // Fetch the edited coupon
 
-        // console.log( 'date :',req.body.date)
         if (!editedCoupon) {
             console.log('coupon not found');
             // Handle if the edited coupon doesn't exist
@@ -133,11 +123,9 @@ exports.postEditCoupon = async (req, res) => {
         });
 
         if (existingCoupon) {
-            console.log('coupon with same details exists');
             req.app.locals.couponExists = 'Coupon with the same details already exists';
             return res.redirect('/admin/adminCoupon/editCoupon/' + couponId);
         }
-        console.log('object');
         // If no conflicts are found, you can update the coupon
         editedCoupon.name = req.body.name;
         editedCoupon.discount = req.body.discount;

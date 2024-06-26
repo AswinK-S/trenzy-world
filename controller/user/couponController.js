@@ -55,27 +55,21 @@ exports.postCouponValidation = async (req, res) => {
 
 exports.postRemoveCoupon = async (req, res) => {
     try {
-        console.log('removing the coupon-----------')
         const userId = req.session.name
         const orginalCartTotal = req.session.orginalCartTotal
         const couponCode = req.session.appliedCoupon || ""
-        console.log('coupon code ;', couponCode)
         const coupon = await Coupon.findOne({
             name: couponCode,
             status: true,
         })
-        console.log('coupon ', coupon)
         const cart = await Cart.findOne({ user: userId })
-        console.log('cart :', cart)
 
         if (couponCode) {
             await Cart.updateOne({ user: userId }, { $set: { total: orginalCartTotal, couponApplied: "" } });
             req.session.payableTotal = orginalCartTotal;
-            console.log('payable :',orginalCartTotal)
             req.session.appliedCoupon = "";
             res.json({ success: true, cartTotal: orginalCartTotal });
         } else {
-            console.log('no coupon')
             return res.json({ success: false, orginalCartTotal, message: "not valid coupons" });
         }
 
