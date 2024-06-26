@@ -40,7 +40,7 @@
                 <a href="#">Show All</a>
             </div>
 
-            <% if (orders.length> 0) { %>
+            <% if (orders?.length> 0) { %>
                 <div class="table-responsive">
                     <table id="recentSalesTable" class="table text-start align-middle table-bordered table-hover mb-0">
                         <thead>
@@ -56,40 +56,40 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% orders.forEach(order=> { %>
+                            <% orders?.forEach(order=> { %>
                                 <tr>
                                     <td>
-                                        <%= order._id %>
+                                        <%= order?._id %>
                                     </td> <!-- Order ID -->
                                     <td>
                                         <%= order.date.toDateString() %>
                                     </td> <!-- Date -->
                                     <td>
-                                        <%= order.user.name %>
+                                        <%= order?.user?.name %>
                                     </td> <!-- Customer -->
                                     <td>
-                                        <% order.products.forEach(product=> { %>
+                                        <% order?.products.forEach(product=> { %>
                                             <!-- Product Details: Format as needed -->
-                                            <%= product.name %> (Price: <%= product.price %>, Quantity: <%=
+                                            <%= product?.name %> (Price: <%= product?.price %>, Quantity: <%=
                                                         product.quantity %>)<br>
                                                         <% }) %>
                                     </td>
                                     <td>
-                                        <%= order.products.reduce((total, product)=> total + product.quantity, 0) %>
+                                        <%= order.products.reduce((total, product)=> total + product?.quantity, 0) %>
                                     </td> <!-- Total Quantity -->
                                     <td>
-                                        <%= order.products.reduce((total, product)=> total + product.price *
+                                        <%= order?.products.reduce((total, product)=> total + product?.price *
                                             product.quantity, 0) %>
                                     </td> <!-- Total Price -->
                                     <td>
-                                        <% if(order.couponName){ %>
-                                            <%= order.couponName %>
+                                        <% if(order?.couponName){ %>
+                                            <%= order?.couponName %>
                                                 <% }else{ %>
                                                     <%= 'no offer/discount' %>
                                                         <% } %>
                                     </td>
                                     <td>
-                                        <%= order.total %>
+                                        <%= order?.total %>
                                     </td> <!-- Total Amount -->
                                 </tr>
                                 <% }) %>
